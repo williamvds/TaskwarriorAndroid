@@ -3,4 +3,4 @@
 	url = git@github.com:kvj/Lima1Common.git
 [submodule "cli"]
 	path = cli
-	url = https://kvorobyev@bitbucket.org/kvorobyev/taskwarriorandroidcli.git
+	url = git@github.com:williamvds/TaskwarriorAndroidCLI.git
