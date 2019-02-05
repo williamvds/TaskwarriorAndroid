@@ -62,5 +62,8 @@
         <item name="android:longClickable">true</item>
         <item name="android:hapticFeedbackEnabled">true</item>
     </style>
-
+    <style name="MainNavigationDrawer" parent="AppTheme">
+        <item name="itemTextColor">@color/colorText</item>
+        <item name="itemIconTint">@color/colorText</item>
+    </style>
 </resources>
