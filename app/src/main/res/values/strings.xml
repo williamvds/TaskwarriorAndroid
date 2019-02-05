@@ -3,4 +3,11 @@
     <string name="app_account_type">kvj.task.account</string>
     <string name="pref_account_name">pref_account_name</string>
     <string name="pref_account_id">pref_account_id</string>
+
+    <!-- Notification channels -->
+    <string name="channel_sync_success_name">Successful syncs</string>
+    <string name="channel_sync_success_desc">Notifies when Taskwarrior successfully syncronizes with a server</string>
+
+    <string name="channel_sync_error_name">Sync errors</string>
+    <string name="channel_sync_error_desc">Notifies when Taskwarrior fails to syncronize with a server</string>
 </resources>

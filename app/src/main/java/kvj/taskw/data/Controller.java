@@ -12,7 +12,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.NotificationCompat;
+import android.app.Notification;
 import android.support.v4.app.NotificationManagerCompat;
 import android.text.TextUtils;
 
@@ -39,6 +39,7 @@ import java.util.UUID;
 
 import kvj.taskw.App;
 import kvj.taskw.R;
+import kvj.taskw.notifications.NotificationChannels;
 
 /**
  * Created by vorobyev on 10/4/15.
@@ -66,6 +67,7 @@ public class Controller extends org.kvj.bravo7.ng.Controller {
         accountManager = AccountManager.get(context);
         executable = eabiExecutable();
         notificationManager = NotificationManagerCompat.from(context);
+        NotificationChannels.create(context);
     }
 
     public File fileFromIntentUri(Intent intent) {
@@ -342,7 +344,7 @@ public class Controller extends org.kvj.bravo7.ng.Controller {
         }
     }
 
-    public void notify(NotificationType type, String account, NotificationCompat.Builder n) {
+    public void notify(NotificationType type, String account, Notification.Builder n) {
         Notification nn = n.build();
         notificationManager.notify(account, type.id, nn);
     }
@@ -351,8 +353,8 @@ public class Controller extends org.kvj.bravo7.ng.Controller {
         notificationManager.cancel(account, type.id);
     }
 
-    public NotificationCompat.Builder newNotification(String account) {
-        NotificationCompat.Builder n = new NotificationCompat.Builder(context);
+    public Notification.Builder newNotification(String account) {
+        Notification.Builder n = new Notification.Builder(context);
         n.setContentTitle(account);
         n.setSmallIcon(R.drawable.ic_stat_logo);
         n.setWhen(System.currentTimeMillis());

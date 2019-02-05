@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.net.LocalServerSocket;
 import android.net.LocalSocket;
 import android.net.Uri;
-import android.support.v4.app.NotificationCompat;
+import android.app.Notification;
 import android.text.TextUtils;
 
 import org.json.JSONArray;
@@ -48,6 +48,7 @@ import kvj.taskw.sync.SSLHelper;
 import kvj.taskw.ui.MainActivity;
 import kvj.taskw.ui.MainListAdapter;
 import kvj.taskw.ui.RunActivity;
+import kvj.taskw.notifications.NotificationChannels;
 
 /**
  * Created by vorobyev on 11/17/15.
@@ -343,7 +344,7 @@ public class AccountController {
         return String.format("android.%s", format);
     }
 
-    private boolean toggleSyncNotification(NotificationCompat.Builder n, NotificationType type) {
+    private boolean toggleSyncNotification(Notification.Builder n, NotificationType type) {
         if (notificationTypes.contains(type)) { // Have to show
             Intent intent = new Intent(controller.context(), MainActivity.class);
             intent.putExtra(App.KEY_ACCOUNT, id);
@@ -357,11 +358,10 @@ public class AccountController {
     }
 
     public String taskSync() {
-        NotificationCompat.Builder n = controller.newNotification(accountName);
+        Notification.Builder n = controller.newNotification(accountName);
         n.setOngoing(true);
         n.setContentText("Sync is in progress");
         n.setTicker("Sync is in progress");
-        n.setPriority(NotificationCompat.PRIORITY_DEFAULT);
         toggleSyncNotification(n, NotificationType.Sync);
         StringAggregator err = new StringAggregator();
         StringAggregator out = new StringAggregator();
@@ -372,7 +372,7 @@ public class AccountController {
         n.setOngoing(false);
         if (result) { // Success
             n.setContentText("Sync complete");
-            n.setPriority(NotificationCompat.PRIORITY_MIN);
+            n.setChannelId(NotificationChannels.SYNC_SUCCESS);
             n.addAction(R.drawable.ic_action_sync, "Sync again", syncIntent("notification"));
             toggleSyncNotification(n, NotificationType.Success);
             scheduleSync(TimerType.Periodical);
@@ -383,8 +383,7 @@ public class AccountController {
             n.setContentText("Sync failed");
             n.setTicker("Sync failed");
             n.setSubText(error);
-            n.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
-            n.setPriority(NotificationCompat.PRIORITY_DEFAULT);
+            n.setChannelId(NotificationChannels.SYNC_ERROR);
             n.addAction(R.drawable.ic_action_sync, "Retry now", syncIntent("notification"));
             toggleSyncNotification(n, NotificationType.Error);
             scheduleSync(TimerType.AfterError);
