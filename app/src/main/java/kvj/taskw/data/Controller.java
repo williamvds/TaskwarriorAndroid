@@ -12,7 +12,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.app.Notification;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.text.TextUtils;
 
@@ -344,7 +344,7 @@ public class Controller extends org.kvj.bravo7.ng.Controller {
         }
     }
 
-    public void notify(NotificationType type, String account, Notification.Builder n) {
+    public void notify(NotificationType type, String account, NotificationCompat.Builder n) {
         Notification nn = n.build();
         notificationManager.notify(account, type.id, nn);
     }
@@ -353,8 +353,14 @@ public class Controller extends org.kvj.bravo7.ng.Controller {
         notificationManager.cancel(account, type.id);
     }
 
-    public Notification.Builder newNotification(String account) {
-        Notification.Builder n = new Notification.Builder(context);
+    public NotificationCompat.Builder newNotification(String account, final String channelId) {
+
+        NotificationCompat.Builder n = null;
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
+            n = new NotificationCompat.Builder(context);
+        else
+            n = new NotificationCompat.Builder(context, channelId);
+
         n.setContentTitle(account);
         n.setSmallIcon(R.drawable.ic_stat_logo);
         n.setWhen(System.currentTimeMillis());

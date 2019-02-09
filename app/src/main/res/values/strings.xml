@@ -5,6 +5,9 @@
     <string name="pref_account_id">pref_account_id</string>
 
     <!-- Notification channels -->
+    <string name="channel_sync_ongoing_name">Ongoing syncs</string>
+    <string name="channel_sync_ongoing_desc">Notifies when Taskwarrior is synchronizing with a server</string>
+
     <string name="channel_sync_success_name">Successful syncs</string>
     <string name="channel_sync_success_desc">Notifies when Taskwarrior successfully syncronizes with a server</string>
 

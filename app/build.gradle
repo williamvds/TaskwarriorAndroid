@@ -31,9 +31,9 @@ android {
 dependencies {
     //    compile fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${versions.kotlin}"
-    implementation 'com.android.support:appcompat-v7:23.3.0'
-    implementation 'com.android.support:design:23.3.0'
-    implementation 'com.android.support:cardview-v7:23.3.0'
-    implementation 'com.android.support:recyclerview-v7:23.3.0'
+    implementation "com.android.support:appcompat-v7:${versions.support}"
+    implementation "com.android.support:design:${versions.support}"
+    implementation "com.android.support:cardview-v7:${versions.support}"
+    implementation "com.android.support:recyclerview-v7:${versions.support}"
     implementation project(':Lima1Common')
 }
