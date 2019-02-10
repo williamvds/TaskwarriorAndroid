@@ -5,15 +5,12 @@ import android.accounts.AccountManager;
 import android.accounts.AccountManagerCallback;
 import android.accounts.AccountManagerFuture;
 import android.app.Activity;
-import android.app.Notification;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
 import android.text.TextUtils;
 
 import org.kvj.bravo7.form.FormController;
@@ -55,7 +52,6 @@ public class Controller extends org.kvj.bravo7.ng.Controller {
     private final AccountManager accountManager;
 
     private final Map<String, AccountController> controllerMap = new HashMap<>();
-    private final NotificationManagerCompat notificationManager;
 
     final Collection<String> BUILTIN_REPORTS = new ArrayList<>();
 
@@ -66,7 +62,6 @@ public class Controller extends org.kvj.bravo7.ng.Controller {
         Collections.addAll(BUILTIN_REPORTS, App.BUILTIN_REPORTS);
         accountManager = AccountManager.get(context);
         executable = eabiExecutable();
-        notificationManager = NotificationManagerCompat.from(context);
         NotificationChannels.create(context);
     }
 
@@ -332,39 +327,6 @@ public class Controller extends org.kvj.bravo7.ng.Controller {
             controllerMap.put(name, new AccountController(this, accountID(acc), acc.name));
         }
         return controllerMap.get(name);
-    }
-
-    public enum NotificationType {
-        Sync(1);
-
-        private final int id;
-
-        NotificationType(int id) {
-            this.id = id;
-        }
-    }
-
-    public void notify(NotificationType type, String account, NotificationCompat.Builder n) {
-        Notification nn = n.build();
-        notificationManager.notify(account, type.id, nn);
-    }
-
-    public void cancel(NotificationType type, String account) {
-        notificationManager.cancel(account, type.id);
-    }
-
-    public NotificationCompat.Builder newNotification(String account, final String channelId) {
-
-        NotificationCompat.Builder n = null;
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
-            n = new NotificationCompat.Builder(context);
-        else
-            n = new NotificationCompat.Builder(context, channelId);
-
-        n.setContentTitle(account);
-        n.setSmallIcon(R.drawable.ic_stat_logo);
-        n.setWhen(System.currentTimeMillis());
-        return n;
     }
 
     public Listeners<ToastMessageListener> toastListeners() {

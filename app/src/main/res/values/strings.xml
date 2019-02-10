@@ -13,4 +13,11 @@
 
     <string name="channel_sync_error_name">Sync errors</string>
     <string name="channel_sync_error_desc">Notifies when Taskwarrior fails to syncronize with a server</string>
+
+    <!-- Notifications -->
+    <string name="notification_sync_ongoing">Sync in progress</string>
+    <string name="notification_sync_success">Sync complete</string>
+    <string name="notification_sync_error">Sync failed</string>
+    <string name="notification_sync_again">Sync again</string>
+    <string name="notification_sync_retry">Retry now</string>
 </resources>

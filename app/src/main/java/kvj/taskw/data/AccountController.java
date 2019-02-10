@@ -1,6 +1,7 @@
 package kvj.taskw.data;
 
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.net.LocalServerSocket;
 import android.net.LocalSocket;
@@ -48,6 +49,7 @@ import kvj.taskw.sync.SSLHelper;
 import kvj.taskw.ui.MainActivity;
 import kvj.taskw.ui.MainListAdapter;
 import kvj.taskw.ui.RunActivity;
+import kvj.taskw.notifications.NotificationFactory;
 import kvj.taskw.notifications.NotificationChannels;
 
 /**
@@ -58,6 +60,7 @@ public class AccountController {
     private static final String CONFIRM_YN = " (yes/no) ";
     private final String accountName;
     private Thread acceptThread = null;
+    private NotificationFactory notifyFactory = null;
 
     private Set<NotificationType> notificationTypes = new HashSet<>();
 
@@ -96,6 +99,10 @@ public class AccountController {
 
     public String name() {
         return accountName;
+    }
+
+    public Context context() {
+        return controller.context();
     }
 
     private static String[] defaultFields = {"description", "urgency", "priority", "due", "wait", "scheduled", "recur", "until", "project", "tags"};
@@ -194,6 +201,7 @@ public class AccountController {
         this.controller = controller;
         this.accountName = name;
         this.id = folder;
+        this.notifyFactory = new NotificationFactory(this);
         tasksFolder = initTasksFolder();
         socketName = UUID.randomUUID().toString().toLowerCase();
         initLogger();
@@ -231,21 +239,7 @@ public class AccountController {
 
             @Override
             protected void onPostExecute(String s) {
-                notificationTypes.clear();
-                if ("all".equals(s)) { // All types
-                    notificationTypes.add(NotificationType.Sync);
-                    notificationTypes.add(NotificationType.Success);
-                    notificationTypes.add(NotificationType.Error);
-                    return;
-                }
-                for (String type : s.split(",")) { // Search type
-                    for (NotificationType nt : NotificationType.values()) { // Check name
-                        if (nt.name.equalsIgnoreCase(type.trim())) { // Found
-                            notificationTypes.add(nt);
-                            break;
-                        }
-                    }
-                }
+                notifyFactory.setEnabledChannels(s);
             }
         }.exec();
     }
@@ -344,51 +338,22 @@ public class AccountController {
         return String.format("android.%s", format);
     }
 
-    private boolean toggleSyncNotification(NotificationCompat.Builder n, NotificationType type) {
-        if (notificationTypes.contains(type)) { // Have to show
-            Intent intent = new Intent(controller.context(), MainActivity.class);
-            intent.putExtra(App.KEY_ACCOUNT, id);
-            n.setContentIntent(PendingIntent.getActivity(controller.context(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT));
-            controller.notify(Controller.NotificationType.Sync, accountName, n);
-            return true;
-        } else {
-            controller.cancel(Controller.NotificationType.Sync, accountName);
-            return false;
-        }
-    }
-
     public String taskSync() {
-        NotificationCompat.Builder n;
-        n = controller.newNotification(accountName, NotificationChannels.SYNC_ONGOING);
-        n.setOngoing(true);
-        n.setContentText("Sync is in progress");
-        n.setTicker("Sync is in progress");
-        toggleSyncNotification(n, NotificationType.Sync);
+        notifyFactory.create(NotificationChannels.SYNC_ONGOING);
         StringAggregator err = new StringAggregator();
         StringAggregator out = new StringAggregator();
         boolean result = callTask(out, err, "rc.taskd.socket=" + socketName, "sync");
         debug("Sync result:", result);
         logger.d("Sync result:", result, "ERR:", err.text(), "OUT:", out.text());
 
-        n = controller.newNotification(accountName,
-                result ? NotificationChannels.SYNC_SUCCESS
-                       : NotificationChannels.SYNC_ERROR);
-
-        n.setOngoing(false);
         if (result) { // Success
-            n.setContentText("Sync complete");
-            n.addAction(R.drawable.ic_action_sync, "Sync again", syncIntent("notification"));
-            toggleSyncNotification(n, NotificationType.Success);
+            notifyFactory.create(NotificationChannels.SYNC_SUCCESS);
             scheduleSync(TimerType.Periodical);
             return null;
         } else {
             String error = err.text();
+            notifyFactory.create(NotificationChannels.SYNC_ERROR, error);
             debug("Sync error output:", error);
-            n.setContentText("Sync failed");
-            n.setTicker("Sync failed");
-            n.setSubText(error);
-            n.addAction(R.drawable.ic_action_sync, "Retry now", syncIntent("notification"));
-            toggleSyncNotification(n, NotificationType.Error);
             scheduleSync(TimerType.AfterError);
             return error;
         }
