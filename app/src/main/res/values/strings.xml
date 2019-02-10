@@ -20,4 +20,7 @@
     <string name="notification_sync_error">Sync failed</string>
     <string name="notification_sync_again">Sync again</string>
     <string name="notification_sync_retry">Retry now</string>
+
+    <!-- Task list activity -->
+    <string name="new_task_title">New task</string>
 </resources>
