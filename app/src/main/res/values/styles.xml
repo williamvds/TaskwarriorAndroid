@@ -1,22 +1,4 @@
 <resources>
-
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-    </style>
-    <style name="AppThemeDialog" parent="@style/Theme.AppCompat.Light.Dialog.Alert">
-    </style>
-    <style name="AppThemeD" parent="Theme.AppCompat.Light.DialogWhenLarge">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-    </style>
     <style name="ClickableText">
         <item name="android:background">?android:attr/selectableItemBackground</item>
         <item name="android:longClickable">true</item>
@@ -48,12 +30,12 @@
         <item name="android:layout_width">5dp</item>
     </style>
     <style name="MonospaceInput">
-        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Small</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
         <item name="android:typeface">monospace</item>
         <item name="android:gravity">top</item>
     </style>
     <style name="LabelText">
-        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Small</item>
+        <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
         <item name="android:layout_gravity">center_vertical</item>
     </style>
     <style name="LabelItem">
@@ -61,9 +43,5 @@
         <item name="android:background">?android:attr/selectableItemBackground</item>
         <item name="android:longClickable">true</item>
         <item name="android:hapticFeedbackEnabled">true</item>
-    </style>
-    <style name="MainNavigationDrawer" parent="AppTheme">
-        <item name="itemTextColor">@color/colorText</item>
-        <item name="itemIconTint">@color/colorText</item>
     </style>
 </resources>

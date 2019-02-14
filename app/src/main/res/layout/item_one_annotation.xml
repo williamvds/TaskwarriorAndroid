@@ -14,12 +14,11 @@
             android:id="@+id/task_ann_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.AppCompat.Small"
-            android:textColor="@color/colorText"
+            android:textAppearance="?android:attr/textAppearanceSmall"
             style="@style/ClickableText"
             android:text="Some annotation"/>
         <TextView
-            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:textAppearance="?android:attr/textAppearanceSmall"
             android:layout_width="match_parent"
             android:gravity="right"
             android:layout_height="wrap_content"

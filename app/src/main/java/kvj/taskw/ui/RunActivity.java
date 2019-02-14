@@ -3,7 +3,6 @@ package kvj.taskw.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.ShareActionProvider;
@@ -33,11 +32,12 @@ import kvj.taskw.App;
 import kvj.taskw.R;
 import kvj.taskw.data.AccountController;
 import kvj.taskw.data.Controller;
+import kvj.taskw.ui.AppActivity;
 
 /**
  * Created by vorobyev on 12/1/15.
  */
-public class RunActivity extends AppCompatActivity {
+public class RunActivity extends AppActivity {
 
     FormController form = new FormController(new ViewFinder.ActivityViewFinder(this));
     Controller controller = App.controller();

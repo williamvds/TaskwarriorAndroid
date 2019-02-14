@@ -14,8 +14,6 @@
         <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
                 app:navigationIcon="@drawable/ic_action_tb_menu"
-                app:titleTextColor="@color/colorPrimaryText"
-                app:subtitleTextColor="@color/colorPrimaryText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="0"/>
@@ -75,7 +73,6 @@
     </LinearLayout>
     <android.support.design.widget.NavigationView
             android:id="@+id/list_navigation"
-            android:theme="@style/MainNavigationDrawer"
             app:menu="@menu/menu_navigation"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"

@@ -3,7 +3,6 @@ package kvj.taskw.ui;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -27,11 +26,12 @@ import kvj.taskw.App;
 import kvj.taskw.R;
 import kvj.taskw.data.AccountController;
 import kvj.taskw.data.Controller;
+import kvj.taskw.ui.AppActivity;
 
 /**
  * Created by kvorobyev on 11/21/15.
  */
-public class EditorActivity extends AppCompatActivity {
+public class EditorActivity extends AppActivity {
 
     private Toolbar toolbar = null;
     private Editor editor = null;

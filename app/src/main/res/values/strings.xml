@@ -23,4 +23,7 @@
 
     <!-- Task list activity -->
     <string name="new_task_title">New task</string>
+
+    <!-- Main drawer -->
+    <string name="dark_theme">Dark mode</string>
 </resources>

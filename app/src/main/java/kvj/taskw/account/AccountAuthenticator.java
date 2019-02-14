@@ -10,7 +10,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -30,6 +29,7 @@ import java.util.List;
 import kvj.taskw.App;
 import kvj.taskw.R;
 import kvj.taskw.data.Controller;
+import kvj.taskw.ui.AppActivity;
 
 /**
  * Created by vorobyev on 11/17/15.
@@ -103,7 +103,7 @@ public class AccountAuthenticator extends AbstractAccountAuthenticator {
         return null;
     }
 
-    public static class AccountAddDialog extends AppCompatActivity {
+    public static class AccountAddDialog extends AppActivity {
 
         Controller controller = App.controller();
         private View okButton;

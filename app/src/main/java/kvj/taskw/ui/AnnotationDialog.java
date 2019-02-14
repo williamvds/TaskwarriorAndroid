@@ -1,7 +1,6 @@
 package kvj.taskw.ui;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
 
@@ -16,11 +15,12 @@ import kvj.taskw.App;
 import kvj.taskw.R;
 import kvj.taskw.data.AccountController;
 import kvj.taskw.data.Controller;
+import kvj.taskw.ui.AppActivity;
 
 /**
  * Created by kvorobyev on 11/25/15.
  */
-public class AnnotationDialog extends AppCompatActivity {
+public class AnnotationDialog extends AppActivity {
     Controller controller = App.controller();
 
     FormController form = new FormController(new ViewFinder.ActivityViewFinder(this));

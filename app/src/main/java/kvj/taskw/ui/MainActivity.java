@@ -3,6 +3,7 @@ package kvj.taskw.ui;
 import android.accounts.Account;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -10,7 +11,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.util.Pair;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Gravity;
@@ -19,6 +20,7 @@ import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -40,8 +42,9 @@ import kvj.taskw.App;
 import kvj.taskw.R;
 import kvj.taskw.data.AccountController;
 import kvj.taskw.data.Controller;
+import kvj.taskw.ui.AppActivity;
 
-public class MainActivity extends AppCompatActivity implements Controller.ToastMessageListener {
+public class MainActivity extends AppActivity implements Controller.ToastMessageListener {
 
     Logger logger = Logger.forInstance(this);
 
@@ -84,6 +87,8 @@ public class MainActivity extends AppCompatActivity implements Controller.ToastM
         }
     };
 
+    private SwitchCompat themeSwitch = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,6 +97,17 @@ public class MainActivity extends AppCompatActivity implements Controller.ToastM
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         navigationDrawer = (DrawerLayout) findViewById(R.id.list_navigation_drawer);
         navigation = (NavigationView) findViewById(R.id.list_navigation);
+        themeSwitch = (SwitchCompat) navigation.getMenu().findItem(R.id.menu_theme_switch).getActionView();
+        themeSwitch.setChecked(preferences.getBoolean(PREF_DARK_MODE, false));
+        themeSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putBoolean("DarkMode", isChecked);
+                editor.commit();
+                ((AppActivity) buttonView.getContext()).recreate();
+            }
+        });
         header = (ViewGroup) navigation.inflateHeaderView(R.layout.item_nav_header);
         navigation.setNavigationItemSelectedListener(
             new NavigationView.OnNavigationItemSelectedListener() {
@@ -321,6 +337,9 @@ public class MainActivity extends AppCompatActivity implements Controller.ToastM
                     logger.e(e, "Failed to edit file");
                     controller.messageLong("No suitable plain text editors found");
                 }
+                break;
+            case R.id.menu_theme_switch:
+                themeSwitch.toggle();
                 break;
         }
     }

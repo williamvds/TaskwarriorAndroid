@@ -2,7 +2,6 @@ package kvj.taskw.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,11 +19,12 @@ import java.io.File;
 import kvj.taskw.App;
 import kvj.taskw.R;
 import kvj.taskw.data.Controller;
+import kvj.taskw.ui.AppActivity;
 
 /**
  * Created by vorobyev on 11/30/15.
  */
-public class TextEditor extends AppCompatActivity {
+public class TextEditor extends AppActivity {
 
     FormController form = new FormController(new ViewFinder.ActivityViewFinder(this));
     private Toolbar toolbar = null;
