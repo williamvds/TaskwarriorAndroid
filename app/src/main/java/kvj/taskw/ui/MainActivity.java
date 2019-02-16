@@ -33,7 +33,6 @@ import org.kvj.bravo7.form.impl.widget.TextViewCharSequenceAdapter;
 import org.kvj.bravo7.form.impl.widget.TransientAdapter;
 import org.kvj.bravo7.log.Logger;
 import org.kvj.bravo7.util.DataUtil;
-import org.kvj.bravo7.util.Tasks;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -341,25 +340,29 @@ public class MainActivity extends AppActivity implements Controller.ToastMessage
         }
     }
 
+    private static class RefreshAccountTask extends StaticAsyncTask<MainActivity, String, Void, AccountController> {
+        RefreshAccountTask(MainActivity activity) {
+            super(activity);
+        }
+
+        @Override
+        protected AccountController background(MainActivity activity, String... params) {
+            return activity.controller.accountController(params[0], true);
+        }
+
+        @Override
+        protected void finish(MainActivity activity, AccountController result) {
+            if (result == null) {
+                activity.finish();
+                return;
+            }
+
+            activity.refreshReports();
+        }
+    }
+
     private void refreshAccount(final String account) {
-        new Tasks.ActivitySimpleTask<AccountController>(this) {
-
-            @Override
-            protected AccountController doInBackground() {
-                return controller.accountController(account, true); //Re-init
-            }
-
-            @Override
-            public void finish(AccountController result) {
-                ac = result;
-                if (null != ac) {
-                    // Refreshed
-                    refreshReports();
-                } else {
-                    MainActivity.this.finish(); // Close
-                }
-            }
-        }.exec();
+        new RefreshAccountTask(this).execute(account);
     }
 
     private void changeStatus(JSONObject json) {
@@ -372,38 +375,43 @@ public class MainActivity extends AppActivity implements Controller.ToastMessage
         }
     }
 
+    private static class OperationTask extends StaticAsyncTask<MainActivity, String, Void, String> {
+        private String message, uuid, op;
+        private String[] ops;
+
+        OperationTask(MainActivity activity, final String message, final String uuid, final String op, final String... ops) {
+            super(activity);
+            this.message = message;
+            this.uuid = uuid;
+            this.op = op;
+            this.ops = ops;
+        }
+
+        @Override
+        protected String background(MainActivity activity, String... params) {
+            AccountController ac = activity.ac;
+
+            switch (op.toLowerCase()) {
+                case "done":     return ac.taskDone(uuid);
+                case "delete":   return ac.taskDelete(uuid);
+                case "start":    return ac.taskStart(uuid);
+                case "stop":     return ac.taskStop(uuid);
+                case "denotate": return ac.taskDenotate(uuid, ops[0]);
+                default:         return "Operation not supported";
+            }
+        }
+
+        @Override
+        protected void finish(MainActivity activity, String result){
+            activity.controller.messageLong(result != null ? result : message);
+
+            if (result == null) activity.list.reload();
+        }
+    }
     private void doOp(final String message, final String uuid, final String op, final String... ops) {
         if (ac == null) return;
-        final Tasks.ActivitySimpleTask<String> task = new Tasks.ActivitySimpleTask<String>(this) {
 
-            @Override
-            protected String doInBackground() {
-                if ("done".equalsIgnoreCase(op))
-                    return ac.taskDone(uuid);
-                if ("delete".equalsIgnoreCase(op))
-                    return ac.taskDelete(uuid);
-                if ("start".equalsIgnoreCase(op))
-                    return ac.taskStart(uuid);
-                if ("stop".equalsIgnoreCase(op))
-                    return ac.taskStop(uuid);
-                if ("denotate".equalsIgnoreCase(op))
-                    return ac.taskDenotate(uuid, ops[0]);
-                return "Not supported operation";
-            }
-
-            @Override
-            public void finish(String result) {
-                if (null != result) {
-                    controller.messageLong(result);
-                } else {
-                    if (null != message) { // Show success message
-                        controller.messageShort(message);
-                    }
-                    list.reload();
-                }
-            }
-        };
-        task.exec();
+        new OperationTask(this, message, uuid, op, ops).execute("");
     }
 
     public static AccountController.TaskListener setupProgressListener(final Activity activity, final ProgressBar bar) {
@@ -556,47 +564,54 @@ public class MainActivity extends AppActivity implements Controller.ToastMessage
         return true;
     }
 
+    private static class RefreshReportsTask extends StaticAsyncTask<MainActivity, Void, Void, Map<String, String>> {
+        RefreshReportsTask(MainActivity activity) {
+            super(activity);
+        }
+
+        @Override
+        protected Map<String, String> background(MainActivity activity, Void... params) {
+            return activity.ac.taskReports();
+        }
+
+        @Override
+        protected void finish(MainActivity activity, Map<String, String> result) {
+            // We're in UI thread
+            activity.navigation.getMenu().findItem(R.id.menu_nav_debug).setVisible(activity.ac.debugEnabled());
+            MenuItem reportsMenu = activity.navigation.getMenu().findItem(R.id.menu_nav_reports);
+            reportsMenu.getSubMenu().clear();
+            for (Map.Entry<String, String> entry : result.entrySet()) { // Add reports
+                addReportMenuItem(entry.getKey(), entry.getValue(), reportsMenu.getSubMenu());
+            }
+            // Report mode
+            String report = activity.form.getValue(App.KEY_REPORT);
+            if (null == report || !result.containsKey(report)) {
+                report = result.keySet().iterator().next(); // First item
+            }
+            activity.form.setValue(App.KEY_REPORT, report);
+            activity.list.load(activity.form, activity.updateTitleAction);
+        }
+
+        private void addReportMenuItem(final String key, String title, SubMenu menu) {
+            menu.add(title).setIcon(R.drawable.ic_action_report).setOnMenuItemClickListener(
+                new MenuItem.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        MainActivity activity = getContext();
+                        if (activity == null) return false;
+
+                        activity.form.setValue(App.KEY_REPORT, key);
+                        activity.form.setValue(App.KEY_QUERY, null);
+                        activity.list.load(activity.form, activity.updateTitleAction);
+                        activity.reload();
+                        return false;
+                    }
+                });
+        }
+    }
+
     private void refreshReports() {
-        new Tasks.ActivitySimpleTask<Map<String, String>>(this){
-
-            @Override
-            protected Map<String, String> doInBackground() {
-                return ac.taskReports();
-            }
-
-            @Override
-            public void finish(Map<String, String> result) {
-                // We're in UI thread
-                navigation.getMenu().findItem(R.id.menu_nav_debug).setVisible(ac.debugEnabled());
-                MenuItem reportsMenu = navigation.getMenu().findItem(R.id.menu_nav_reports);
-                reportsMenu.getSubMenu().clear();
-                for (Map.Entry<String, String> entry : result.entrySet()) { // Add reports
-                    addReportMenuItem(entry.getKey(), entry.getValue(), reportsMenu.getSubMenu());
-                }
-                // Report mode
-                String report = form.getValue(App.KEY_REPORT);
-                if (null == report || !result.containsKey(report)) {
-                    report = result.keySet().iterator().next(); // First item
-                }
-                form.setValue(App.KEY_REPORT, report);
-                list.load(form, updateTitleAction);
-            }
-
-            private void addReportMenuItem(final String key, String title, SubMenu menu) {
-                menu.add(title).setIcon(R.drawable.ic_action_report).setOnMenuItemClickListener(
-                    new MenuItem.OnMenuItemClickListener() {
-                        @Override
-                        public boolean onMenuItemClick(MenuItem item) {
-                            // Show report
-                            form.setValue(App.KEY_REPORT, key);
-                            form.setValue(App.KEY_QUERY, null);
-                            list.load(form, updateTitleAction);
-                            reload();
-                            return false;
-                        }
-                    });
-            }
-        }.exec();
+        new RefreshReportsTask(this).execute();
     }
 
     @Override
@@ -647,45 +662,51 @@ public class MainActivity extends AppActivity implements Controller.ToastMessage
         form.getView(App.KEY_QUERY).requestFocus();
     }
 
+    private static class UndoTask extends StaticAsyncTask<MainActivity, Void, Void, String> {
+        UndoTask(MainActivity activity) {
+            super(activity);
+        }
+
+        @Override
+        protected String background(MainActivity activity, Void... params) {
+            return activity.ac.taskUndo();
+        }
+
+        @Override
+        public void finish(MainActivity activity, String result) {
+            if (result != null) {
+                activity.controller.messageShort(result);
+            } else {
+                activity.list.reload();
+            }
+        }
+    }
+
     private void undo() {
         if (null == ac) return;
-        new Tasks.ActivitySimpleTask<String>(this){
+        new UndoTask(this).execute();
+    }
 
-            @Override
-            protected String doInBackground() {
-                return ac.taskUndo();
-            }
+    private static class SyncTask extends StaticAsyncTask<MainActivity, Void, Void, String> {
+        SyncTask(MainActivity activity) {
+            super(activity);
+        }
 
-            @Override
-            public void finish(String result) {
-                if (null != result) {
-                    controller.messageShort(result);
-                } else {
-                    list.reload();
-                }
-            }
-        }.exec();
+        @Override
+        protected String background(MainActivity activity, Void... params) {
+            return activity.ac.taskSync();
+        }
+
+        @Override
+        public void finish(MainActivity activity, String result) {
+            activity.controller.messageShort(result != null ? result : "Sync success");
+            if (result != null) activity.list.reload();
+        }
     }
 
     private void sync() {
         if (null == ac) return;
-        new Tasks.ActivitySimpleTask<String>(this){
-
-            @Override
-            protected String doInBackground() {
-                return ac.taskSync();
-            }
-
-            @Override
-            public void finish(String result) {
-                if (null != result) { // Error
-                    controller.messageShort(result);
-                } else {
-                    controller.messageShort("Sync success");
-                    list.reload();
-                }
-            }
-        }.exec();
+        new SyncTask(this).execute();
     }
 
     @Override
