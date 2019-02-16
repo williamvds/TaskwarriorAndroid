@@ -104,7 +104,7 @@ class NotificationFactory(val controller: AccountController) {
 
     private fun isChannelEnabled(id: String): Boolean {
         return enabledChannels.isEmpty()
-            || enabledChannels.getOrDefault(id, false)
+            || enabledChannels[id] ?: false
     }
 
     companion object {
