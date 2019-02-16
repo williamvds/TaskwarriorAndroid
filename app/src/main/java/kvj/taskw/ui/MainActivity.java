@@ -101,7 +101,7 @@ public class MainActivity extends AppActivity implements Controller.ToastMessage
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 SharedPreferences.Editor editor = preferences.edit();
                 editor.putBoolean("DarkMode", isChecked);
-                editor.commit();
+                editor.apply();
                 ((AppActivity) buttonView.getContext()).recreate();
             }
         });
