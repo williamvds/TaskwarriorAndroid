@@ -64,11 +64,9 @@ public class MainActivity extends AppActivity implements Controller.ToastMessage
         }
     };
     private FloatingActionButton addButton = null;
-    private ProgressBar progressBar = null;
     private AccountController.TaskListener progressListener = null;
     private TextView accountNameDisplay = null;
     private TextView accountNameID = null;
-    private ViewGroup header = null;
     private PopupMenu.OnMenuItemClickListener accountMenuListener = new PopupMenu.OnMenuItemClickListener() {
         @Override
         public boolean onMenuItemClick(MenuItem item) {
@@ -93,9 +91,9 @@ public class MainActivity extends AppActivity implements Controller.ToastMessage
         super.onCreate(savedInstanceState);
         controller.toastListeners().add(this);
         setContentView(R.layout.activity_list);
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        navigationDrawer = (DrawerLayout) findViewById(R.id.list_navigation_drawer);
-        navigation = (NavigationView) findViewById(R.id.list_navigation);
+        toolbar = findViewById(R.id.toolbar);
+        navigationDrawer = findViewById(R.id.list_navigation_drawer);
+        navigation = findViewById(R.id.list_navigation);
         themeSwitch = (SwitchCompat) navigation.getMenu().findItem(R.id.menu_theme_switch).getActionView();
         themeSwitch.setChecked(preferences.getBoolean(PREF_DARK_MODE, false));
         themeSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -107,7 +105,7 @@ public class MainActivity extends AppActivity implements Controller.ToastMessage
                 ((AppActivity) buttonView.getContext()).recreate();
             }
         });
-        header = (ViewGroup) navigation.inflateHeaderView(R.layout.item_nav_header);
+        ViewGroup header = (ViewGroup) navigation.inflateHeaderView(R.layout.item_nav_header);
         navigation.setNavigationItemSelectedListener(
             new NavigationView.OnNavigationItemSelectedListener() {
                 @Override
@@ -117,11 +115,11 @@ public class MainActivity extends AppActivity implements Controller.ToastMessage
                 }
             });
         list = (MainList) getSupportFragmentManager().findFragmentById(R.id.list_list_fragment);
-        addButton = (FloatingActionButton) findViewById(R.id.list_add_btn);
-        progressBar = (ProgressBar) findViewById(R.id.progress);
-        accountNameDisplay = (TextView) header.findViewById(R.id.list_nav_account_name);
-        accountNameID = (TextView) header.findViewById(R.id.list_nav_account_id);
-        filterPanel = (ViewGroup) findViewById(R.id.list_filter_block);
+        addButton = findViewById(R.id.list_add_btn);
+        ProgressBar progressBar = findViewById(R.id.progress);
+        accountNameDisplay = header.findViewById(R.id.list_nav_account_name);
+        accountNameID = header.findViewById(R.id.list_nav_account_id);
+        filterPanel = findViewById(R.id.list_filter_block);
         setSupportActionBar(toolbar);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
