@@ -25,5 +25,9 @@
     <string name="new_task_title">New task</string>
 
     <!-- Main drawer -->
+    <string name="account_options_hint">Account options</string>
     <string name="dark_theme">Dark mode</string>
+
+    <!-- Text editor -->
+    <string name="text_editor_hint">Text editor</string>
 </resources>

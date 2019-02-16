@@ -46,6 +46,7 @@
 
         <ImageButton
             android:id="@+id/list_nav_menu_btn"
+            android:contentDescription="@string/account_options_hint"
             style="@style/IconButton"
             android:layout_weight="0"
             android:src="@drawable/ic_action_menu" />
