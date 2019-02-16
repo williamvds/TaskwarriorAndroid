@@ -4,6 +4,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:actionOverflowButtonStyle">@style/OverflowButton</item>
 
         <!-- App attributes -->
         <item name="iconColor">@color/primary_text_default_material_light</item>
@@ -13,6 +14,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:actionOverflowButtonStyle">@style/OverflowButton</item>
 
         <!-- App attributes -->
         <item name="iconColor">@color/primary_text_default_material_dark</item>

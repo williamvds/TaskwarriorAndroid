@@ -1,4 +1,7 @@
 <resources>
+    <style name="OverflowButton" parent="@style/Widget.AppCompat.ActionButton.Overflow">
+        <item name="android:src">@drawable/ic_action_more</item>
+    </style>
     <style name="ClickableText">
         <item name="android:background">?android:attr/selectableItemBackground</item>
         <item name="android:longClickable">true</item>
