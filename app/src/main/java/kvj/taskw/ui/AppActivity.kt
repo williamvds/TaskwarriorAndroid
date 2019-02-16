@@ -10,7 +10,7 @@ import kvj.taskw.R
 /**
  * Base class of all activities of the application
  */
-open class AppActivity : AppCompatActivity() {
+abstract class AppActivity : AppCompatActivity() {
     var activeTheme: String? = null
     @JvmField var preferences: SharedPreferences? = null
 
