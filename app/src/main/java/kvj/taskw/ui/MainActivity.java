@@ -42,7 +42,6 @@ import kvj.taskw.App;
 import kvj.taskw.R;
 import kvj.taskw.data.AccountController;
 import kvj.taskw.data.Controller;
-import kvj.taskw.ui.AppActivity;
 
 public class MainActivity extends AppActivity implements Controller.ToastMessageListener {
 
