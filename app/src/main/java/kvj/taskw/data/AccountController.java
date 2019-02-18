@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.net.LocalServerSocket;
 import android.net.LocalSocket;
 import android.net.Uri;
-import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
 
 import org.json.JSONArray;
@@ -44,9 +43,7 @@ import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 
 import kvj.taskw.App;
-import kvj.taskw.R;
 import kvj.taskw.sync.SSLHelper;
-import kvj.taskw.ui.MainActivity;
 import kvj.taskw.ui.MainListAdapter;
 import kvj.taskw.ui.RunActivity;
 import kvj.taskw.notifications.NotificationFactory;
