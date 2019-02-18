@@ -150,7 +150,7 @@ public class Controller extends org.kvj.bravo7.ng.Controller {
         return false;
     }
 
-    private enum Arch {Arm7, X86};
+    private enum Arch {Arm7, X86}
 
     private String eabiExecutable() {
         Arch arch = Arch.Arm7;

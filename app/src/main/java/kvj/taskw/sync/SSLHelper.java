@@ -122,7 +122,7 @@ public class SSLHelper {
         return result;
     }
 
-    public enum TrustType {Strict, Hostname, All};
+    public enum TrustType {Strict, Hostname, All}
 
     protected static TrustManager[] trustManagerFactoryPEM(InputStream stream, final TrustType trustType) throws NoSuchAlgorithmException, CertificateException, KeyStoreException, IOException {
         TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
