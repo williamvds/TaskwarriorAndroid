@@ -359,7 +359,7 @@ public class AccountController {
         }
     }
 
-    Pattern linePatthern = Pattern.compile("^([A-Za-z0-9\\._]+)\\s+(\\S.*)$");
+    private Pattern linePattern = Pattern.compile("^([A-Za-z0-9._]+)\\s+(\\S.*)$");
 
     private String taskSetting(String name) {
         return taskSettings(name).get(name);
@@ -370,7 +370,7 @@ public class AccountController {
         callTask(new StreamConsumer() {
             @Override
             public void eat(String line) {
-                Matcher m = linePatthern.matcher(line);
+                Matcher m = linePattern.matcher(line);
                 if (m.find()) {
                     String keyName = m.group(1).trim();
                     String keyValue = m.group(2).trim();
@@ -390,7 +390,7 @@ public class AccountController {
 
         @Override
         public void eat(String line) {
-            Matcher m = linePatthern.matcher(line);
+            Matcher m = linePattern.matcher(line);
             if (m.find()) {
                 String keyName = m.group(1).trim();
                 String keyValue = m.group(2).trim();
