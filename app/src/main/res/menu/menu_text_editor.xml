@@ -4,5 +4,5 @@
         android:id="@+id/menu_tb_save"
         android:title="Save"
         android:icon="@drawable/ic_action_save"
-        app:showAsAction="always"></item>
+        app:showAsAction="always" />
 </menu>
