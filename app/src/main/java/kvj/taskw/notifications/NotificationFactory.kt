@@ -35,7 +35,7 @@ class NotificationFactory(val controller: AccountController) {
         config
             .split(',')
             .map(String::trim)
-            .forEach { enabledChannels.set(it, true) }
+            .forEach { enabledChannels[it] = true }
     }
 
     /**
