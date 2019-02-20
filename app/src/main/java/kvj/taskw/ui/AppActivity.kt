@@ -41,7 +41,7 @@ abstract class AppActivity : AppCompatActivity() {
         if (preferences == null) return
 
         darkMode    = preferences?.getBoolean(PREF_DARK_MODE, false) ?: false
-        globalTheme = if (darkMode ?: false) "dark" else "light"
+        globalTheme = if (darkMode == true) "dark" else "light"
     }
 
     fun applyThemeChanges() {
