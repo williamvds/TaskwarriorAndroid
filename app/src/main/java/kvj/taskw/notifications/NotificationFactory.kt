@@ -2,15 +2,15 @@ package kvj.taskw.notifications
 
 import kotlin.collections.HashMap
 
-import android.app.PendingIntent;
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.support.v4.app.NotificationCompat
 import android.support.v4.app.NotificationManagerCompat
 
-import kvj.taskw.App;
-import kvj.taskw.R;
+import kvj.taskw.App
+import kvj.taskw.R
 import kvj.taskw.data.AccountController
 import kvj.taskw.notifications.NotificationChannels as C
 import kvj.taskw.ui.MainActivity
@@ -87,7 +87,7 @@ class NotificationFactory(val controller: AccountController) {
             }
 
             val intent = Intent(context, MainActivity::class.java).apply {
-                putExtra(App.KEY_ACCOUNT, controller.id());
+                putExtra(App.KEY_ACCOUNT, controller.id())
             }
             setContentIntent(PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT))
         }

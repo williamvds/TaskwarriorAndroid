@@ -1,11 +1,11 @@
-package kvj.taskw.notifications;
+package kvj.taskw.notifications
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
 
-import kvj.taskw.R;
+import kvj.taskw.R
 
 /**
  * Factory for creating the application's notification channels

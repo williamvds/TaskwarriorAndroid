@@ -2,7 +2,7 @@ package kvj.taskw.ui
 
 import java.lang.ref.WeakReference
 
-import android.os.AsyncTask;
+import android.os.AsyncTask
 
 abstract class StaticAsyncTask<Context, Params, Progress, Result>(activityContext: Context)
 : AsyncTask<Params, Progress, Result>() {
