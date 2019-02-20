@@ -34,6 +34,7 @@ import java.io.OutputStream;
  *
  * @author D. N. Hoover
  */
+@SuppressWarnings("all")
 public interface DerEncoder {
 
     /**

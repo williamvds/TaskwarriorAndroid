@@ -52,6 +52,7 @@ import java.math.BigInteger;
  * @author Amit Kapoor
  * @author Hemma Prafullchandra
  */
+@SuppressWarnings("all")
 public class DerOutputStream
 extends ByteArrayOutputStream implements DerEncoder {
     /**

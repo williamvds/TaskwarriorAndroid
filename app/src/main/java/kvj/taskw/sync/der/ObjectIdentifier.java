@@ -49,6 +49,7 @@ import java.io.*;
  * @author Amit Kapoor
  * @author Hemma Prafullchandra
  */
+@SuppressWarnings("all")
 final public
 class ObjectIdentifier implements Serializable
 {

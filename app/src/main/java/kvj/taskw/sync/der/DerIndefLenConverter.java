@@ -38,6 +38,7 @@ import java.util.ArrayList;
  *
  * @author Hemma Prafullchandra
  */
+@SuppressWarnings("all")
 class DerIndefLenConverter {
 
     private static final int TAG_MASK            = 0x1f; // bits 5-1

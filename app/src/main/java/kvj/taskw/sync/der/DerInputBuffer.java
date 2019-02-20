@@ -42,6 +42,7 @@ import java.util.Date;
  *
  * @author David Brownell
  */
+@SuppressWarnings("all")
 class DerInputBuffer extends ByteArrayInputStream implements Cloneable {
 
     DerInputBuffer(byte[] buf) { super(buf); }

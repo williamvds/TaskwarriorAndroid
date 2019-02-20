@@ -56,6 +56,7 @@ import java.io.DataInputStream;
  * @author Hemma Prafullchandra
  */
 
+@SuppressWarnings("all")
 public class DerInputStream {
 
     /*

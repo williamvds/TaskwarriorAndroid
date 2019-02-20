@@ -35,6 +35,7 @@ package kvj.taskw.sync.der;
 
 import java.util.Comparator;
 
+@SuppressWarnings("all")
 public class ByteArrayTagOrder implements Comparator<byte[]> {
 
     /**

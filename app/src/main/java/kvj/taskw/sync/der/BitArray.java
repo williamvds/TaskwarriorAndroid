@@ -36,6 +36,7 @@ import java.util.Arrays;
  * @author Douglas Hoover
  */
 
+@SuppressWarnings("all")
 public class BitArray {
 
     private byte[] repn;

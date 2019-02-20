@@ -33,6 +33,7 @@ import java.util.Comparator;
  *
  * @author D. N. Hoover
  */
+@SuppressWarnings("all")
 public class ByteArrayLexOrder implements Comparator<byte[]> {
 
     /**
