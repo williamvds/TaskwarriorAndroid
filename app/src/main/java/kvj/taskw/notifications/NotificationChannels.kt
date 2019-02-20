@@ -12,9 +12,9 @@ import kvj.taskw.R;
  */
 class NotificationChannels {
     companion object {
-        public const val SYNC_ONGOING = "SyncOngoing"
-        public const val SYNC_SUCCESS = "SyncSuccess"
-        public const val SYNC_ERROR   = "SyncError"
+        const val SYNC_ONGOING = "SyncOngoing"
+        const val SYNC_SUCCESS = "SyncSuccess"
+        const val SYNC_ERROR   = "SyncError"
 
         /**
          * Create all notification channels

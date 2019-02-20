@@ -27,7 +27,7 @@ class NotificationFactory(val controller: AccountController) {
      * `android.sync.notification`
      * @param config comma delimited list or 'all'
      */
-    public fun setEnabledChannels(config: String) {
+    fun setEnabledChannels(config: String) {
         enabledChannels.clear()
 
         if (config == "all") return
@@ -45,7 +45,7 @@ class NotificationFactory(val controller: AccountController) {
      * @see .NotificationChannels
      */
     @JvmOverloads
-    public fun create(id: String, body: String? = null) {
+    fun create(id: String, body: String? = null) {
         val syncChannels = arrayOf(
                 C.SYNC_ONGOING,
                 C.SYNC_SUCCESS,
