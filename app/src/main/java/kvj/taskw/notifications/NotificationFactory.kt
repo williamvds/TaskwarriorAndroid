@@ -42,7 +42,7 @@ class NotificationFactory(val controller: AccountController) {
      * Send a notification in the given channel
      * @param id channel ID
      * @param body notification body text
-     * @see NotificationChannels
+     * @see .NotificationChannels
      */
     @JvmOverloads
     public fun create(id: String, body: String? = null) {
