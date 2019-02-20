@@ -1,19 +1,14 @@
 package kvj.taskw.notifications
 
-import kotlin.collections.HashMap
-
 import android.app.PendingIntent
-import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.support.v4.app.NotificationCompat
 import android.support.v4.app.NotificationManagerCompat
-
 import kvj.taskw.App
 import kvj.taskw.R
 import kvj.taskw.data.AccountController
-import kvj.taskw.notifications.NotificationChannels as C
 import kvj.taskw.ui.MainActivity
+import kvj.taskw.notifications.NotificationChannels as C
 
 /**
  * Creates and manages notifications created by the application
