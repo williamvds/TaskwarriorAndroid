@@ -1,5 +1,6 @@
 package kvj.taskw.data;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ public class ReportInfo {
     public String description = "Untitled";
     public List<String> priorities = new ArrayList<>();
 
+    @NotNull
     @Override
     public String toString() {
         return String.format("ReportInfo: %s [%s %s] %s", query, fields.toString(), sort.toString(), description);

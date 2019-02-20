@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TimePicker;
 
+import org.jetbrains.annotations.NotNull;
 import org.kvj.bravo7.form.FormController;
 import org.kvj.bravo7.form.impl.widget.ImageViewIntegerAdapter;
 import org.kvj.bravo7.form.impl.widget.SpinnerIntegerAdapter;
@@ -36,7 +37,7 @@ public class Editor extends Fragment {
     private Spinner prioritiesSpinner = null;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_editor, container, false);
         setupDatePicker(view, R.id.editor_due, R.id.editor_due_btn);
         setupDatePicker(view, R.id.editor_wait, R.id.editor_wait_btn);

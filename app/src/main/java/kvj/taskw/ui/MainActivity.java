@@ -25,6 +25,7 @@ import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 import org.kvj.bravo7.form.FormController;
 import org.kvj.bravo7.form.impl.ViewFinder;
@@ -108,7 +109,7 @@ public class MainActivity extends AppActivity implements Controller.ToastMessage
         navigation.setNavigationItemSelectedListener(
             new NavigationView.OnNavigationItemSelectedListener() {
                 @Override
-                public boolean onNavigationItemSelected(MenuItem item) {
+                public boolean onNavigationItemSelected(@NotNull MenuItem item) {
                     onNavigationMenu(item);
                     return true;
                 }

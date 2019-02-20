@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RemoteViews;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.kvj.bravo7.log.Logger;
@@ -62,8 +63,9 @@ public class MainListAdapter extends RecyclerView.Adapter<MainListAdapter.ListVi
     private ReportInfo info = null;
     private ItemListener listener = null;
 
+    @NotNull
     @Override
-    public ListViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ListViewHolder onCreateViewHolder(@NotNull ViewGroup parent, int viewType) {
         return new ListViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_one_card, parent, false));
     }
 
@@ -88,7 +90,7 @@ public class MainListAdapter extends RecyclerView.Adapter<MainListAdapter.ListVi
     }
 
     @Override
-    public void onBindViewHolder(ListViewHolder holder, int position) {
+    public void onBindViewHolder(@NotNull ListViewHolder holder, int position) {
         boolean last = getItemCount() - 1 == position;
         holder.itemView.setPadding(0, 0, 0, last? lastMargin: 0);
         final JSONObject json = data.get(position);

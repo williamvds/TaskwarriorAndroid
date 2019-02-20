@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 import org.kvj.bravo7.form.FormController;
 import org.kvj.bravo7.log.Logger;
@@ -35,7 +36,7 @@ public class MainList extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_list, container, false);
         list = (RecyclerView) view.findViewById(R.id.list_main_list);
         list.setLayoutManager(new LinearLayoutManager(getContext()));

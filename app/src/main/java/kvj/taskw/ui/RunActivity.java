@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import org.jetbrains.annotations.NotNull;
 import org.kvj.bravo7.form.FormController;
 import org.kvj.bravo7.form.impl.ViewFinder;
 import org.kvj.bravo7.form.impl.bundle.ListStringBundleAdapter;
@@ -182,14 +183,15 @@ public class RunActivity extends AppActivity {
             }
         }
 
+        @NotNull
         @Override
-        public RunAdapterItem onCreateViewHolder(ViewGroup parent, int viewType) {
+        public RunAdapterItem onCreateViewHolder(@NotNull ViewGroup parent, int viewType) {
             return new RunAdapterItem(LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_run_output, parent, false));
         }
 
         @Override
-        public void onBindViewHolder(RunAdapterItem holder, int position) {
+        public void onBindViewHolder(@NotNull RunAdapterItem holder, int position) {
             holder.text.setText(data.get(position));
         }
 
