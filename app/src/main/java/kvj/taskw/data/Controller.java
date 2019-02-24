@@ -158,15 +158,7 @@ public class Controller extends org.kvj.bravo7.ng.Controller {
         if (eabi.equals("x86") || eabi.equals("x86_64")) {
             arch = Arch.X86;
         }
-        int rawID = -1;
-        switch (arch) {
-            case Arm7:
-                rawID = Build.VERSION.SDK_INT >= 16? R.raw.task_arm7_16: R.raw.task_arm7;
-                break;
-            case X86:
-                rawID = Build.VERSION.SDK_INT >= 16? R.raw.task_x86_16: R.raw.task_x86;
-                break;
-        }
+        int rawID = arch == Arch.Arm7 ? R.raw.task_arm7_16 : R.raw.task_x86_16;
         try {
             File file = new File(context().getFilesDir(), "task");
             InputStream rawStream = context().getResources().openRawResource(rawID);
