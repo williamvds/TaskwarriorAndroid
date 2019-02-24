@@ -25,18 +25,23 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
     <LinearLayout
+        style="?android:attr/buttonBarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <Button
+            style="?android:attr/buttonBarButtonStyle"
+            android:id="@+id/add_account_cancel_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_weight="0.5"
+            android:text="@android:string/cancel" />
         <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" android:layout_weight="0.5"
-                android:id="@+id/add_account_ok_btn"
-                android:text="OK"/>
-        <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" android:layout_weight="0.5"
-                android:id="@+id/add_account_cancel_btn"
-                android:text="Cancel"/>
+            style="?android:attr/buttonBarButtonStyle"
+            android:id="@+id/add_account_ok_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:text="@android:string/ok" />
     </LinearLayout>
 </LinearLayout>
