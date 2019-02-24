@@ -23,7 +23,7 @@ public class SyncIntentReceiver extends BroadcastReceiver {
     public void onReceive(final Context context, final Intent intent) {
         // Lock and run sync
         final PowerManager.WakeLock lock = controller.lock();
-        lock.acquire();
+        lock.acquire(10*60*1000L);
         logger.d("Sync from receiver", intent.getData());
         new Tasks.SimpleTask<String>() {
 
