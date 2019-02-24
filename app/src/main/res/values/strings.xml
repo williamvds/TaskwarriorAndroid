@@ -9,10 +9,10 @@
     <string name="channel_sync_ongoing_desc">Notifies when Taskwarrior is synchronizing with a server</string>
 
     <string name="channel_sync_success_name">Successful syncs</string>
-    <string name="channel_sync_success_desc">Notifies when Taskwarrior successfully syncronizes with a server</string>
+    <string name="channel_sync_success_desc">Notifies when Taskwarrior successfully synchronizes with a server</string>
 
     <string name="channel_sync_error_name">Sync errors</string>
-    <string name="channel_sync_error_desc">Notifies when Taskwarrior fails to syncronize with a server</string>
+    <string name="channel_sync_error_desc">Notifies when Taskwarrior fails to synchronize with a server</string>
 
     <!-- Notifications -->
     <string name="notification_sync_ongoing">Sync in progress</string>
