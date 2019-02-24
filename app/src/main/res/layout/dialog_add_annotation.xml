@@ -14,18 +14,23 @@
                 android:layout_height="wrap_content"/>
     </android.support.design.widget.TextInputLayout>
     <LinearLayout
+        style="?android:attr/buttonBarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <Button
+            style="?android:attr/buttonBarButtonStyle"
+            android:id="@+id/ann_cancel_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_weight="0.5"
+            android:text="@android:string/cancel" />
         <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" android:layout_weight="0.5"
-                android:id="@+id/ann_ok_btn"
-                android:text="OK"/>
-        <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" android:layout_weight="0.5"
-                android:id="@+id/ann_cancel_btn"
-                android:text="Cancel"/>
+            style="?android:attr/buttonBarButtonStyle"
+            android:id="@+id/ann_ok_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:text="@android:string/ok" />
     </LinearLayout>
 </LinearLayout>
