@@ -11,7 +11,7 @@ import kvj.taskw.R
  * Base class of all activities of the application
  */
 abstract class AppActivity : AppCompatActivity() {
-    var activeTheme: String? = null
+    private var activeTheme: String? = null
     @JvmField var preferences: SharedPreferences? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,14 +37,14 @@ abstract class AppActivity : AppCompatActivity() {
         applyThemeChanges()
     }
 
-    fun loadPreferences() {
+    private fun loadPreferences() {
         if (preferences == null) return
 
         darkMode    = preferences?.getBoolean(PREF_DARK_MODE, false) ?: false
         globalTheme = if (darkMode == true) "dark" else "light"
     }
 
-    fun applyThemeChanges() {
+    private fun applyThemeChanges() {
         if (activeTheme != globalTheme) recreate()
     }
 
