@@ -54,7 +54,6 @@
                     class="kvj.taskw.ui.MainList"/>
                 <android.support.design.widget.FloatingActionButton
                     android:id="@+id/list_add_btn"
-                    android:tooltipText="@string/new_task_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/floating_button_margin"
