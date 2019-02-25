@@ -968,7 +968,7 @@ public class AccountController {
             }
         }
         StringAggregator err = new StringAggregator();
-        if (!callTask(outConsumer, err, params.toArray(new String[params.size()]))) { // Failure
+        if (!callTask(outConsumer, err, params.toArray(new String[0]))) { // Failure
             return err.text();
         }
         scheduleSync(TimerType.AfterChange);
@@ -985,7 +985,7 @@ public class AccountController {
             }
         }
         StringAggregator err = new StringAggregator();
-        if (!callTask(outConsumer, err, params.toArray(new String[params.size()]))) { // Failure
+        if (!callTask(outConsumer, err, params.toArray(new String[0]))) { // Failure
             return err.text();
         }
         scheduleSync(TimerType.AfterChange);
