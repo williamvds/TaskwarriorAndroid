@@ -143,11 +143,7 @@ public class Editor extends Fragment {
 
     public boolean adding(FormController form) {
         String uuid = form.getValue(App.KEY_EDIT_UUID);
-        if (TextUtils.isEmpty(uuid)) { // Add new
-            return true;
-        } else {
-            return false;
-        }
+        return TextUtils.isEmpty(uuid);
     }
 
     public void show(FormController form) {
