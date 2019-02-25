@@ -26,6 +26,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -150,15 +151,8 @@ public class Controller extends org.kvj.bravo7.ng.Controller {
         return false;
     }
 
-    private enum Arch {Arm7, X86}
-
     private String eabiExecutable() {
-        Arch arch = Arch.Arm7;
-        String eabi = Build.CPU_ABI;
-        if (eabi.equals("x86") || eabi.equals("x86_64")) {
-            arch = Arch.X86;
-        }
-        int rawID = arch == Arch.Arm7 ? R.raw.task_arm7 : R.raw.task_x86;
+        int rawID = Arrays.asList(Build.SUPPORTED_ABIS).contains("x86") ? R.raw.task_x86 : R.raw.task_arm7;
         try {
             File file = new File(context().getFilesDir(), "task");
             InputStream rawStream = context().getResources().openRawResource(rawID);
