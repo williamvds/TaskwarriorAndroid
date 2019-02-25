@@ -30,4 +30,7 @@
 
     <!-- Text editor -->
     <string name="text_editor_hint">Text editor</string>
+
+    <!-- Custom command dialog -->
+    <string name="command_prompt_hint">Arguments</string>
 </resources>

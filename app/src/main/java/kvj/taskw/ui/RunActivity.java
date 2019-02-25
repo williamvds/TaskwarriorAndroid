@@ -8,11 +8,13 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -56,6 +58,18 @@ public class RunActivity extends AppActivity {
         RecyclerView list = (RecyclerView) findViewById(R.id.run_output);
         list.setLayoutManager(new LinearLayoutManager(this));
         setSupportActionBar(toolbar);
+        final EditText input = findViewById(R.id.run_command);
+        input.setOnKeyListener(new View.OnKeyListener() {
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (keyCode != KeyEvent.KEYCODE_ENTER) return false;
+
+                if (event.getAction() == KeyEvent.ACTION_DOWN) {
+                    run();
+                }
+
+                return true;
+            }
+        });
         form.add(new TransientAdapter<>(new StringBundleAdapter(), null), App.KEY_ACCOUNT);
         form.add(new TransientAdapter<>(new ListStringBundleAdapter(), null), App.KEY_RUN_OUTPUT);
         form.add(new TextViewCharSequenceAdapter(R.id.run_command, null), App.KEY_RUN_COMMAND);
