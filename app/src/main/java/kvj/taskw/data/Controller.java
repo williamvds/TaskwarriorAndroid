@@ -196,9 +196,7 @@ public class Controller extends org.kvj.bravo7.ng.Controller {
     public Collection<Account> accounts() {
         Account[] accounts = accountManager.getAccountsByType(App.ACCOUNT_TYPE);
         List<Account> result = new ArrayList<>();
-        for (Account acc : accounts) {
-            result.add(acc);
-        }
+        result.addAll(Arrays.asList(accounts));
         return result;
     }
 
