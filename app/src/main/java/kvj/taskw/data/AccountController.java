@@ -14,7 +14,6 @@ import org.kvj.bravo7.log.Logger;
 import org.kvj.bravo7.util.Compat;
 import org.kvj.bravo7.util.DataUtil;
 import org.kvj.bravo7.util.Listeners;
-import org.kvj.bravo7.util.Tasks;
 
 import java.io.CharArrayWriter;
 import java.io.File;
@@ -48,6 +47,7 @@ import kvj.taskw.ui.MainListAdapter;
 import kvj.taskw.ui.RunActivity;
 import kvj.taskw.notifications.NotificationFactory;
 import kvj.taskw.notifications.NotificationChannels;
+import kvj.taskw.ui.StaticAsyncTask;
 
 /**
  * Created by vorobyev on 11/17/15.
@@ -222,23 +222,26 @@ public class AccountController {
         }
     }
 
+    private static class LoadNotificationsTask extends StaticAsyncTask<AccountController, Void, Void, String> {
+        LoadNotificationsTask(AccountController c) {
+            super(c);
+        }
+
+        @Override
+        protected String background(AccountController c, Void... params) {
+            Map<String, String> config = c.taskSettings(c.androidConf("sync.notification"));
+            if (config.isEmpty()) return "all";
+            return config.values().iterator().next();
+        }
+
+        @Override
+        protected void finish(AccountController c, String result) {
+            c.notifyFactory.setEnabledChannels(result);
+        }
+    }
+
     private void loadNotificationTypes() {
-        new Tasks.SimpleTask<String>() {
-
-            @Override
-            protected String doInBackground() {
-                Map<String, String> config = taskSettings(androidConf("sync.notification"));
-                if (config.isEmpty()) {
-                    return "all";
-                }
-                return config.values().iterator().next();
-            }
-
-            @Override
-            protected void onPostExecute(String s) {
-                notifyFactory.setEnabledChannels(s);
-            }
-        }.exec();
+        new LoadNotificationsTask(this).execute();
     }
 
     private class StringAggregator implements StreamConsumer {
@@ -301,34 +304,41 @@ public class AccountController {
         }
     }
 
-    public void scheduleSync(final TimerType type) {
-        new Tasks.SimpleTask<Double>() {
-            @Override
-            protected Double doInBackground() {
-                Map<String, String> config = taskSettings(androidConf(String.format("sync.%s", type.type)));
-                if (config.isEmpty()) {
-                    return 0.0;
-                }
-                try {
-                    return Double.parseDouble(config.values().iterator().next());
-                } catch (Exception e) {
-                    logger.w("Failed to parse:", e.getMessage(), config);
-                }
-                return 0.0;
-            }
+    private static class ScheduleSyncTask extends StaticAsyncTask<AccountController, Void, Void, Double> {
+        private final TimerType type;
 
-            @Override
-            protected void onPostExecute(Double minutes) {
-                if (minutes <= 0) {
-                    logger.d("Ignore schedule - not configured", type);
-                    return;
-                }
-                Calendar c = Calendar.getInstance();
-                c.add(Calendar.SECOND, (int) (minutes * 60.0));
-                controller.scheduleAlarm(c.getTime(), syncIntent("alarm"));
-                logger.d("Scheduled:", c.getTime(), type);
+        ScheduleSyncTask(AccountController c, final TimerType type) {
+            super(c);
+            this.type = type;
+        }
+
+        @Override
+        protected Double background(AccountController c, Void... params) {
+            Map<String, String> config = c.taskSettings(c.androidConf(String.format("sync.%s", type.type)));
+            if (config.isEmpty()) return 0.0;
+            try {
+                return Double.parseDouble(config.values().iterator().next());
+            } catch (Exception e) {
+                c.logger.w("Failed to parse:", e.getMessage(), config);
             }
-        }.exec();
+            return 0.0;
+        }
+
+        @Override
+        protected void finish(AccountController c, Double minutes) {
+            if (minutes <= 0) {
+                c.logger.d("Ignore schedule - not configured", type);
+                return;
+            }
+            Calendar cal = Calendar.getInstance();
+            cal.add(Calendar.SECOND, (int) (minutes * 60.0));
+            c.controller.scheduleAlarm(cal.getTime(), c.syncIntent("alarm"));
+            c.logger.d("Scheduled:", cal.getTime(), type);
+        }
+    }
+
+    public void scheduleSync(final TimerType type) {
+        new ScheduleSyncTask(this, type).execute();
     }
 
     private String androidConf(String format) {
