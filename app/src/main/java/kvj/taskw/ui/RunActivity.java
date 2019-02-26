@@ -26,7 +26,6 @@ import org.kvj.bravo7.form.impl.bundle.StringBundleAdapter;
 import org.kvj.bravo7.form.impl.widget.TextViewCharSequenceAdapter;
 import org.kvj.bravo7.form.impl.widget.TransientAdapter;
 import org.kvj.bravo7.log.Logger;
-import org.kvj.bravo7.util.Tasks;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +34,6 @@ import kvj.taskw.App;
 import kvj.taskw.R;
 import kvj.taskw.data.AccountController;
 import kvj.taskw.data.Controller;
-import kvj.taskw.ui.AppActivity;
 
 /**
  * Created by vorobyev on 12/1/15.
