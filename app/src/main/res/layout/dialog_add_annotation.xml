@@ -13,6 +13,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Annotation"
+            android:importantForAutofill="no"
             android:inputType="text"
             android:singleLine="true" />
     </android.support.design.widget.TextInputLayout>
