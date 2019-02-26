@@ -102,7 +102,7 @@ public class MainListAdapter extends RecyclerView.Adapter<MainListAdapter.ListVi
         setupLabelListeners(holder.itemView.getContext(), json,
                 (ViewGroup) holder.card.findViewById(R.id.task_labels_right), card.rightColumn);
         final View bottomBtns = holder.card.findViewById(R.id.task_bottom_btns);
-        final ViewGroup annotations = (ViewGroup) holder.card.findViewById(R.id.task_annotations);
+        final ViewGroup annotations = holder.card.findViewById(R.id.task_annotations);
         final View id = holder.card.findViewById(R.id.task_id);
         bottomBtns.setVisibility(View.GONE);
         holder.card.findViewById(R.id.task_more_btn).setOnClickListener(new View.OnClickListener() {
@@ -282,7 +282,7 @@ public class MainListAdapter extends RecyclerView.Adapter<MainListAdapter.ListVi
 
         public ListViewHolder(View itemView) {
             super(itemView);
-            card = (CardView) itemView.findViewById(R.id.card_card);
+            card = itemView.findViewById(R.id.card_card);
         }
     }
 

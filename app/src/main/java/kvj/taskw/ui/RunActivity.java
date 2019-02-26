@@ -52,8 +52,8 @@ public class RunActivity extends AppActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_run);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        RecyclerView list = (RecyclerView) findViewById(R.id.run_output);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        RecyclerView list = findViewById(R.id.run_output);
         list.setLayoutManager(new LinearLayoutManager(this));
         setSupportActionBar(toolbar);
         final EditText input = findViewById(R.id.run_command);
@@ -252,7 +252,7 @@ public class RunActivity extends AppActivity {
             public RunAdapterItem(View itemView) {
                 super(itemView);
                 itemView.setOnLongClickListener(this);
-                this.text = (TextView) itemView.findViewById(R.id.run_item_text);
+                this.text = itemView.findViewById(R.id.run_item_text);
             }
 
             @Override

@@ -37,7 +37,7 @@ public class MainList extends Fragment {
     @Override
     public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_list, container, false);
-        list = (RecyclerView) view.findViewById(R.id.list_main_list);
+        list = view.findViewById(R.id.list_main_list);
         list.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new MainListAdapter(getResources());
         list.setAdapter(adapter);

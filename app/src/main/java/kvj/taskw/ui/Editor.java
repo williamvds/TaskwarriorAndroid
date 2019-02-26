@@ -43,7 +43,7 @@ public class Editor extends Fragment {
         setupDatePicker(view, R.id.editor_wait, R.id.editor_wait_btn);
         setupDatePicker(view, R.id.editor_scheduled, R.id.editor_scheduled_btn);
         setupDatePicker(view, R.id.editor_until, R.id.editor_until_btn);
-        prioritiesSpinner = (Spinner) view.findViewById(R.id.editor_priority);
+        prioritiesSpinner = view.findViewById(R.id.editor_priority);
         return view;
     }
 
@@ -86,7 +86,7 @@ public class Editor extends Fragment {
     }
 
     private void setupDatePicker(View view, int text, int btn) {
-        final EditText textInput = (EditText) view.findViewById(text);
+        final EditText textInput = view.findViewById(text);
         view.findViewById(btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
