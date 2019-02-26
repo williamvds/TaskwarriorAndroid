@@ -4,6 +4,22 @@
     <string name="pref_account_name">pref_account_name</string>
     <string name="pref_account_id">pref_account_id</string>
 
+    <!-- General -->
+    <string name="task_description">Description</string>
+    <string name="task_project">Project</string>
+    <string name="task_tags">Tags</string>
+    <string name="task_due">Due</string>
+    <string name="task_wait">Wait until</string>
+    <string name="task_scheduled">Scheduled for</string>
+    <string name="task_recur">Recurrence</string>
+    <string name="task_until">Until</string>
+
+    <string name="save">Save</string>
+    <string name="share">Share</string>
+    <string name="reload">Reload</string>
+    <string name="create_shortcut">Create shortcut…</string>
+    <string name="copy_to_clipboard">Copy to clipboard</string>
+
     <!-- Notification channels -->
     <string name="channel_sync_ongoing_name">Ongoing syncs</string>
     <string name="channel_sync_ongoing_desc">Notifies when Taskwarrior is synchronizing with a server</string>
@@ -23,14 +39,35 @@
 
     <!-- Task list activity -->
     <string name="new_task_title">New task</string>
+    <string name="filter_hint">Query</string>
+    <string name="sync">Sync</string>
+    <string name="undo">Undo</string>
+    <string name="custom_filter">Custom filter…</string>
 
     <!-- Main drawer -->
+    <string name="add_account">Add account</string>
+    <string name="set_account_default">Make default</string>
     <string name="account_options_hint">Account options</string>
     <string name="dark_theme">Dark mode</string>
+    <string name="reports">Reports</string>
+    <string name="run_command">Run command…</string>
+    <string name="settings">Settings</string>
+    <string name="share_debug_file">Share debug file</string>
 
     <!-- Text editor -->
     <string name="text_editor_hint">Text editor</string>
 
+    <!-- Task editor -->
+    <string name="add_another">Add another</string>
+
     <!-- Custom command dialog -->
     <string name="command_prompt_hint">Arguments</string>
+    <string name="run">Run</string>
+
+    <!-- New account dialog -->
+    <string name="account_name_hint">Name</string>
+    <string name="data_folder">Name</string>
+
+    <!-- Annotation dialog -->
+    <string name="annotation">Annotation</string>
 </resources>

@@ -1,23 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
-    <item android:id="@+id/menu_tb_undo" android:title="Undo" android:icon="@drawable/ic_action_undo" app:showAsAction="always"/>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/menu_tb_undo"
+        android:icon="@drawable/ic_action_undo"
+        android:title="@string/undo"
+        app:showAsAction="always" />
     <item
         android:id="@+id/menu_tb_sync"
-        android:title="Sync"
         android:icon="@drawable/ic_action_sync"
+        android:title="@string/sync"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/menu_tb_reload"
-        android:title="Reload"
         android:icon="@drawable/ic_action_refresh"
+        android:title="@string/reload"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/menu_tb_filter"
-        android:title="Custom filter..."
         android:icon="@drawable/ic_action_filter"
+        android:title="@string/custom_filter"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/menu_tb_add_shortcut"
-        android:title="Add shortcut to home..."
+        android:title="@string/create_shortcut"
         app:showAsAction="never" />
 </menu>

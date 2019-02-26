@@ -12,7 +12,7 @@
             android:id="@+id/ann_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Annotation"
+            android:hint="@string/annotation"
             android:importantForAutofill="no"
             android:inputType="text"
             android:singleLine="true" />

@@ -37,7 +37,7 @@
                     android:id="@+id/list_filter"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Query"
+                    android:hint="@string/filter_hint"
                     android:inputType="text"
                     android:singleLine="true" />
             </android.support.design.widget.TextInputLayout>
@@ -86,5 +86,5 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        app:menu="@menu/menu_navigation"></android.support.design.widget.NavigationView>
+        app:menu="@menu/menu_navigation" />
 </android.support.v4.widget.DrawerLayout>

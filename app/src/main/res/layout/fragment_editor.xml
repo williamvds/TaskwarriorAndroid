@@ -26,7 +26,7 @@
                 android:id="@+id/editor_description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Description"
+                android:hint="@string/task_description"
                 android:importantForAutofill="no"
                 android:inputType="text"
                 android:singleLine="true" />
@@ -57,7 +57,7 @@
                 android:id="@+id/editor_project"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Project"
+                android:hint="@string/task_project"
                 android:importantForAutofill="no"
                 android:inputType="text"
                 android:singleLine="true" />
@@ -72,7 +72,7 @@
                 android:id="@+id/editor_tags"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Tags"
+                android:hint="@string/task_tags"
                 android:importantForAutofill="no"
                 android:inputType="text"
                 android:singleLine="true" />
@@ -93,7 +93,7 @@
                 android:id="@+id/editor_due"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Due"
+                android:hint="@string/task_due"
                 android:importantForAutofill="no"
                 android:inputType="text"
                 android:singleLine="true" />
@@ -113,7 +113,7 @@
                 android:id="@+id/editor_wait"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Wait"
+                android:hint="@string/task_wait"
                 android:importantForAutofill="no"
                 android:inputType="text"
                 android:singleLine="true" />
@@ -139,7 +139,7 @@
                 android:id="@+id/editor_scheduled"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Scheduled"
+                android:hint="@string/task_scheduled"
                 android:importantForAutofill="no"
                 android:inputType="text"
                 android:singleLine="true" />
@@ -165,7 +165,7 @@
                 android:id="@+id/editor_recur"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Recurrence"
+                android:hint="@string/task_recur"
                 android:importantForAutofill="no"
                 android:inputType="text"
                 android:singleLine="true" />
@@ -180,7 +180,7 @@
                 android:id="@+id/editor_until"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Until"
+                android:hint="@string/task_until"
                 android:importantForAutofill="no"
                 android:inputType="text"
                 android:singleLine="true" />

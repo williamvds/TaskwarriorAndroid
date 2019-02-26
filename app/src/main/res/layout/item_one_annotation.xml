@@ -1,35 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="1dp">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="1dp">
+
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:layout_height="wrap_content">
+        android:orientation="vertical">
+
         <TextView
             android:id="@+id/task_ann_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
             style="@style/ClickableText"
-            android:text="Some annotation"/>
-        <TextView
-            android:textAppearance="?android:attr/textAppearanceSmall"
             android:layout_width="match_parent"
-            android:gravity="right"
             android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            tools:text="Some annotation" />
+
+        <TextView
             android:id="@+id/task_ann_date"
-            android:text="2015-11-24 13:00"/>
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            tools:text="2015-11-24 13:00" />
     </LinearLayout>
+
     <android.widget.ImageButton
         android:id="@+id/task_ann_delete_btn"
-        android:visibility="visible"
+        style="@style/IconButton"
         android:layout_gravity="top"
         android:layout_weight="0"
-        style="@style/IconButton"
-        android:src="@drawable/ic_action_delete"/>
+        android:src="@drawable/ic_action_delete"
+        android:visibility="visible" />
 </LinearLayout>

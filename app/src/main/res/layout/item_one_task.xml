@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
+
     <FrameLayout
         android:id="@+id/task_start_flag"
         android:layout_width="match_parent"
@@ -10,10 +12,12 @@
         android:layout_margin="3dp"
         android:background="?android:attr/colorAccent"
         android:visibility="gone" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
+
         <ProgressBar
             android:id="@+id/task_priority"
             style="@style/VerticalBar"
@@ -21,18 +25,22 @@
             android:layout_weight="0"
             android:max="100"
             android:progress="20" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
+
                 <android.widget.ImageButton
                     android:id="@+id/task_status_btn"
                     style="@style/IconButton"
                     android:layout_gravity="top" />
+
                 <TextView
                     android:id="@+id/task_description"
                     style="@style/ClickableText"
@@ -40,9 +48,10 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_weight="1"
-                    android:text="Task description"
                     android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="?android:attr/textColorPrimary" />
+                    android:textColor="?android:attr/textColorPrimary"
+                    tools:text="@string/task_description" />
+
                 <TextView
                     android:id="@+id/task_id"
                     android:layout_width="wrap_content"
@@ -50,35 +59,41 @@
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="8dp"
                     android:layout_weight="0"
-                    android:text="[1]"
                     android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:visibility="gone" />
+                    android:visibility="gone"
+                    tools:text="[1]" />
+
                 <android.widget.ImageView
                     android:id="@+id/task_annotations_flag"
                     style="@style/IconImage"
                     android:layout_gravity="top"
                     android:src="@drawable/ic_status_annotations" />
             </LinearLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:baselineAligned="false"
                     android:orientation="horizontal">
+
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="bottom"
                         android:layout_weight="0"
                         android:orientation="vertical">
+
                         <android.widget.ImageButton
                             android:id="@+id/task_start_stop_btn"
                             style="@style/IconButton"
                             android:src="@drawable/ic_action_stop" />
                     </LinearLayout>
+
                     <LinearLayout
                         android:id="@+id/task_labels_left"
                         android:layout_width="0dp"
@@ -87,6 +102,7 @@
                         android:orientation="vertical">
                         <!--<include layout="@layout/item_one_label_left"/>-->
                     </LinearLayout>
+
                     <LinearLayout
                         android:id="@+id/task_labels_right"
                         android:layout_width="0dp"
@@ -95,38 +111,45 @@
                         android:orientation="vertical">
                         <!--<include layout="@layout/item_one_label_right"/>-->
                     </LinearLayout>
+
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="bottom"
                         android:layout_weight="0"
                         android:orientation="vertical">
+
                         <android.widget.ImageButton
                             android:id="@+id/task_more_btn"
                             style="@style/IconButton"
                             android:src="@drawable/ic_action_more" />
                     </LinearLayout>
                 </LinearLayout>
+
                 <LinearLayout
                     android:id="@+id/task_bottom_btns"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
                     android:layout_gravity="right"
+                    android:orientation="horizontal"
                     android:visibility="gone">
+
                     <android.widget.ImageButton
                         android:id="@+id/task_delete_btn"
                         style="@style/IconButton"
                         android:src="@drawable/ic_action_delete" />
+
                     <android.widget.ImageButton
                         android:id="@+id/task_annotate_btn"
                         style="@style/IconButton"
                         android:src="@drawable/ic_action_annotate" />
+
                     <android.widget.ImageButton
                         android:id="@+id/task_edit_btn"
                         style="@style/IconButton"
                         android:src="@drawable/ic_action_edit" />
                 </LinearLayout>
+
                 <LinearLayout
                     android:id="@+id/task_annotations"
                     android:layout_width="match_parent"
@@ -134,6 +157,7 @@
                     android:orientation="vertical" />
             </LinearLayout>
         </LinearLayout>
+
         <ProgressBar
             android:id="@+id/task_urgency"
             style="@style/VerticalBar"

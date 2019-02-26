@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <group
-            android:id="@+id/menu_account_list">
-    </group>
+    <group android:id="@+id/menu_account_list"></group>
     <item
-            android:id="@+id/menu_account_add"
-            android:title="Add Account"/>
+        android:id="@+id/menu_account_add"
+        android:title="@string/add_account" />
     <item
         android:id="@+id/menu_account_set_def"
-        android:title="Set default"/>
+        android:title="@string/set_account_default" />
 </menu>

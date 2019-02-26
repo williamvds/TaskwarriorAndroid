@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/menu_tb_add_another"
-        android:title="Add another"
         android:icon="@drawable/ic_action_add_keep"
+        android:title="@string/add_another"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/menu_tb_save"
-        android:title="Save"
         android:icon="@drawable/ic_action_save"
+        android:title="@string/save"
         app:showAsAction="always" />
     <item
         android:id="@+id/menu_tb_add_shortcut"
-        android:title="Add shortcut to home..."
+        android:title="@string/create_shortcut"
         app:showAsAction="never" />
 </menu>

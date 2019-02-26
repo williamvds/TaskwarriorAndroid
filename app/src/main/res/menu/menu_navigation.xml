@@ -1,30 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-            android:id="@+id/menu_nav_reports"
-            android:title="Reports"
-            android:icon="@drawable/ic_action_reports">
-        <menu>
-        </menu>
+        android:id="@+id/menu_nav_reports"
+        android:icon="@drawable/ic_action_reports"
+        android:title="@string/reports">
+        <menu></menu>
     </item>
     <item
-            android:id="@+id/menu_nav_run"
-            android:title="Run custom..."
-            android:icon="@drawable/ic_action_start"/>
+        android:id="@+id/menu_nav_run"
+        android:icon="@drawable/ic_action_start"
+        android:title="@string/run_command" />
     <item
-            android:id="@+id/menu_nav_settings"
-            android:title="Settings"
-            android:icon="@drawable/ic_action_settings"/>
+        android:id="@+id/menu_nav_settings"
+        android:icon="@drawable/ic_action_settings"
+        android:title="@string/settings" />
     <item
-            android:id="@+id/menu_nav_debug"
-            android:title="Share debug file"
-            android:icon="@drawable/ic_action_debug"/>
+        android:id="@+id/menu_nav_debug"
+        android:icon="@drawable/ic_action_debug"
+        android:title="@string/share_debug_file" />
     <item
-            android:id="@+id/menu_nav_reload"
-            android:title="Reload"
-            android:icon="@drawable/ic_action_reload"/>
+        android:id="@+id/menu_nav_reload"
+        android:icon="@drawable/ic_action_reload"
+        android:title="@string/reload" />
 
     <item
         android:id="@+id/menu_theme_switch"
