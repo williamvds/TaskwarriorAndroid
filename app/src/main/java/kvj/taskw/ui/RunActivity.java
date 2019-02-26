@@ -140,6 +140,31 @@ public class RunActivity extends AppActivity {
         controller.copyToClipboard(text);
     }
 
+    private static class RunTask extends StaticAsyncTask<RunActivity, Void, Void, Boolean> {
+        private String input;
+        private AccountController.ListAggregator out, err;
+
+        RunTask(RunActivity activity, String input, AccountController.ListAggregator out, AccountController.ListAggregator err) {
+            super(activity);
+            this.input = input;
+            this.out = out;
+            this.err = err;
+        }
+
+        @Override
+        protected Boolean background(RunActivity activity, Void... params) {
+            int result = activity.ac.taskCustom(input, out, err);
+            return 0 == result;
+        }
+
+        @Override
+        protected void finish(RunActivity activity, Boolean result) {
+            out.data().addAll(err.data());
+            activity.adapter.addAll(out.data());
+            activity.shareAll();
+        }
+    }
+
     private void run() {
         final String input = form.getValue(App.KEY_RUN_COMMAND);
         if (TextUtils.isEmpty(input)) {
@@ -149,21 +174,7 @@ public class RunActivity extends AppActivity {
         adapter.clear();
         final AccountController.ListAggregator out = new AccountController.ListAggregator();
         final AccountController.ListAggregator err = new AccountController.ListAggregator();
-        new Tasks.ActivitySimpleTask<Boolean>(this) {
-
-            @Override
-            protected Boolean doInBackground() {
-                int result = ac.taskCustom(input, out, err);
-                return 0 == result;
-            }
-
-            @Override
-            public void finish(Boolean result) {
-                out.data().addAll(err.data());
-                adapter.addAll(out.data());
-                shareAll();
-            }
-        }.exec();
+        new RunTask(this, input, out, err).execute();
     }
 
     @Override
