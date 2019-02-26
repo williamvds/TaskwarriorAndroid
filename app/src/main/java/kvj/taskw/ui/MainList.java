@@ -13,7 +13,6 @@ import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 import org.kvj.bravo7.form.FormController;
 import org.kvj.bravo7.log.Logger;
-import org.kvj.bravo7.util.Tasks;
 
 import java.util.List;
 
@@ -45,47 +44,62 @@ public class MainList extends Fragment {
         return view;
     }
 
+    private static class LoadReportTask extends StaticAsyncTask<MainList, Void, Void, ReportInfo> {
+        private String report;
+        private String query;
+        private Runnable callback;
+
+        LoadReportTask(MainList frag, String report, String query, Runnable callback) {
+            super(frag);
+            this.report = report;
+            this.query = query;
+            this.callback = callback;
+        }
+
+        @Override
+        protected ReportInfo background(MainList frag, Void... params) {
+            frag.logger.d("Load:", query, report);
+            return frag.controller.accountController(frag.account).taskReportInfo(report, query);
+        }
+
+        @Override
+        protected void finish(MainList frag, ReportInfo result) {
+            frag.info = result;
+            if (callback != null) callback.run();
+            frag.reload();
+        }
+    }
+
     public void load(final FormController form, final Runnable afterLoad) {
         this.account = form.getValue(App.KEY_ACCOUNT);
         final String report = form.getValue(App.KEY_REPORT);
         final String query = form.getValue(App.KEY_QUERY);
-        new Tasks.ActivitySimpleTask<ReportInfo>(getActivity()){
+        new LoadReportTask(this, report, query, afterLoad).execute();
+    }
 
-            @Override
-            protected ReportInfo doInBackground() {
-                logger.d("Load:", query, report);
-                return controller.accountController(account).taskReportInfo(report, query);
-            }
+    private static class LoadResultsTask extends StaticAsyncTask<MainList, Void, Void, List<JSONObject>> {
+        LoadResultsTask(MainList frag) {
+            super(frag);
+        }
 
-            @Override
-            public void finish(ReportInfo result) {
-                info = result;
-                if (null != afterLoad) afterLoad.run();
-                reload();
-            }
-        }.exec();
+        @Override
+        protected List<JSONObject> background(MainList frag, Void... params) {
+            frag.logger.d("Exec:", frag.info.query);
+            List<JSONObject> list = frag.controller.accountController(frag.account).taskList(frag.info.query);
+            frag.info.sort(list); // Sorted according to report spec.
+            return list;
+        }
+
+        @Override
+        public void finish(MainList frag, List<JSONObject> result) {
+            frag.adapter.update(result, frag.info);
+        }
     }
 
     public void reload() {
         if (null == info || null == account) return;
         // Load all items
-        new Tasks.ActivitySimpleTask<List<JSONObject>>(getActivity()){
-
-            @Override
-            protected List<JSONObject> doInBackground() {
-                logger.d("Exec:", info.query);
-                List<JSONObject> list = controller.accountController(account).taskList(info.query);
-                info.sort(list); // Sorted according to report spec.
-                return list;
-            }
-
-            @Override
-            public void finish(List<JSONObject> result) {
-                adapter.update(result, info);
-//                logger.d("Loaded:", info, result);
-            }
-        }.exec();
-
+        new LoadResultsTask(this).execute();
     }
 
     public void listener(MainListAdapter.ItemListener listener) {
