@@ -1,150 +1,186 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
     <LinearLayout
-            android:layout_marginTop="5dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:orientation="horizontal">
+
         <android.widget.ImageButton
-                android:id="@+id/editor_type_switch"
-                android:layout_gravity="center_vertical"
-                style="@style/IconButton"
-                android:layout_weight="0"/>
+            android:id="@+id/editor_type_switch"
+            style="@style/IconButton"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="0" />
+
         <android.support.design.widget.TextInputLayout
-                android:layout_weight="1"
-                android:layout_width="0dp"
-                android:layout_gravity="bottom"
-                android:layout_height="wrap_content">
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_weight="1">
+
             <EditText
-                android:hint="Description"
                 android:id="@+id/editor_description"
                 android:layout_width="match_parent"
-                android:singleLine="true"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:hint="Description"
+                android:inputType="text"
+                android:singleLine="true" />
         </android.support.design.widget.TextInputLayout>
+
         <Spinner
-                style="@style/Base.Widget.AppCompat.Spinner.Underlined"
-                android:id="@+id/editor_priority"
-                android:layout_gravity="bottom"
-                android:layout_weight="0"
-                android:minWidth="50dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-    </LinearLayout>
-    <LinearLayout
-            android:layout_width="match_parent"
+            android:id="@+id/editor_priority"
+            style="@style/Base.Widget.AppCompat.Spinner.Underlined"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:baselineAligned="false"
-            android:orientation="horizontal">
+            android:layout_gravity="bottom"
+            android:layout_weight="0"
+            android:minWidth="50dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:baselineAligned="false"
+        android:orientation="horizontal">
+
         <android.support.design.widget.TextInputLayout
-                android:layout_weight="1"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content">
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
             <EditText
-                    android:hint="Project"
-                    android:id="@+id/editor_project"
-                    android:layout_width="match_parent"
-                    android:singleLine="true"
-                    android:layout_height="wrap_content"/>
+                android:id="@+id/editor_project"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Project"
+                android:inputType="text"
+                android:singleLine="true" />
         </android.support.design.widget.TextInputLayout>
+
         <android.support.design.widget.TextInputLayout
-                android:layout_weight="1"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content">
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
             <EditText
-                    android:hint="Tags"
-                    android:id="@+id/editor_tags"
-                    android:layout_width="match_parent"
-                    android:singleLine="true"
-                    android:layout_height="wrap_content"/>
+                android:id="@+id/editor_tags"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Tags"
+                android:inputType="text"
+                android:singleLine="true" />
         </android.support.design.widget.TextInputLayout>
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
+
         <android.support.design.widget.TextInputLayout
-            android:layout_weight="1"
             android:layout_width="0dp"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
             <EditText
-                android:hint="Due"
                 android:id="@+id/editor_due"
                 android:layout_width="match_parent"
-                android:singleLine="true"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:hint="Due"
+                android:inputType="text"
+                android:singleLine="true" />
         </android.support.design.widget.TextInputLayout>
+
         <android.widget.ImageButton
             android:id="@+id/editor_due_btn"
             style="@style/IconButton"
-            android:src="@drawable/ic_action_date"/>
+            android:src="@drawable/ic_action_date" />
+
         <android.support.design.widget.TextInputLayout
-            android:layout_weight="1"
             android:layout_width="0dp"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
             <EditText
-                android:hint="Wait"
                 android:id="@+id/editor_wait"
                 android:layout_width="match_parent"
-                android:singleLine="true"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:hint="Wait"
+                android:inputType="text"
+                android:singleLine="true" />
         </android.support.design.widget.TextInputLayout>
+
         <android.widget.ImageButton
             android:id="@+id/editor_wait_btn"
             style="@style/IconButton"
-            android:src="@drawable/ic_action_date"/>
+            android:src="@drawable/ic_action_date" />
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
+
         <android.support.design.widget.TextInputLayout
-            android:layout_weight="1"
             android:layout_width="0dp"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
             <EditText
-                android:hint="Scheduled"
                 android:id="@+id/editor_scheduled"
                 android:layout_width="match_parent"
-                android:singleLine="true"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:hint="Scheduled"
+                android:inputType="text"
+                android:singleLine="true" />
         </android.support.design.widget.TextInputLayout>
+
         <android.widget.ImageButton
             android:id="@+id/editor_scheduled_btn"
             style="@style/IconButton"
-            android:src="@drawable/ic_action_date"/>
+            android:src="@drawable/ic_action_date" />
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
+
         <android.support.design.widget.TextInputLayout
-            android:layout_weight="1"
             android:layout_width="0dp"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
             <EditText
-                android:hint="Recurrence"
                 android:id="@+id/editor_recur"
                 android:layout_width="match_parent"
-                android:singleLine="true"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:hint="Recurrence"
+                android:inputType="text"
+                android:singleLine="true" />
         </android.support.design.widget.TextInputLayout>
+
         <android.support.design.widget.TextInputLayout
-            android:layout_weight="1"
             android:layout_width="0dp"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
             <EditText
-                android:hint="Until"
                 android:id="@+id/editor_until"
                 android:layout_width="match_parent"
-                android:singleLine="true"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:hint="Until"
+                android:inputType="text"
+                android:singleLine="true" />
         </android.support.design.widget.TextInputLayout>
+
         <android.widget.ImageButton
             android:id="@+id/editor_until_btn"
             style="@style/IconButton"
-            android:src="@drawable/ic_action_date"/>
+            android:src="@drawable/ic_action_date" />
     </LinearLayout>
 </LinearLayout>
