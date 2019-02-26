@@ -136,7 +136,7 @@ public class Editor extends Fragment {
     }
 
     public void setupPriorities(List<String> strings) {
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, strings);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, strings);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         prioritiesSpinner.setAdapter(adapter);
     }

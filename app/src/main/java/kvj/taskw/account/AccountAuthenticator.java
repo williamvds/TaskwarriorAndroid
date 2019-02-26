@@ -123,7 +123,7 @@ public class AccountAuthenticator extends AbstractAccountAuthenticator {
             folders = controller.accountFolders();
             folders.add(0, "<<Create new>>");
             ArrayAdapter<String>
-                adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, folders);
+                adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, folders);
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             form.getView("folder", Spinner.class).setAdapter(adapter);
             okButton = findViewById(R.id.add_account_ok_btn);
