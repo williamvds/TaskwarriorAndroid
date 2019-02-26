@@ -24,7 +24,7 @@
             android:id="@+id/task_ann_date"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="right"
+            android:gravity="start"
             android:textAppearance="?android:attr/textAppearanceSmall"
             tools:text="2015-11-24 13:00" />
     </LinearLayout>
