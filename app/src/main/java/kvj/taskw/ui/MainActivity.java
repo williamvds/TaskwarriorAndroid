@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.v4.content.FileProvider;
 import android.support.v4.util.Pair;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.SwitchCompat;
@@ -39,6 +40,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import kvj.taskw.App;
+import kvj.taskw.BuildConfig;
 import kvj.taskw.R;
 import kvj.taskw.data.AccountController;
 import kvj.taskw.data.Controller;
@@ -326,8 +328,9 @@ public class MainActivity extends AppActivity implements Controller.ToastMessage
             case R.id.menu_nav_settings:
                 // Open taskrc for editing
                 Intent intent = new Intent(Intent.ACTION_EDIT);
-                Uri uri = Uri.parse(String.format("file://%s", ac.taskrc().getAbsolutePath()));
+                Uri uri = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".FileProvider", ac.taskrc());
                 intent.setDataAndType(uri, "text/plain");
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 try {
                     startActivityForResult(intent, App.SETTINGS_REQUEST);
                 } catch (Exception e) {

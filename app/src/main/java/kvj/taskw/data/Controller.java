@@ -66,64 +66,6 @@ public class Controller extends org.kvj.bravo7.ng.Controller {
         NotificationChannels.create(context);
     }
 
-    public File fileFromIntentUri(Intent intent) {
-        if (null == intent) return null;
-        if (TextUtils.isEmpty(intent.getDataString())) return null;
-        if (!"file".equals(intent.getData().getScheme())) {
-            logger.w("Requested Uri is not file", intent.getData().getScheme(), intent.getData());
-            return null;
-        }
-        try {
-            File file = new File(intent.getData().getPath());
-            if (!file.isFile() && !file.exists()) {
-                logger.w("Invalid file:", file);
-                return null;
-            }
-            if (!file.canRead() || !file.canWrite()) {
-                logger.w("Invalid file access:", file, file.canRead(), file.canWrite());
-                return null;
-            }
-            return file;
-        } catch (Exception e) {
-            logger.e(e, "Error getting file:", intent.getData(), intent.getData().getPath());
-        }
-        return null;
-    }
-
-    public String readFile(File file) {
-        StringBuilder result = new StringBuilder();
-        try {
-            String line;
-            BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file), "utf-8"));
-            while ((line = br.readLine()) != null) {
-                result.append(line);
-                result.append('\n');
-            }
-            br.close();
-            return result.toString();
-        } catch (Exception e) {
-            logger.e(e, "Error reading file", file.getAbsolutePath());
-            return null;
-        }
-    }
-
-    public Boolean saveFile(String fileName, String text) {
-        try {
-            File output = new File(fileName);
-            if (!output.exists() || !output.canWrite()) {
-                logger.d("Invalid file:", output);
-                return false;
-            }
-            Writer writer = new OutputStreamWriter(new FileOutputStream(output), "utf-8");
-            writer.write(text);
-            writer.close();
-            return true;
-        } catch (Exception e) {
-            logger.e(e, "Failed to write file:", fileName);
-            return false;
-        }
-    }
-
     public void copyToClipboard(CharSequence text) {
         ClipData clip = ClipData.newPlainText(text, text);
         getClipboard().setPrimaryClip(clip);

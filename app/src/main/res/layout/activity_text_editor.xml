@@ -22,7 +22,7 @@
             android:layout_height="match_parent"
             android:hint="@string/text_editor_hint"
             android:importantForAutofill="no"
-            android:inputType="text"
+            android:inputType="textMultiLine|textNoSuggestions"
             android:singleLine="false" />
     </RelativeLayout>
 </LinearLayout>

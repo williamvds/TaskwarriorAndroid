@@ -1,6 +1,7 @@
 package kvj.taskw.ui;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -14,12 +15,13 @@ import org.kvj.bravo7.form.impl.widget.TransientAdapter;
 import org.kvj.bravo7.log.Logger;
 import org.kvj.bravo7.util.Tasks;
 
-import java.io.File;
+import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.util.Scanner;
 
 import kvj.taskw.App;
 import kvj.taskw.R;
 import kvj.taskw.data.Controller;
-import kvj.taskw.ui.AppActivity;
 
 /**
  * Created by vorobyev on 11/30/15.
@@ -54,30 +56,31 @@ public class TextEditor extends AppActivity {
     }
 
     private void loadText(Intent intent) {
-        // Load
-        final File file = controller.fileFromIntentUri(intent);
-        if (null == file) {
-            // Invalid file
-            controller.messageLong("Invalid file provided");
-            finish();
-            return;
-        }
+        final Uri uri = intent.getData();
+        if (uri == null) return;
+
         new Tasks.ActivitySimpleTask<String>(this) {
 
             @Override
             protected String doInBackground() {
-                return controller.readFile(file);
+                try {
+                    InputStream stream = getContentResolver().openInputStream(uri);
+                    Scanner s = new Scanner(stream).useDelimiter("\\A");
+                    return s.hasNext() ? s.next() : "";
+                } catch (Exception ex) {
+                    return null;
+                }
             }
 
             @Override
             public void finish(String result) {
-                logger.d("File loaded:", file.getAbsolutePath(), result != null);
+                logger.d("File loaded:", uri, result != null);
                 if (null == result) {
                     controller.messageLong("File IO error");
                     TextEditor.this.finish();
                 } else {
-                    form.setValue(App.KEY_TEXT_TARGET, file.getAbsolutePath(), true);
-                    form.setValue(App.KEY_TEXT_INPUT, result.trim(), true);
+                    form.setValue(App.KEY_TEXT_TARGET, uri.toString(), true);
+                    form.setValue(App.KEY_TEXT_INPUT, result, true);
                     updateToolbar();
                 }
             }
@@ -122,20 +125,22 @@ public class TextEditor extends AppActivity {
     }
 
     private void save() {
-        if (!form.changed()) {
-            finish(); //
-        }
-        final String fileName = form.getValue(App.KEY_TEXT_TARGET);
+        if (!form.changed()) finish();
+
+        final Uri uri = Uri.parse((String) form.getValue(App.KEY_TEXT_TARGET));
         final String text = form.getValue(App.KEY_TEXT_INPUT);
         new Tasks.ActivitySimpleTask<Boolean>(this) {
 
             @Override
             protected Boolean doInBackground() {
-                String saveMe = text;
-                if (!saveMe.isEmpty() && !saveMe.endsWith("\n")) { // Auto-add new line
-                    saveMe += "\n";
+                try {
+                    OutputStreamWriter stream = new OutputStreamWriter(getContentResolver().openOutputStream(uri));
+                    stream.write(text);
+                    stream.close();
+                    return true;
+                } catch (Exception ex) {
+                    return false;
                 }
-                return controller.saveFile(fileName, saveMe);
             }
 
             @Override
