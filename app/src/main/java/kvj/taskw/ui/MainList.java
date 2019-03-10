@@ -39,7 +39,7 @@ public class MainList extends Fragment {
         View view = inflater.inflate(R.layout.fragment_list, container, false);
         list = view.findViewById(R.id.list_main_list);
         list.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new MainListAdapter(getResources());
+        adapter = new MainListAdapter();
         list.setAdapter(adapter);
         return view;
     }
@@ -103,7 +103,7 @@ public class MainList extends Fragment {
     }
 
     public void listener(MainListAdapter.ItemListener listener) {
-        adapter.listener(listener);
+        adapter.setListener(listener);
     }
 
 

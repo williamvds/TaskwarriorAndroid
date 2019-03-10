@@ -208,19 +208,19 @@ public class MainActivity extends AppActivity implements Controller.ToastMessage
                 }
                 if ("due".equals(type)) {
                     add(Pair.create(App.KEY_EDIT_DUE,
-                            MainListAdapter.asDate(json.optString("due"), "", null)));
+                            MainListAdapter.asDate(json.optString("due"))));
                 }
                 if ("wait".equals(type)) {
                     add(Pair.create(App.KEY_EDIT_WAIT,
-                            MainListAdapter.asDate(json.optString("wait"), "", null)));
+                            MainListAdapter.asDate(json.optString("wait"))));
                 }
                 if ("scheduled".equals(type)) {
                     add(Pair.create(App.KEY_EDIT_SCHEDULED,
-                            MainListAdapter.asDate(json.optString("scheduled"), "", null)));
+                            MainListAdapter.asDate(json.optString("scheduled"))));
                 }
                 if ("recur".equals(type)) {
                     add(Pair.create(App.KEY_EDIT_UNTIL,
-                                    MainListAdapter.asDate(json.optString("until"), "", null)),
+                                    MainListAdapter.asDate(json.optString("until"))),
                             Pair.create(App.KEY_EDIT_RECUR, json.optString("recur")));
                 }
             }

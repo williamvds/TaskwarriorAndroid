@@ -925,10 +925,10 @@ public class AccountController {
         if (null != tags) {
             intent.putExtra(App.KEY_EDIT_TAGS, MainListAdapter.join(" ", MainListAdapter.array2List(tags)));
         }
-        intent.putExtra(App.KEY_EDIT_DUE, MainListAdapter.asDate(json.optString("due"), "", null));
-        intent.putExtra(App.KEY_EDIT_WAIT, MainListAdapter.asDate(json.optString("wait"), "", null));
-        intent.putExtra(App.KEY_EDIT_SCHEDULED, MainListAdapter.asDate(json.optString("scheduled"), "", null));
-        intent.putExtra(App.KEY_EDIT_UNTIL, MainListAdapter.asDate(json.optString("until"), "", null));
+        intent.putExtra(App.KEY_EDIT_DUE, MainListAdapter.asDate(json.optString("due")));
+        intent.putExtra(App.KEY_EDIT_WAIT, MainListAdapter.asDate(json.optString("wait")));
+        intent.putExtra(App.KEY_EDIT_SCHEDULED, MainListAdapter.asDate(json.optString("scheduled")));
+        intent.putExtra(App.KEY_EDIT_UNTIL, MainListAdapter.asDate(json.optString("until")));
         intent.putExtra(App.KEY_EDIT_RECUR, json.optString("recur"));
         return true;
     }

@@ -68,7 +68,8 @@
                     android:id="@+id/task_annotations_flag"
                     style="@style/IconImage"
                     android:layout_gravity="top"
-                    android:src="@drawable/ic_status_annotations" />
+                    android:src="@drawable/ic_status_annotations"
+                    android:visibility="gone" />
             </LinearLayout>
 
             <LinearLayout
@@ -155,7 +156,8 @@
                     android:id="@+id/task_annotations"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical" />
+                    android:orientation="vertical"
+                    android:visibility="gone" />
             </LinearLayout>
         </LinearLayout>
 
