@@ -39,8 +39,8 @@ class MainListAdapter : RecyclerView.Adapter<MainListAdapter.ViewHolder>() {
     override fun getItemCount() = data.size
 
     override fun onCreateViewHolder(parent: ViewGroup, type: Int) =
-            ViewHolder(LayoutInflater.from(parent.context)
-                    .inflate(R.layout.item_one_card, parent, false))
+        ViewHolder(LayoutInflater.from(parent.context)
+            .inflate(R.layout.item_one_card, parent, false))
 
     override fun onBindViewHolder(holder: MainListAdapter.ViewHolder, position: Int) {
         val json = data[position]
@@ -52,9 +52,9 @@ class MainListAdapter : RecyclerView.Adapter<MainListAdapter.ViewHolder>() {
             task_id.text = json.optInt("id").toString()
 
             task_status_btn.setImageResource(STATUS_ICON_MAP[json.optString("status")]
-                    ?: STATUS_ICON_DEFAULT)
+                ?: STATUS_ICON_DEFAULT)
             task_start_stop_btn.setImageResource(
-                    if (json.optString("start").isEmpty()) PROGRESS_ICON_START else PROGRESS_ICON_STOP
+                if (json.optString("start").isEmpty()) PROGRESS_ICON_START else PROGRESS_ICON_STOP
             )
 
             task_start_stop_btn.visibility = when (json.optString("status", "pending")) {
@@ -82,8 +82,8 @@ class MainListAdapter : RecyclerView.Adapter<MainListAdapter.ViewHolder>() {
                 val parent = if (right) task_labels_right else task_labels_left
 
                 inflater.inflate(
-                        if (right) R.layout.item_one_label_right else R.layout.item_one_label_left,
-                        parent
+                    if (right) R.layout.item_one_label_right else R.layout.item_one_label_left,
+                    parent
                 )
 
                 return parent.getChildAt(parent.childCount - 1).apply {
@@ -97,7 +97,7 @@ class MainListAdapter : RecyclerView.Adapter<MainListAdapter.ViewHolder>() {
             addLabel(asDate(json.optString("scheduled", null)), R.drawable.ic_label_scheduled)
 
             val recur = json.optString("recur", null)
-            if (recur != null) {
+            recur?.let {
                 var text = recur
 
                 val until = asDate(json.optString("until"))
@@ -107,13 +107,15 @@ class MainListAdapter : RecyclerView.Adapter<MainListAdapter.ViewHolder>() {
             }
 
             addLabel(json.optString("project", null), R.drawable.ic_label_project, true)
-                    ?.setOnLongClickListener { listener?.onLabelClick(json, "project", true); true }
+                ?.setOnLongClickListener { listener?.onLabelClick(json, "project", true); true }
 
             val tags = json.optJSONArray("tags")
-            if (tags != null) addLabel(join(", ", array2List(tags)), R.drawable.ic_label_tags, true)
+            tags?.let {
+                addLabel(join(", ", array2List(tags)), R.drawable.ic_label_tags, true)
+            }
 
             val annotations = json.optJSONArray("annotations")
-            if (annotations != null) {
+            annotations?.let {
                 task_annotations_flag.visibility = View.VISIBLE
 
                 for (i in 0 until annotations.length()) {
@@ -181,10 +183,10 @@ class MainListAdapter : RecyclerView.Adapter<MainListAdapter.ViewHolder>() {
     companion object {
         private const val STATUS_ICON_DEFAULT = R.drawable.ic_status_pending
         private val STATUS_ICON_MAP = mapOf(
-                "deleted" to R.drawable.ic_status_deleted,
-                "completed" to R.drawable.ic_status_completed,
-                "waiting" to R.drawable.ic_status_waiting,
-                "recurring" to R.drawable.ic_status_recurring
+            "deleted" to R.drawable.ic_status_deleted,
+            "completed" to R.drawable.ic_status_completed,
+            "waiting" to R.drawable.ic_status_waiting,
+            "recurring" to R.drawable.ic_status_recurring
         )
         private const val PROGRESS_ICON_START = R.drawable.ic_action_start
         private const val PROGRESS_ICON_STOP = R.drawable.ic_action_stop
@@ -220,7 +222,7 @@ class MainListAdapter : RecyclerView.Adapter<MainListAdapter.ViewHolder>() {
             try {
                 val parsed = jsonFormat.parse(value)
 
-                if (format != null) return format.format(parsed)
+                format?.let { return format.format(parsed) }
 
                 val c = Calendar.getInstance()
                 c.time = parsed
@@ -241,8 +243,8 @@ class MainListAdapter : RecyclerView.Adapter<MainListAdapter.ViewHolder>() {
 
         @JvmStatic
         fun join(separator: String, list: Iterable<String>) =
-                list.reduce { string, element ->
-                    if (TextUtils.isEmpty(element)) string else "$string$separator$element"
-                }
+            list.reduce { string, element ->
+                if (TextUtils.isEmpty(element)) string else "$string$separator$element"
+            }
     }
 }
