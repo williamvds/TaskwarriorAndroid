@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import org.jetbrains.annotations.NotNull;
-import org.json.JSONObject;
 import org.kvj.bravo7.form.FormController;
 import org.kvj.bravo7.log.Logger;
 
@@ -20,6 +19,7 @@ import kvj.taskw.App;
 import kvj.taskw.R;
 import kvj.taskw.data.Controller;
 import kvj.taskw.data.ReportInfo;
+import kvj.taskw.data.Task;
 
 /**
  * Created by vorobyev on 11/19/15.
@@ -77,21 +77,21 @@ public class MainList extends Fragment {
         new LoadReportTask(this, report, query, afterLoad).execute();
     }
 
-    private static class LoadResultsTask extends StaticAsyncTask<MainList, Void, Void, List<JSONObject>> {
+    private static class LoadResultsTask extends StaticAsyncTask<MainList, Void, Void, List<Task>> {
         LoadResultsTask(MainList frag) {
             super(frag);
         }
 
         @Override
-        protected List<JSONObject> background(MainList frag, Void... params) {
+        protected List<Task> background(MainList frag, Void... params) {
             frag.logger.d("Exec:", frag.info.query);
-            List<JSONObject> list = frag.controller.accountController(frag.account).taskList(frag.info.query);
+            List<Task> list = frag.controller.accountController(frag.account).taskList(frag.info.query);
             frag.info.sort(list); // Sorted according to report spec.
             return list;
         }
 
         @Override
-        public void finish(MainList frag, List<JSONObject> result) {
+        public void finish(MainList frag, List<Task> result) {
             frag.adapter.update(result, frag.info);
         }
     }

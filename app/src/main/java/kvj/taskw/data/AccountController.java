@@ -8,7 +8,7 @@ import android.net.LocalSocket;
 import android.net.Uri;
 import android.text.TextUtils;
 
-import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.kvj.bravo7.log.Logger;
 import org.kvj.bravo7.util.Compat;
@@ -853,7 +853,7 @@ public class AccountController {
         return null;
     }
 
-    public List<JSONObject> taskList(String query) {
+    public List<Task> taskList(String query) {
         if (TextUtils.isEmpty(query)) {
             query = "status:pending";
         } else {
@@ -870,9 +870,10 @@ public class AccountController {
             }
             logger.d("Context query:", cQuery, query);
         }
-        final List<JSONObject> result = new ArrayList<>();
+        final List<Task> result = new ArrayList<>();
         List<String> params = new ArrayList<>();
         params.add("rc.json.array=off");
+        params.add("rc.json.depends.array=on");
         params.add("export");
         params.add(escape(query));
         callTask(new StreamConsumer() {
@@ -880,8 +881,9 @@ public class AccountController {
             public void eat(String line) {
                 if (!TextUtils.isEmpty(line)) {
                     try {
-                        result.add(new JSONObject(line));
-                    } catch (Exception e) {
+                        JSONObject json = new JSONObject(line);
+                        result.add(Task.fromJSON(json));
+                    } catch (JSONException e) {
                         logger.e(e, "Not JSON object:", line);
                     }
                 }
@@ -908,28 +910,25 @@ public class AccountController {
             intent.putExtra(App.KEY_EDIT_PRIORITY, priorities.indexOf(""));
             return true;
         }
-        List<JSONObject> jsons = taskList(uuid);
-        if (jsons.isEmpty()) { // Failed
+        List<Task> tasks = taskList(uuid);
+        if (tasks.isEmpty()) { // Failed
             return false;
         }
-        JSONObject json = jsons.get(0);
-        int priorityIndex = priorities.indexOf(json.optString("priority", ""));
+        Task task = tasks.get(0);
+        int priorityIndex = priorities.indexOf(task.priority);
         if (-1 == priorityIndex) {
             priorityIndex = priorities.indexOf("");
         }
         intent.putExtra(App.KEY_EDIT_PRIORITY, priorityIndex);
-        intent.putExtra(App.KEY_EDIT_UUID, json.optString("uuid"));
-        intent.putExtra(App.KEY_EDIT_DESCRIPTION, json.optString("description"));
-        intent.putExtra(App.KEY_EDIT_PROJECT, json.optString("project"));
-        JSONArray tags = json.optJSONArray("tags");
-        if (null != tags) {
-            intent.putExtra(App.KEY_EDIT_TAGS, MainListAdapter.join(" ", MainListAdapter.array2List(tags)));
-        }
-        intent.putExtra(App.KEY_EDIT_DUE, MainListAdapter.asDate(json.optString("due")));
-        intent.putExtra(App.KEY_EDIT_WAIT, MainListAdapter.asDate(json.optString("wait")));
-        intent.putExtra(App.KEY_EDIT_SCHEDULED, MainListAdapter.asDate(json.optString("scheduled")));
-        intent.putExtra(App.KEY_EDIT_UNTIL, MainListAdapter.asDate(json.optString("until")));
-        intent.putExtra(App.KEY_EDIT_RECUR, json.optString("recur"));
+        intent.putExtra(App.KEY_EDIT_UUID, task.uuid.toString());
+        intent.putExtra(App.KEY_EDIT_DESCRIPTION, task.description);
+        intent.putExtra(App.KEY_EDIT_PROJECT, task.project);
+        intent.putExtra(App.KEY_EDIT_TAGS, MainListAdapter.join(" ", task.tags));
+        intent.putExtra(App.KEY_EDIT_DUE, MainListAdapter.formatDate(task.due));
+        intent.putExtra(App.KEY_EDIT_WAIT, MainListAdapter.formatDate(task.wait));
+        intent.putExtra(App.KEY_EDIT_SCHEDULED, MainListAdapter.formatDate(task.scheduled));
+        intent.putExtra(App.KEY_EDIT_UNTIL, MainListAdapter.formatDate(task.until));
+        intent.putExtra(App.KEY_EDIT_RECUR, task.recur);
         return true;
     }
 

@@ -1,7 +1,8 @@
 package kvj.taskw.data;
 
 import org.jetbrains.annotations.NotNull;
-import org.json.JSONObject;
+
+import java.lang.reflect.Field;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,13 +28,23 @@ public class ReportInfo {
         return String.format("ReportInfo: %s [%s %s] %s", query, fields.toString(), sort.toString(), description);
     }
 
-    public void sort(List<JSONObject> list) {
-        Collections.sort(list, new Comparator<JSONObject>() {
+    public void sort(List<Task> list) {
+        Collections.sort(list, new Comparator<Task>() {
             @Override
-            public int compare(JSONObject lhs, JSONObject rhs) {
+            public int compare(Task lhs, Task rhs) {
                 for (Map.Entry<String, Boolean> entry : sort.entrySet()) {
-                    Object lo = lhs.opt(entry.getKey());
-                    Object ro = rhs.opt(entry.getKey());
+                    String fieldName = entry.getKey();
+                    Object lo, ro;
+
+                    try {
+                        Field field = Task.class.getField(fieldName);
+                        lo = field.get(lhs);
+                        ro = field.get(rhs);
+                    } catch (Exception e) {
+                        android.util.Log.e(ReportInfo.class.getName(), "Couldn't access task field: " + fieldName);
+                        continue;
+                    }
+
                     if (lo == null && ro != null) {
                         return 1;
                     }

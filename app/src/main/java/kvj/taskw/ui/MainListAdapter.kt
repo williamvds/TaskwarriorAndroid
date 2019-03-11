@@ -4,11 +4,9 @@ import java.lang.Exception
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
-
-import org.json.JSONArray
-import org.json.JSONObject
 
 import android.support.v7.widget.CardView
 import android.support.v7.widget.RecyclerView
@@ -23,6 +21,8 @@ import org.kvj.bravo7.log.Logger
 
 import kvj.taskw.R
 import kvj.taskw.data.ReportInfo
+import kvj.taskw.data.Task
+import kvj.taskw.data.Task.Companion.Status
 
 import kotlinx.android.synthetic.main.item_one_card.view.*
 import kotlinx.android.synthetic.main.item_one_task.view.*
@@ -30,7 +30,7 @@ import kotlinx.android.synthetic.main.item_one_annotation.view.*
 
 class MainListAdapter : RecyclerView.Adapter<MainListAdapter.ViewHolder>() {
     var listener: ItemListener? = null
-    private val data = ArrayList<JSONObject>()
+    private val data = ArrayList<Task>()
     private var info: ReportInfo? = null
     private var minUrgency = 0.0
     private var maxUrgency = 0.0
@@ -43,34 +43,31 @@ class MainListAdapter : RecyclerView.Adapter<MainListAdapter.ViewHolder>() {
             .inflate(R.layout.item_one_card, parent, false))
 
     override fun onBindViewHolder(holder: MainListAdapter.ViewHolder, position: Int) {
-        val json = data[position]
+        val task = data[position]
 
         holder.card.apply {
             val inflater = LayoutInflater.from(context)
 
-            task_description.text = json.optString("description")
-            task_id.text = json.optInt("id").toString()
+            task_description.text = task.description
+            task_id.text = task.id.toString()
 
-            task_status_btn.setImageResource(STATUS_ICON_MAP[json.optString("status")]
-                ?: STATUS_ICON_DEFAULT)
-            task_start_stop_btn.setImageResource(
-                if (json.optString("start").isEmpty()) PROGRESS_ICON_START else PROGRESS_ICON_STOP
-            )
+            task_status_btn.setImageResource(getStatusIcon(task.status))
+            task_start_stop_btn.setImageResource(if (task.start == null) PROGRESS_ICON_START else PROGRESS_ICON_STOP)
 
-            task_start_stop_btn.visibility = when (json.optString("status", "pending")) {
-                "pending" -> View.VISIBLE
+            task_start_stop_btn.visibility = when (task.status) {
+                Status.PENDING -> View.VISIBLE
                 else -> View.GONE
             }
 
             task_priority.apply {
-                val index = info?.priorities?.indexOf(json.optString("priority", "")) ?: -1
+                val index = info?.priorities?.indexOf(task.priority) ?: -1
                 max = (info?.priorities?.size ?: 0) - 1
                 progress = if (index == -1) 0 else max - index - 1
             }
 
             task_urgency.apply {
                 max = maxUrgency.toInt()
-                progress = Math.round(json.optDouble("urgency") - minUrgency).toInt()
+                progress = Math.round((task.urgency ?: 0.0) - minUrgency).toInt()
             }
 
             task_labels_left.removeAllViews()
@@ -92,46 +89,39 @@ class MainListAdapter : RecyclerView.Adapter<MainListAdapter.ViewHolder>() {
                 }
             }
 
-            addLabel(asDate(json.optString("due", null)), R.drawable.ic_label_due)
-            addLabel(asDate(json.optString("wait", null)), R.drawable.ic_label_wait)
-            addLabel(asDate(json.optString("scheduled", null)), R.drawable.ic_label_scheduled)
+            addLabel(formatDate(task.due), R.drawable.ic_label_due)
+            addLabel(formatDate(task.wait), R.drawable.ic_label_wait)
+            addLabel(formatDate(task.scheduled), R.drawable.ic_label_scheduled)
 
-            val recur = json.optString("recur", null)
-            recur?.let {
-                var text = recur
+            task.recur?.let {
+                var text = task.recur
 
-                val until = asDate(json.optString("until"))
+                val until = formatDate(task.until)
                 if (!TextUtils.isEmpty(until)) text += " ~ $until"
 
                 addLabel(text, R.drawable.ic_label_recur)
             }
 
-            addLabel(json.optString("project", null), R.drawable.ic_label_project, true)
-                ?.setOnLongClickListener { listener?.onLabelClick(json, "project", true); true }
+            addLabel(task.project, R.drawable.ic_label_project, true)
+                ?.setOnLongClickListener { listener?.onLabelClick(task, "project", true); true }
 
-            val tags = json.optJSONArray("tags")
-            tags?.let {
-                addLabel(join(", ", array2List(tags)), R.drawable.ic_label_tags, true)
+            if (task.tags.isNotEmpty()) {
+                addLabel(join(", ", task.tags), R.drawable.ic_label_tags, true)
             }
 
-            val annotations = json.optJSONArray("annotations")
-            annotations?.let {
+            if (task.annotations.isNotEmpty())
                 task_annotations_flag.visibility = View.VISIBLE
 
-                for (i in 0 until annotations.length()) {
-                    inflater.inflate(R.layout.item_one_annotation, task_annotations)
+            task.annotations.reversed().forEach annotation@{ annotation ->
+                inflater.inflate(R.layout.item_one_annotation, task_annotations)
 
-                    // inflate() only returns the inflated view the first time, so get it manually
-                    task_annotations.getChildAt(i).apply {
-                        val annotation = annotations.optJSONObject(annotations.length() - i - 1)
-                        val description = annotation.optString("description")
+                // inflate() only returns the inflated view the first time, so get it manually
+                task_annotations.getChildAt(task_annotations.childCount - 1).apply {
+                    task_ann_text.text = annotation.description
+                    task_ann_date.text = formattedFormatDT.format(annotation.entry)
 
-                        task_ann_text.text = description
-                        task_ann_date.text = asDate(annotation.optString("entry"), formattedFormatDT)
-
-                        task_ann_text.setOnLongClickListener { listener?.onCopyText(json, description); true }
-                        task_ann_delete_btn.setOnClickListener { listener?.onDenotate(json, annotation) }
-                    }
+                    task_ann_text.setOnLongClickListener { listener?.onCopyText(task, annotation.description); true }
+                    task_ann_delete_btn.setOnClickListener { listener?.onDenotate(task, annotation) }
                 }
             }
 
@@ -142,20 +132,19 @@ class MainListAdapter : RecyclerView.Adapter<MainListAdapter.ViewHolder>() {
                 task_annotations.visibility = visibility
             }
 
-            task_edit_btn.setOnClickListener { listener?.onEdit(json) }
-            task_status_btn.setOnClickListener { listener?.onStatus(json) }
-            task_delete_btn.setOnClickListener { listener?.onDelete(json) }
-            task_annotate_btn.setOnClickListener { listener?.onAnnotate(json) }
-            task_start_stop_btn.setOnClickListener { listener?.onStartStop(json) }
+            task_edit_btn.setOnClickListener { listener?.onEdit(task) }
+            task_status_btn.setOnClickListener { listener?.onStatus(task) }
+            task_delete_btn.setOnClickListener { listener?.onDelete(task) }
+            task_annotate_btn.setOnClickListener { listener?.onAnnotate(task) }
+            task_start_stop_btn.setOnClickListener { listener?.onStartStop(task) }
         }
     }
 
-    fun update(list: List<JSONObject>, info: ReportInfo) {
+    fun update(list: List<Task>, info: ReportInfo) {
         this.info = info
 
         if (!list.isEmpty() && info.fields.containsKey("urgency")) {
-            val urgency = ArrayList<Double>()
-            list.forEach { urgency.add(it.optDouble("urgency")) }
+            val urgency = List(list.size) { list[it].urgency ?: 0.0 }
             maxUrgency = urgency.max() ?: 0.0
             minUrgency = urgency.min() ?: 0.0
         }
@@ -170,24 +159,25 @@ class MainListAdapter : RecyclerView.Adapter<MainListAdapter.ViewHolder>() {
     }
 
     interface ItemListener {
-        fun onEdit(json: JSONObject)
-        fun onStatus(json: JSONObject)
-        fun onDelete(json: JSONObject)
-        fun onAnnotate(json: JSONObject)
-        fun onStartStop(json: JSONObject)
-        fun onDenotate(json: JSONObject, annJson: JSONObject)
-        fun onCopyText(json: JSONObject, text: String)
-        fun onLabelClick(json: JSONObject, type: String, longClick: Boolean)
+        fun onEdit(task: Task)
+        fun onStatus(task: Task)
+        fun onDelete(task: Task)
+        fun onAnnotate(task: Task)
+        fun onStartStop(task: Task)
+        fun onDenotate(task: Task, annotation: Task.Companion.Annotation)
+        fun onCopyText(task: Task, text: String)
+        fun onLabelClick(task: Task, type: String, longClick: Boolean)
     }
 
     companion object {
-        private const val STATUS_ICON_DEFAULT = R.drawable.ic_status_pending
-        private val STATUS_ICON_MAP = mapOf(
-            "deleted" to R.drawable.ic_status_deleted,
-            "completed" to R.drawable.ic_status_completed,
-            "waiting" to R.drawable.ic_status_waiting,
-            "recurring" to R.drawable.ic_status_recurring
-        )
+        private fun getStatusIcon(status: Status) = when (status) {
+            Status.DELETED -> R.drawable.ic_status_deleted
+            Status.COMPLETED -> R.drawable.ic_status_completed
+            Status.WAITING -> R.drawable.ic_status_waiting
+            Status.RECURRING -> R.drawable.ic_status_recurring
+            else -> R.drawable.ic_status_pending
+        }
+
         private const val PROGRESS_ICON_START = R.drawable.ic_action_start
         private const val PROGRESS_ICON_STOP = R.drawable.ic_action_stop
 
@@ -201,38 +191,22 @@ class MainListAdapter : RecyclerView.Adapter<MainListAdapter.ViewHolder>() {
         val formattedISO = SimpleDateFormat("yyyy-MM-dd'T'HH:mm", Locale.US)
 
         @JvmStatic
-        fun array2List(array: JSONArray): Collection<String> {
-            val result = ArrayList<String>()
-            for (i in 0..array.length()) {
-                val str = array.optString(i)
-                if (!TextUtils.isEmpty(str)) result.add(str)
-            }
-
-            return result
-        }
-
-        @JvmStatic
         @JvmOverloads
-        fun asDate(value: String?, format: DateFormat? = null): String? {
+        fun formatDate(value: Date?, format: DateFormat? = null): String? {
             value ?: return null
 
-            val jsonFormat = SimpleDateFormat("yyyyMMdd'T'HHmmss", Locale.US)
-            jsonFormat.timeZone = TimeZone.getTimeZone("UTC")
-
             try {
-                val parsed = jsonFormat.parse(value)
-
-                format?.let { return format.format(parsed) }
+                format?.let { return format.format(value) }
 
                 val c = Calendar.getInstance()
-                c.time = parsed
+                c.time = value
 
                 // Just show date if time is midnight
                 if (c.get(Calendar.HOUR_OF_DAY) == 0 && c.get(Calendar.MINUTE) == 0) { // 00:00
-                    return formattedFormat.format(parsed)
+                    return formattedFormat.format(value)
                 }
 
-                return formattedISO.format(parsed)
+                return formattedISO.format(value)
 
             } catch (e: Exception) {
                 logger.e(e, "Failed to parse Date:", value)
@@ -242,7 +216,7 @@ class MainListAdapter : RecyclerView.Adapter<MainListAdapter.ViewHolder>() {
         }
 
         @JvmStatic
-        fun join(separator: String, list: Iterable<String>) =
+        fun join(separator: String, list: Iterable<String>) = if (list.count() < 1) "" else
             list.reduce { string, element ->
                 if (TextUtils.isEmpty(element)) string else "$string$separator$element"
             }

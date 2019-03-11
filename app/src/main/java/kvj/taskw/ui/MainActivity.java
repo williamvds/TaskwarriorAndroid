@@ -27,7 +27,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.jetbrains.annotations.NotNull;
-import org.json.JSONObject;
 import org.kvj.bravo7.form.FormController;
 import org.kvj.bravo7.form.impl.ViewFinder;
 import org.kvj.bravo7.form.impl.bundle.StringBundleAdapter;
@@ -44,6 +43,8 @@ import kvj.taskw.BuildConfig;
 import kvj.taskw.R;
 import kvj.taskw.data.AccountController;
 import kvj.taskw.data.Controller;
+import kvj.taskw.data.Task;
+import kvj.taskw.data.Task.Companion.*;
 
 public class MainActivity extends AppActivity implements Controller.ToastMessageListener {
 
@@ -109,13 +110,13 @@ public class MainActivity extends AppActivity implements Controller.ToastMessage
         });
         ViewGroup header = (ViewGroup) navigation.inflateHeaderView(R.layout.item_nav_header);
         navigation.setNavigationItemSelectedListener(
-            new NavigationView.OnNavigationItemSelectedListener() {
-                @Override
-                public boolean onNavigationItemSelected(@NotNull MenuItem item) {
-                    onNavigationMenu(item);
-                    return true;
-                }
-            });
+                new NavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(@NotNull MenuItem item) {
+                        onNavigationMenu(item);
+                        return true;
+                    }
+                });
         list = (MainList) getSupportFragmentManager().findFragmentById(R.id.list_list_fragment);
         addButton = findViewById(R.id.list_add_btn);
         ProgressBar progressBar = findViewById(R.id.progress);
@@ -141,55 +142,53 @@ public class MainActivity extends AppActivity implements Controller.ToastMessage
         });
         list.listener(new MainListAdapter.ItemListener() {
             @Override
-            public void onEdit(JSONObject json) {
+            public void onEdit(@NotNull Task task) {
                 // Start editor
-                edit(json);
+                edit(task);
             }
 
             @Override
-            public void onStatus(JSONObject json) {
-                changeStatus(json);
+            public void onStatus(@NotNull Task task) {
+                changeStatus(task);
             }
 
             @Override
-            public void onDelete(JSONObject json) {
-                doOp(String.format("Task '%s' deleted", json.optString("description")),
-                        json.optString("uuid"), "delete");
+            public void onDelete(@NotNull Task task) {
+                doOp(String.format("Task '%s' deleted", task.description),
+                        task.uuid.toString(), "delete");
             }
 
             @Override
-            public void onAnnotate(JSONObject json) {
-                annotate(json);
+            public void onAnnotate(@NotNull Task task) {
+                annotate(task);
             }
 
             @Override
-            public void onDenotate(JSONObject json, JSONObject annJson) {
-                String text = annJson.optString("description");
-                doOp(String.format("Annotation '%s' deleted", text), json.optString("uuid"),
-                        "denotate", text);
+            public void onDenotate(@NotNull Task task, @NotNull Annotation annotation) {
+                doOp(String.format("Annotation '%s' deleted", annotation.description), task.uuid.toString(),
+                        "denotate", annotation.description);
             }
 
             @Override
-            public void onCopyText(JSONObject json, String text) {
+            public void onCopyText(@NotNull Task task, @NotNull String text) {
                 controller.copyToClipboard(text);
             }
 
             @Override
-            public void onLabelClick(JSONObject json, String type, boolean longClick) {
+            public void onLabelClick(@NotNull Task task, @NotNull String type, boolean longClick) {
                 if (longClick) { // Special case - start search
                     Intent intent = new Intent(MainActivity.this, MainActivity.class);
                     intent.putExtra(App.KEY_ACCOUNT, form.getValue(App.KEY_ACCOUNT, String.class));
                     intent.putExtra(App.KEY_REPORT, form.getValue(App.KEY_REPORT, String.class));
                     String query = form.getValue(App.KEY_QUERY);
                     if ("project".equals(type)) {
-                        query += " pro:" + json.optString("project");
+                        query += " pro:" + task.project;
                         intent.putExtra(App.KEY_QUERY, query.trim());
                         startActivity(intent);
                         return;
                     }
                     if ("tags".equals(type)) {
-                        String tags = MainListAdapter.join(" +",
-                                MainListAdapter.array2List(json.optJSONArray("tags")));
+                        String tags = MainListAdapter.join(" +", task.tags);
                         query += " +" + tags;
                         intent.putExtra(App.KEY_QUERY, query.trim());
                         startActivity(intent);
@@ -199,42 +198,34 @@ public class MainActivity extends AppActivity implements Controller.ToastMessage
                     return;
                 }
                 if ("project".equals(type)) {
-                    add(Pair.create(App.KEY_EDIT_PROJECT, json.optString("project")));
+                    add(Pair.create(App.KEY_EDIT_PROJECT, task.project));
                 }
                 if ("tags".equals(type)) {
-                    String tags = MainListAdapter.join(" ",
-                            MainListAdapter.array2List(json.optJSONArray("tags")));
-                    add(Pair.create(App.KEY_EDIT_TAGS, tags));
+                    add(Pair.create(App.KEY_EDIT_TAGS, MainListAdapter.join(" ", task.tags)));
                 }
                 if ("due".equals(type)) {
                     add(Pair.create(App.KEY_EDIT_DUE,
-                            MainListAdapter.asDate(json.optString("due"))));
+                            MainListAdapter.formatDate(task.due)));
                 }
                 if ("wait".equals(type)) {
                     add(Pair.create(App.KEY_EDIT_WAIT,
-                            MainListAdapter.asDate(json.optString("wait"))));
+                            MainListAdapter.formatDate(task.wait)));
                 }
                 if ("scheduled".equals(type)) {
                     add(Pair.create(App.KEY_EDIT_SCHEDULED,
-                            MainListAdapter.asDate(json.optString("scheduled"))));
+                            MainListAdapter.formatDate(task.scheduled)));
                 }
                 if ("recur".equals(type)) {
                     add(Pair.create(App.KEY_EDIT_UNTIL,
-                                    MainListAdapter.asDate(json.optString("until"))),
-                            Pair.create(App.KEY_EDIT_RECUR, json.optString("recur")));
+                            MainListAdapter.formatDate(task.until)),
+                            Pair.create(App.KEY_EDIT_RECUR, task.recur));
                 }
             }
 
             @Override
-            public void onStartStop(JSONObject json) {
-                String text = json.optString("description");
-                String uuid = json.optString("uuid");
-                boolean started = json.has("start");
-                if (started) { // Stop
-                    doOp(String.format("Task'%s' stopped", text), uuid, "stop");
-                } else { // Start
-                    doOp(String.format("Task '%s' started", text), uuid, "start");
-                }
+            public void onStartStop(@NotNull Task task) {
+                doOp(String.format("Task '%s' %s", task.description, task.start == null ? "started" : "stopped"),
+                        task.uuid.toString(), "stop");
             }
         });
         addButton.setOnClickListener(new View.OnClickListener() {
@@ -271,10 +262,10 @@ public class MainActivity extends AppActivity implements Controller.ToastMessage
         list.load(form, updateTitleAction);
     }
 
-    private void annotate(JSONObject json) {
+    private void annotate(@NotNull Task task) {
         Intent dialog = new Intent(this, AnnotationDialog.class);
         dialog.putExtra(App.KEY_ACCOUNT, form.getValue(App.KEY_ACCOUNT, String.class));
-        dialog.putExtra(App.KEY_EDIT_UUID, json.optString("uuid"));
+        dialog.putExtra(App.KEY_EDIT_UUID, task.uuid.toString());
         startActivityForResult(dialog, App.ANNOTATE_REQUEST);
     }
 
@@ -284,7 +275,7 @@ public class MainActivity extends AppActivity implements Controller.ToastMessage
         int index = 0;
         for (Account account : controller.accounts()) {
             menu.getMenu().add(R.id.menu_account_list, index++, 0, account.name)
-                .setOnMenuItemClickListener(newAccountMenu(controller.accountID(account)));
+                    .setOnMenuItemClickListener(newAccountMenu(controller.accountID(account)));
         }
         menu.setOnMenuItemClickListener(accountMenuListener);
         menu.show();
@@ -369,14 +360,9 @@ public class MainActivity extends AppActivity implements Controller.ToastMessage
         new RefreshAccountTask(this).execute(account);
     }
 
-    private void changeStatus(JSONObject json) {
-        String status = json.optString("status");
-        String uuid = json.optString("uuid");
-        String description = json.optString("description");
-        if ("pending".equalsIgnoreCase(status)) {
-            // Mark as done
-            doOp(String.format("Task '%s' marked done", description), uuid, "done");
-        }
+    private void changeStatus(Task task) {
+        if (task.status != Status.PENDING) return;
+        doOp(String.format("Task '%s' marked done", task.description), task.uuid.toString(), "done");
     }
 
     private static class OperationTask extends StaticAsyncTask<MainActivity, String, Void, String> {
@@ -396,22 +382,29 @@ public class MainActivity extends AppActivity implements Controller.ToastMessage
             AccountController ac = activity.ac;
 
             switch (op.toLowerCase()) {
-                case "done":     return ac.taskDone(uuid);
-                case "delete":   return ac.taskDelete(uuid);
-                case "start":    return ac.taskStart(uuid);
-                case "stop":     return ac.taskStop(uuid);
-                case "denotate": return ac.taskDenotate(uuid, ops[0]);
-                default:         return "Operation not supported";
+                case "done":
+                    return ac.taskDone(uuid);
+                case "delete":
+                    return ac.taskDelete(uuid);
+                case "start":
+                    return ac.taskStart(uuid);
+                case "stop":
+                    return ac.taskStop(uuid);
+                case "denotate":
+                    return ac.taskDenotate(uuid, ops[0]);
+                default:
+                    return "Operation not supported";
             }
         }
 
         @Override
-        protected void finish(MainActivity activity, String result){
+        protected void finish(MainActivity activity, String result) {
             activity.controller.messageLong(result != null ? result : message);
 
             if (result == null) activity.list.reload();
         }
     }
+
     private void doOp(final String message, final String uuid, final String op, final String... ops) {
         if (ac == null) return;
 
@@ -487,7 +480,7 @@ public class MainActivity extends AppActivity implements Controller.ToastMessage
         };
     }
 
-    private void add(Pair<String, String> ...pairs) {
+    private void add(Pair<String, String>... pairs) {
         if (null == ac) return;
         Intent intent = new Intent(this, EditorActivity.class);
         ac.intentForEditor(intent, null);
@@ -506,10 +499,10 @@ public class MainActivity extends AppActivity implements Controller.ToastMessage
         startActivityForResult(intent, App.EDIT_REQUEST);
     }
 
-    private void edit(JSONObject json) {
+    private void edit(@NotNull Task task) {
         if (null == ac) return;
         Intent intent = new Intent(this, EditorActivity.class);
-        if (ac.intentForEditor(intent, json.optString("uuid"))) { // Valid task
+        if (ac.intentForEditor(intent, task.uuid.toString())) { // Valid task
             startActivityForResult(intent, App.EDIT_REQUEST);
         } else {
             controller.messageShort("Invalid task");
@@ -598,19 +591,19 @@ public class MainActivity extends AppActivity implements Controller.ToastMessage
 
         private void addReportMenuItem(final String key, String title, SubMenu menu) {
             menu.add(title).setIcon(R.drawable.ic_action_report).setOnMenuItemClickListener(
-                new MenuItem.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        MainActivity activity = getContext();
-                        if (activity == null) return false;
+                    new MenuItem.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem item) {
+                            MainActivity activity = getContext();
+                            if (activity == null) return false;
 
-                        activity.form.setValue(App.KEY_REPORT, key);
-                        activity.form.setValue(App.KEY_QUERY, null);
-                        activity.list.load(activity.form, activity.updateTitleAction);
-                        activity.reload();
-                        return false;
-                    }
-                });
+                            activity.form.setValue(App.KEY_REPORT, key);
+                            activity.form.setValue(App.KEY_QUERY, null);
+                            activity.list.load(activity.form, activity.updateTitleAction);
+                            activity.reload();
+                            return false;
+                        }
+                    });
         }
     }
 
@@ -646,7 +639,7 @@ public class MainActivity extends AppActivity implements Controller.ToastMessage
         String query = bundle.getString(App.KEY_QUERY, "");
         String name = bundle.getString(App.KEY_REPORT, "");
         if (!TextUtils.isEmpty(query)) { // Have add. query
-            name += " "+query;
+            name += " " + query;
         }
         final Intent shortcutIntent = new Intent(this, MainActivity.class);
         shortcutIntent.putExtras(bundle);
