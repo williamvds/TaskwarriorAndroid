@@ -24,6 +24,7 @@ import org.kvj.bravo7.log.Logger;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import kvj.taskw.App;
 import kvj.taskw.R;
@@ -142,8 +143,7 @@ public class Editor extends Fragment {
     }
 
     public boolean adding(FormController form) {
-        String uuid = form.getValue(App.KEY_EDIT_UUID);
-        return TextUtils.isEmpty(uuid);
+        return form.getValue(App.KEY_EDIT_UUID) != null;
     }
 
     public void show(FormController form) {

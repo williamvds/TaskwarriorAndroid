@@ -37,6 +37,7 @@ import org.kvj.bravo7.util.DataUtil;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.UUID;
 
 import kvj.taskw.App;
 import kvj.taskw.BuildConfig;
@@ -155,7 +156,7 @@ public class MainActivity extends AppActivity implements Controller.ToastMessage
             @Override
             public void onDelete(@NotNull Task task) {
                 doOp(String.format("Task '%s' deleted", task.description),
-                        task.uuid.toString(), "delete");
+                        task.uuid, "delete");
             }
 
             @Override
@@ -165,7 +166,7 @@ public class MainActivity extends AppActivity implements Controller.ToastMessage
 
             @Override
             public void onDenotate(@NotNull Task task, @NotNull Annotation annotation) {
-                doOp(String.format("Annotation '%s' deleted", annotation.description), task.uuid.toString(),
+                doOp(String.format("Annotation '%s' deleted", annotation.description), task.uuid,
                         "denotate", annotation.description);
             }
 
@@ -225,7 +226,7 @@ public class MainActivity extends AppActivity implements Controller.ToastMessage
             @Override
             public void onStartStop(@NotNull Task task) {
                 doOp(String.format("Task '%s' %s", task.description, task.start == null ? "started" : "stopped"),
-                        task.uuid.toString(), "stop");
+                        task.uuid, "stop");
             }
         });
         addButton.setOnClickListener(new View.OnClickListener() {
@@ -265,7 +266,7 @@ public class MainActivity extends AppActivity implements Controller.ToastMessage
     private void annotate(@NotNull Task task) {
         Intent dialog = new Intent(this, AnnotationDialog.class);
         dialog.putExtra(App.KEY_ACCOUNT, form.getValue(App.KEY_ACCOUNT, String.class));
-        dialog.putExtra(App.KEY_EDIT_UUID, task.uuid.toString());
+        dialog.putExtra(App.KEY_EDIT_UUID, task.uuid);
         startActivityForResult(dialog, App.ANNOTATE_REQUEST);
     }
 
@@ -362,14 +363,15 @@ public class MainActivity extends AppActivity implements Controller.ToastMessage
 
     private void changeStatus(Task task) {
         if (task.status != Status.PENDING) return;
-        doOp(String.format("Task '%s' marked done", task.description), task.uuid.toString(), "done");
+        doOp(String.format("Task '%s' marked done", task.description), task.uuid, "done");
     }
 
     private static class OperationTask extends StaticAsyncTask<MainActivity, String, Void, String> {
-        private String message, uuid, op;
+        private String message, op;
+        private UUID uuid;
         private String[] ops;
 
-        OperationTask(MainActivity activity, final String message, final String uuid, final String op, final String... ops) {
+        OperationTask(MainActivity activity, final String message, final UUID uuid, final String op, final String... ops) {
             super(activity);
             this.message = message;
             this.uuid = uuid;
@@ -405,7 +407,7 @@ public class MainActivity extends AppActivity implements Controller.ToastMessage
         }
     }
 
-    private void doOp(final String message, final String uuid, final String op, final String... ops) {
+    private void doOp(final String message, final UUID uuid, final String op, final String... ops) {
         if (ac == null) return;
 
         new OperationTask(this, message, uuid, op, ops).execute("");
@@ -502,7 +504,7 @@ public class MainActivity extends AppActivity implements Controller.ToastMessage
     private void edit(@NotNull Task task) {
         if (null == ac) return;
         Intent intent = new Intent(this, EditorActivity.class);
-        if (ac.intentForEditor(intent, task.uuid.toString())) { // Valid task
+        if (ac.intentForEditor(intent, task.uuid)) { // Valid task
             startActivityForResult(intent, App.EDIT_REQUEST);
         } else {
             controller.messageShort("Invalid task");

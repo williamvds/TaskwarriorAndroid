@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ProgressBar;
 
+import kvj.taskw.data.UUIDBundleAdapter;
 import org.kvj.bravo7.form.BundleAdapter;
 import org.kvj.bravo7.form.FormController;
 import org.kvj.bravo7.form.impl.ViewFinder;
@@ -21,6 +22,7 @@ import org.kvj.bravo7.util.Tasks;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 import kvj.taskw.App;
 import kvj.taskw.R;
@@ -50,8 +52,9 @@ public class EditorActivity extends AppActivity {
         editor = (Editor) getSupportFragmentManager().findFragmentById(R.id.editor_editor);
         ProgressBar progressBar = findViewById(R.id.progress);
         setSupportActionBar(toolbar);
+        logger.e("OnCreate", savedInstanceState);
         form.add(new TransientAdapter<>(new StringBundleAdapter(), null), App.KEY_ACCOUNT);
-        form.add(new TransientAdapter<>(new StringBundleAdapter(), null), App.KEY_EDIT_UUID);
+        form.add(new TransientAdapter<>(new UUIDBundleAdapter(), null), App.KEY_EDIT_UUID);
         form.add(new TransientAdapter<>(new BundleAdapter<Bundle>() {
             @Override
             public Bundle get(Bundle bundle, String name, Bundle def) {
@@ -235,10 +238,10 @@ public class EditorActivity extends AppActivity {
                 changes.add(String.format("tags:%s", MainListAdapter.join(",", tags)));
             }
         }
-        String uuid = form.getValue(App.KEY_EDIT_UUID);
+        UUID uuid = form.getValue(App.KEY_EDIT_UUID);
         boolean completed = form.getValue(App.KEY_EDIT_STATUS, Integer.class) > 0;
         logger.d("Saving change:", uuid, changes, completed);
-        if (TextUtils.isEmpty(uuid)) { // Add new
+        if (uuid == null) { // Add new
             return completed? ac.taskLog(changes): ac.taskAdd(changes);
         } else {
             return ac.taskModify(uuid, changes);

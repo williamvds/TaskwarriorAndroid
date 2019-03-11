@@ -8,6 +8,7 @@ import android.net.LocalSocket;
 import android.net.Uri;
 import android.text.TextUtils;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.kvj.bravo7.log.Logger;
@@ -67,18 +68,18 @@ public class AccountController {
         return new File(tasksFolder, TASKRC);
     }
 
-    public String taskAnnotate(String uuid, String text) {
+    public String taskAnnotate(@NotNull UUID uuid, String text) {
         StringAggregator err = new StringAggregator();
-        if (!callTask(outConsumer, err, uuid, "annotate", escape(text))) { // Failure
+        if (!callTask(outConsumer, err, uuid.toString(), "annotate", escape(text))) { // Failure
             return err.text();
         }
         scheduleSync(TimerType.AfterChange);
         return null; // Success
     }
 
-    public String taskDenotate(String uuid, String text) {
+    public String taskDenotate(@NotNull UUID uuid, String text) {
         StringAggregator err = new StringAggregator();
-        if (!callTask(outConsumer, err, uuid, "denotate", escape(text))) { // Failure
+        if (!callTask(outConsumer, err, uuid.toString(), "denotate", escape(text))) { // Failure
             return err.text();
         }
         scheduleSync(TimerType.AfterChange);
@@ -903,14 +904,14 @@ public class AccountController {
         return intent;
     }
 
-    public boolean intentForEditor(Intent intent, String uuid) {
+    public boolean intentForEditor(Intent intent, UUID uuid) {
         intent.putExtra(App.KEY_ACCOUNT, id);
         List<String> priorities = taskPriority();
-        if (TextUtils.isEmpty(uuid)) { // Done - new item
+        if (uuid == null) { // Done - new item
             intent.putExtra(App.KEY_EDIT_PRIORITY, priorities.indexOf(""));
             return true;
         }
-        List<Task> tasks = taskList(uuid);
+        List<Task> tasks = taskList(uuid.toString());
         if (tasks.isEmpty()) { // Failed
             return false;
         }
@@ -920,7 +921,7 @@ public class AccountController {
             priorityIndex = priorities.indexOf("");
         }
         intent.putExtra(App.KEY_EDIT_PRIORITY, priorityIndex);
-        intent.putExtra(App.KEY_EDIT_UUID, task.uuid.toString());
+        intent.putExtra(App.KEY_EDIT_UUID, task.uuid);
         intent.putExtra(App.KEY_EDIT_DESCRIPTION, task.description);
         intent.putExtra(App.KEY_EDIT_PROJECT, task.project);
         intent.putExtra(App.KEY_EDIT_TAGS, MainListAdapter.join(" ", task.tags));
@@ -932,36 +933,36 @@ public class AccountController {
         return true;
     }
 
-    public String taskDone(String uuid) {
+    public String taskDone(@NotNull UUID uuid) {
         StringAggregator err = new StringAggregator();
-        if (!callTask(outConsumer, err, uuid, "done")) { // Failure
+        if (!callTask(outConsumer, err, uuid.toString(), "done")) { // Failure
             return err.text();
         }
         scheduleSync(TimerType.AfterChange);
         return null; // Success
     }
 
-    public String taskDelete(String uuid) {
+    public String taskDelete(UUID uuid) {
         StringAggregator err = new StringAggregator();
-        if (!callTask(outConsumer, err, uuid, "delete")) { // Failure
+        if (!callTask(outConsumer, err, uuid.toString(), "delete")) { // Failure
             return err.text();
         }
         scheduleSync(TimerType.AfterChange);
         return null; // Success
     }
 
-    public String taskStart(String uuid) {
+    public String taskStart(UUID uuid) {
         StringAggregator err = new StringAggregator();
-        if (!callTask(outConsumer, err, uuid, "start")) { // Failure
+        if (!callTask(outConsumer, err, uuid.toString(), "start")) { // Failure
             return err.text();
         }
         scheduleSync(TimerType.AfterChange);
         return null; // Success
     }
 
-    public String taskStop(String uuid) {
+    public String taskStop(UUID uuid) {
         StringAggregator err = new StringAggregator();
-        if (!callTask(outConsumer, err, uuid, "stop")) { // Failure
+        if (!callTask(outConsumer, err, uuid.toString(), "stop")) { // Failure
             return err.text();
         }
         scheduleSync(TimerType.AfterChange);
@@ -1001,9 +1002,9 @@ public class AccountController {
         return null; // Success
     }
 
-    public String taskModify(String uuid, List<String> changes) {
+    public String taskModify(@NotNull UUID uuid, List<String> changes) {
         List<String> params = new ArrayList<>();
-        params.add(uuid);
+        params.add(uuid.toString());
         params.add("modify");
         for (String change : changes) { // Copy non-empty
             if (!TextUtils.isEmpty(change)) {

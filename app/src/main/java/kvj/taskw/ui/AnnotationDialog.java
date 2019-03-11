@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 
+import kvj.taskw.data.UUIDBundleAdapter;
 import org.kvj.bravo7.form.FormController;
 import org.kvj.bravo7.form.impl.ViewFinder;
 import org.kvj.bravo7.form.impl.bundle.StringBundleAdapter;
@@ -16,6 +17,8 @@ import kvj.taskw.R;
 import kvj.taskw.data.AccountController;
 import kvj.taskw.data.Controller;
 import kvj.taskw.ui.AppActivity;
+
+import java.util.UUID;
 
 /**
  * Created by kvorobyev on 11/25/15.
@@ -30,7 +33,7 @@ public class AnnotationDialog extends AppActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dialog_add_annotation);
         form.add(new TransientAdapter<>(new StringBundleAdapter(), null), App.KEY_ACCOUNT);
-        form.add(new TransientAdapter<>(new StringBundleAdapter(), null), App.KEY_EDIT_UUID);
+        form.add(new TransientAdapter<>(new UUIDBundleAdapter(), null), App.KEY_EDIT_UUID);
         form.add(new TextViewCharSequenceAdapter(R.id.ann_text, ""), App.KEY_EDIT_TEXT);
         form.load(this, savedInstanceState);
         findViewById(R.id.ann_cancel_btn).setOnClickListener(new View.OnClickListener() {
@@ -58,7 +61,7 @@ public class AnnotationDialog extends AppActivity {
 
             @Override
             protected String doInBackground() {
-                String uuid = form.getValue(App.KEY_EDIT_UUID);
+                UUID uuid = form.getValue(App.KEY_EDIT_UUID);
                 return ac.taskAnnotate(uuid, text);
             }
 
