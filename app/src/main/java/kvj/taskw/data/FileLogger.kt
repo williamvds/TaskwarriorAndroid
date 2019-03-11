@@ -20,7 +20,7 @@ class FileLogger(folder: File) {
     fun file() = file
 
     @Synchronized
-    fun log(vararg params: Any) {
+    fun log(vararg params: Any?) {
         var str = "${timeFormat.format(Date())}:"
         params.forEach {
             str += " "
