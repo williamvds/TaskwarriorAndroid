@@ -55,6 +55,7 @@
     <string name="share_debug_file">Share debug file</string>
 
     <!-- Text editor -->
+    <string name="text_editor_title">Taskwarrior text editor</string>
     <string name="text_editor_hint">Text editor</string>
 
     <!-- Task editor -->

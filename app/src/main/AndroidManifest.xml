@@ -32,7 +32,7 @@
                 android:theme="@style/Theme.App.Light"
                 android:exported="true"
                 android:windowSoftInputMode="adjustResize"
-                android:label="Textwarrior Text editor">
+                android:label="@string/text_editor_title">
             <intent-filter>
                 <action android:name="android.intent.action.EDIT" />
                 <category android:name="android.intent.category.DEFAULT" />
