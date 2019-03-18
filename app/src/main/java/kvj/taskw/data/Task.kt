@@ -1,11 +1,19 @@
 package kvj.taskw.data
 
+import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
+import java.util.UUID
+import java.text.SimpleDateFormat
+
 import org.json.JSONArray
 import org.json.JSONObject
-import java.text.SimpleDateFormat
-import java.util.*
-import kotlin.collections.ArrayList
 
+import android.os.Parcelable
+
+import kotlinx.android.parcel.Parcelize
+
+@Parcelize
 data class Task(
     @JvmField val uuid: UUID,
     @JvmField val id: Int,
@@ -24,7 +32,7 @@ data class Task(
     @JvmField val wait: Date? = null,
     @JvmField val scheduled: Date? = null,
     @JvmField val start: Date? = null
-) {
+) : Parcelable {
     companion object {
         enum class Status {
             PENDING,
@@ -34,7 +42,8 @@ data class Task(
             DELETED,
         }
 
-        data class Annotation(@JvmField val entry: Date, @JvmField val description: String) {
+        @Parcelize
+        data class Annotation(@JvmField val entry: Date, @JvmField val description: String) : Parcelable {
             companion object {
                 fun fromJSON(json: JSONObject) = Annotation(
                     entry = getDate(json.getString("entry"))!!,
