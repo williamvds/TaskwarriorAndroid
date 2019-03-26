@@ -2,4 +2,5 @@
 <resources>
     <dimen name="last_task_margin">80dp</dimen>
     <dimen name="floating_button_margin">16dp</dimen>
+    <dimen name="task_property_icon">24dp</dimen>
 </resources>

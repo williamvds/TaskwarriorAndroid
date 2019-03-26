@@ -27,6 +27,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".ui.TaskActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
         <activity
                 android:name=".ui.TextEditor"
                 android:theme="@style/Theme.App.Light"
@@ -58,6 +66,9 @@
         </activity>
         <activity android:name=".ui.RunActivity">
         </activity>
+
+        <activity android:name=".ui.TagDialog" />
+
         <service
                 android:name=".account.AccountAuthenticator$Service"
                 android:exported="true">

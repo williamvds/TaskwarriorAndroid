@@ -15,6 +15,7 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class Task(
+    @JvmField val account: UUID,
     @JvmField val uuid: UUID,
     @JvmField val id: Int,
     @JvmField val description: String,
@@ -75,7 +76,8 @@ data class Task(
         }
 
         @JvmStatic
-        fun fromJSON(json: JSONObject) = Task(
+        fun fromJSON(json: JSONObject, account: UUID) = Task(
+            account = account,
             uuid = UUID.fromString(json.getString("uuid")),
             id = json.getInt("id"),
             description = json.getString("description"),

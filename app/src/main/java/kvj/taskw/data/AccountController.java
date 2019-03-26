@@ -86,6 +86,24 @@ public class AccountController {
         return null; // Success
     }
 
+    public String taskAddTag(@NotNull UUID uuid, String text) {
+        StringAggregator err = new StringAggregator();
+        if (!callTask(outConsumer, err, uuid.toString(), "modify", "+" + text.replace("\\s+", ""))) { // Failure
+            return err.text();
+        }
+        scheduleSync(TimerType.AfterChange);
+        return null; // Success
+    }
+
+    public String taskRemoveTag(@NotNull UUID uuid, String text) {
+        StringAggregator err = new StringAggregator();
+        if (!callTask(outConsumer, err, uuid.toString(), "modify", "-" + text.replace("\\s+", ""))) { // Failure
+            return err.text();
+        }
+        scheduleSync(TimerType.AfterChange);
+        return null; // Success
+    }
+
     public String taskUndo() {
         StringAggregator err = new StringAggregator();
         if (!callTask(outConsumer, err, "undo")) { // Failure
@@ -883,7 +901,7 @@ public class AccountController {
                 if (!TextUtils.isEmpty(line)) {
                     try {
                         JSONObject json = new JSONObject(line);
-                        result.add(Task.fromJSON(json));
+                        result.add(Task.fromJSON(json, UUID.fromString(id)));
                     } catch (JSONException e) {
                         logger.e(e, "Not JSON object:", line);
                     }
@@ -892,6 +910,10 @@ public class AccountController {
         }, errConsumer, params.toArray(new String[0]));
         logger.d("List for:", query, result.size(), context);
         return result;
+    }
+
+    public Task getTask(@NotNull UUID uuid) {
+        return taskList("uuid:" + uuid).get(0);
     }
 
     public static String escape(String query) {

@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingLeft="16dp"
+        android:paddingTop="16dp"
+        android:paddingRight="16dp"
+        android:paddingBottom="8dp">
+
+        <TextView
+            android:id="@+id/id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:gravity="start"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="?android:attr/textColorSecondary"
+            tools:text="#12" />
+
+        <TextView
+            android:id="@+id/description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="?android:attr/textColorPrimary"
+            tools:text="This is a task description" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/due_group"
+        style="@style/TaskProperty">
+
+        <ImageView
+            style="@style/TaskPropertyIcon"
+            android:src="@drawable/ic_label_due" />
+
+        <TextView
+            android:id="@+id/due"
+            style="@style/TaskPropertyLabel"
+            tools:text="2000-01-01" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/wait_group"
+        style="@style/TaskProperty">
+
+        <ImageView
+            style="@style/TaskPropertyIcon"
+            android:src="@drawable/ic_label_wait" />
+
+        <TextView
+            android:id="@+id/wait"
+            style="@style/TaskPropertyLabel"
+            tools:text="2000-01-01" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/scheduled_group"
+        style="@style/TaskProperty">
+
+        <ImageView
+            style="@style/TaskPropertyIcon"
+            android:src="@drawable/ic_label_scheduled" />
+
+        <TextView
+            android:id="@+id/scheduled"
+            style="@style/TaskPropertyLabel"
+            tools:text="2000-01-01" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/recur_group"
+        style="@style/TaskProperty">
+
+        <ImageView
+            style="@style/TaskPropertyIcon"
+            android:src="@drawable/ic_label_recur" />
+
+        <TextView
+            android:id="@+id/recur"
+            style="@style/TaskPropertyLabel"
+            tools:text="weekly" />
+
+        <TextView
+            android:id="@+id/until"
+            style="@style/TaskPropertyLabel"
+            android:visibility="gone"
+            tools:text="until 2000-01-01" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/project_group"
+        style="@style/TaskProperty"
+        android:clickable="true"
+        android:focusable="true">
+
+        <ImageView
+            style="@style/TaskPropertyIcon"
+            android:src="@drawable/ic_label_project" />
+
+        <TextView
+            android:id="@+id/project"
+            style="@style/TaskPropertyLabel"
+            tools:text="Project" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/tags_group"
+        style="@style/TaskProperty"
+        android:visibility="visible">
+
+        <ImageView
+            style="@style/TaskPropertyIcon"
+            android:src="@drawable/ic_label_tags" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/tags"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:orientation="horizontal"
+            app:layoutManager="android.support.v7.widget.LinearLayoutManager" />
+
+        <ImageButton
+            android:id="@+id/add_tag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/tag_background"
+            android:src="@drawable/ic_action_add" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:orientation="vertical"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="@string/task_annotations"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <TextView
+            android:id="@+id/no_annotations"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/no_annotations" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/annotations"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+            tools:listitem="@layout/item_one_annotation" />
+
+        <Button
+            android:id="@+id/add_annotation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_marginTop="8dp"
+            android:background="@color/colorPrimaryDark"
+            android:drawableStart="@drawable/ic_action_add"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:text="@string/add_annotation" />
+    </LinearLayout>
+</LinearLayout>

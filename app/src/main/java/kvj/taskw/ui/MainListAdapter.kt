@@ -8,6 +8,7 @@ import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 
+import android.content.Intent
 import android.support.v7.widget.CardView
 import android.support.v7.widget.RecyclerView
 import android.text.TextUtils
@@ -27,6 +28,7 @@ import kvj.taskw.data.Task.Companion.Status
 import kotlinx.android.synthetic.main.item_one_card.view.*
 import kotlinx.android.synthetic.main.item_one_task.view.*
 import kotlinx.android.synthetic.main.item_one_annotation.view.*
+import kvj.taskw.App
 
 class MainListAdapter : RecyclerView.Adapter<MainListAdapter.ViewHolder>() {
     var listener: ItemListener? = null
@@ -49,6 +51,14 @@ class MainListAdapter : RecyclerView.Adapter<MainListAdapter.ViewHolder>() {
             val inflater = LayoutInflater.from(context)
 
             task_description.text = task.description
+
+            task_description.setOnClickListener {
+                val intent = Intent(context, TaskActivity::class.java).apply {
+                    putExtra(App.KEY_TASK, task)
+                }
+                context.startActivity(intent)
+            }
+
             task_id.text = task.id.toString()
 
             task_status_btn.setImageResource(getStatusIcon(task.status))
