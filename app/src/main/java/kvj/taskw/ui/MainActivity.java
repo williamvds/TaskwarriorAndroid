@@ -226,7 +226,7 @@ public class MainActivity extends AppActivity implements Controller.ToastMessage
             @Override
             public void onStartStop(@NotNull Task task) {
                 doOp(String.format("Task '%s' %s", task.description, task.start == null ? "started" : "stopped"),
-                        task.uuid, "stop");
+                        task.uuid, task.start == null ? "start" : "stop");
             }
         });
         addButton.setOnClickListener(new View.OnClickListener() {
