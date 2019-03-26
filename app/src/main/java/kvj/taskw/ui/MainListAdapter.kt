@@ -68,6 +68,7 @@ class MainListAdapter : RecyclerView.Adapter<MainListAdapter.ViewHolder>() {
                 Status.PENDING -> View.VISIBLE
                 else -> View.GONE
             }
+            task_start_flag.visibility = if (task.start != null) View.VISIBLE else View.GONE
 
             task_priority.apply {
                 val index = info?.priorities?.indexOf(task.priority) ?: -1
