@@ -128,7 +128,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:orientation="horizontal"
-            app:layoutManager="android.support.v7.widget.LinearLayoutManager" />
+            app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+            tools:listitem="@layout/task_tag" />
 
         <ImageButton
             android:id="@+id/add_tag"
