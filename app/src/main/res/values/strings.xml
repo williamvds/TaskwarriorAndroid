@@ -23,6 +23,11 @@
     <string name="recur_until_format">Recurs %1$s until %2$s</string>
     <string name="tag_format">#%1$s</string>
 
+    <plurals name="annotation_count">
+        <item quantity="one">%d annotation</item>
+        <item quantity="other">%d annotations</item>
+    </plurals>
+
     <string name="tag">Tag</string>
 
     <string name="save">Save</string>

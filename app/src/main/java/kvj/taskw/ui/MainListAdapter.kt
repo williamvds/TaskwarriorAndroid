@@ -6,7 +6,6 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
-import java.util.TimeZone
 
 import android.content.Intent
 import android.support.v7.widget.CardView
@@ -15,8 +14,7 @@ import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
+import kotlinx.android.synthetic.main.icon_label.view.value
 
 import org.kvj.bravo7.log.Logger
 
@@ -27,7 +25,6 @@ import kvj.taskw.data.Task.Companion.Status
 
 import kotlinx.android.synthetic.main.item_one_card.view.*
 import kotlinx.android.synthetic.main.item_one_task.view.*
-import kotlinx.android.synthetic.main.item_one_annotation.view.*
 import kvj.taskw.App
 
 class MainListAdapter : RecyclerView.Adapter<MainListAdapter.ViewHolder>() {
@@ -48,11 +45,9 @@ class MainListAdapter : RecyclerView.Adapter<MainListAdapter.ViewHolder>() {
         val task = data[position]
 
         holder.card.apply {
-            val inflater = LayoutInflater.from(context)
-
             task_description.text = task.description
 
-            task_description.setOnClickListener {
+            body.setOnClickListener {
                 val intent = Intent(context, TaskActivity::class.java).apply {
                     putExtra(App.KEY_TASK, task)
                 }
@@ -64,11 +59,8 @@ class MainListAdapter : RecyclerView.Adapter<MainListAdapter.ViewHolder>() {
             task_status_btn.setImageResource(getStatusIcon(task.status))
             task_start_stop_btn.setImageResource(if (task.start == null) PROGRESS_ICON_START else PROGRESS_ICON_STOP)
 
-            task_start_stop_btn.visibility = when (task.status) {
-                Status.PENDING -> View.VISIBLE
-                else -> View.GONE
-            }
             task_start_flag.visibility = if (task.start != null) View.VISIBLE else View.GONE
+            task_start_stop_btn.visibility = if (task.status == Status.PENDING) View.VISIBLE else View.GONE
 
             task_priority.apply {
                 val index = info?.priorities?.indexOf(task.priority) ?: -1
@@ -81,72 +73,38 @@ class MainListAdapter : RecyclerView.Adapter<MainListAdapter.ViewHolder>() {
                 progress = Math.round((task.urgency ?: 0.0) - minUrgency).toInt()
             }
 
-            task_labels_left.removeAllViews()
-            task_labels_right.removeAllViews()
-
-            fun addLabel(text: CharSequence?, drawable: Int, right: Boolean = false): View? {
-                text ?: return null
-
-                val parent = if (right) task_labels_right else task_labels_left
-
-                inflater.inflate(
-                    if (right) R.layout.item_one_label_right else R.layout.item_one_label_left,
-                    parent
-                )
-
-                return parent.getChildAt(parent.childCount - 1).apply {
-                    findViewById<TextView>(R.id.label_text).text = text
-                    findViewById<ImageView>(R.id.label_icon).setImageResource(drawable)
-                }
+            // Summary
+            mapOf<IconLabel, Any?>(
+                    due to task.due,
+                    project to task.project
+            ).forEach {
+                it.key.visibility = if (it.value != null) View.VISIBLE else View.GONE
             }
 
-            addLabel(formatDate(task.due), R.drawable.ic_label_due)
-            addLabel(formatDate(task.wait), R.drawable.ic_label_wait)
-            addLabel(formatDate(task.scheduled), R.drawable.ic_label_scheduled)
-
-            task.recur?.let {
-                var text = task.recur
-
-                val until = formatDate(task.until)
-                if (!TextUtils.isEmpty(until)) text += " ~ $until"
-
-                addLabel(text, R.drawable.ic_label_recur)
+            due.visibility = if (task.due != null) View.VISIBLE else View.GONE
+            task.due?.let {
+                due.value.text = context.getString(R.string.due_format, MainListAdapter.formatDate(it))
             }
 
-            addLabel(task.project, R.drawable.ic_label_project, true)
-                ?.setOnLongClickListener { listener?.onLabelClick(task, "project", true); true }
+            if (task.annotations.isNotEmpty()) {
+                val count = task.annotations.size
+                annotation_count.value.text = resources.getQuantityString(R.plurals.annotation_count, count, count)
+                annotation_count.visibility = View.VISIBLE
+            } else
+                annotation_count.visibility = View.GONE
 
-            if (task.tags.isNotEmpty()) {
-                addLabel(join(", ", task.tags), R.drawable.ic_label_tags, true)
-            }
-
-            if (task.annotations.isNotEmpty())
-                task_annotations_flag.visibility = View.VISIBLE
-
-            task.annotations.reversed().forEach annotation@{ annotation ->
-                inflater.inflate(R.layout.item_one_annotation, task_annotations)
-
-                // inflate() only returns the inflated view the first time, so get it manually
-                task_annotations.getChildAt(task_annotations.childCount - 1).apply {
-                    task_ann_text.text = annotation.description
-                    task_ann_date.text = formattedFormatDT.format(annotation.entry)
-
-                    task_ann_text.setOnLongClickListener { listener?.onCopyText(task, annotation.description); true }
-                    task_ann_delete_btn.setOnClickListener { listener?.onDenotate(task, annotation) }
-                }
+            task.project?.let {
+                project.value.text = it
             }
 
             task_more_btn.setOnClickListener {
                 val visibility = if (task_bottom_btns.visibility == View.VISIBLE) View.GONE else View.VISIBLE
-                task_id.visibility = visibility
                 task_bottom_btns.visibility = visibility
-                task_annotations.visibility = visibility
             }
 
             task_edit_btn.setOnClickListener { listener?.onEdit(task) }
             task_status_btn.setOnClickListener { listener?.onStatus(task) }
             task_delete_btn.setOnClickListener { listener?.onDelete(task) }
-            task_annotate_btn.setOnClickListener { listener?.onAnnotate(task) }
             task_start_stop_btn.setOnClickListener { listener?.onStartStop(task) }
         }
     }
