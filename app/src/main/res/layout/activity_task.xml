@@ -89,12 +89,6 @@
             android:id="@+id/recur"
             style="@style/TaskPropertyLabel"
             tools:text="weekly" />
-
-        <TextView
-            android:id="@+id/until"
-            style="@style/TaskPropertyLabel"
-            android:visibility="gone"
-            tools:text="until 2000-01-01" />
     </LinearLayout>
 
     <LinearLayout

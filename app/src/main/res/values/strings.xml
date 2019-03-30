@@ -20,7 +20,7 @@
     <string name="wait_format">Waiting until %1$s</string>
     <string name="scheduled_format">Scheduled for %1$s</string>
     <string name="recur_format">Recurs %1$s</string>
-    <string name="until_format">until %1$s</string>
+    <string name="recur_until_format">Recurs %1$s until %2$s</string>
     <string name="tag_format">#%1$s</string>
 
     <string name="tag">Tag</string>

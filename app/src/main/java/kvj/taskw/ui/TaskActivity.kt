@@ -96,12 +96,8 @@ class TaskActivity : AppActivity() {
 
         task.recur?.let {
             recur_group.visibility = View.VISIBLE
-            recur.text = getString(R.string.recur_format, it)
-        }
-
-        task.until?.let {
-            until.visibility = View.VISIBLE
-            until.text = getString(R.string.until_format, MainListAdapter.formatDate(it))
+            recur.text = if (task.until != null) getString(R.string.recur_until_format, it, MainListAdapter.formatDate(task.until))
+                else getString(R.string.recur_format, it)
         }
 
         task.project?.let {
