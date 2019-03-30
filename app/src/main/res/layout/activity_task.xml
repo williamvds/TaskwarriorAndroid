@@ -35,86 +35,34 @@
             tools:text="This is a task description" />
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/due_group"
-        style="@style/TaskProperty">
-
-        <ImageView
-            style="@style/TaskPropertyIcon"
-            android:src="@drawable/ic_label_due" />
-
-        <TextView
-            android:id="@+id/due"
-            style="@style/TaskPropertyLabel"
-            tools:text="2000-01-01" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/wait_group"
-        style="@style/TaskProperty">
-
-        <ImageView
-            style="@style/TaskPropertyIcon"
-            android:src="@drawable/ic_label_wait" />
-
-        <TextView
-            android:id="@+id/wait"
-            style="@style/TaskPropertyLabel"
-            tools:text="2000-01-01" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/scheduled_group"
-        style="@style/TaskProperty">
-
-        <ImageView
-            style="@style/TaskPropertyIcon"
-            android:src="@drawable/ic_label_scheduled" />
-
-        <TextView
-            android:id="@+id/scheduled"
-            style="@style/TaskPropertyLabel"
-            tools:text="2000-01-01" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/recur_group"
-        style="@style/TaskProperty">
-
-        <ImageView
-            style="@style/TaskPropertyIcon"
-            android:src="@drawable/ic_label_recur" />
-
-        <TextView
-            android:id="@+id/recur"
-            style="@style/TaskPropertyLabel"
-            tools:text="weekly" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/project_group"
+    <kvj.taskw.ui.IconLabel
+        android:id="@+id/due"
         style="@style/TaskProperty"
-        android:clickable="true"
-        android:focusable="true">
+        android:src="@drawable/ic_label_due" />
 
-        <ImageView
-            style="@style/TaskPropertyIcon"
-            android:src="@drawable/ic_label_project" />
-
-        <TextView
-            android:id="@+id/project"
-            style="@style/TaskPropertyLabel"
-            tools:text="Project" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/tags_group"
+    <kvj.taskw.ui.IconLabel
+        android:id="@+id/wait"
         style="@style/TaskProperty"
-        android:visibility="visible">
+        android:src="@drawable/ic_label_wait" />
 
-        <ImageView
-            style="@style/TaskPropertyIcon"
-            android:src="@drawable/ic_label_tags" />
+    <kvj.taskw.ui.IconLabel
+        android:id="@+id/scheduled"
+        style="@style/TaskProperty"
+        android:src="@drawable/ic_label_scheduled" />
+
+    <kvj.taskw.ui.IconLabel
+        android:id="@+id/recur"
+        style="@style/TaskProperty"
+        android:src="@drawable/ic_label_recur" />
+
+    <kvj.taskw.ui.IconLabel
+        android:id="@+id/project"
+        style="@style/TaskProperty"
+        android:src="@drawable/ic_label_project" />
+
+    <kvj.taskw.ui.IconLabel
+        style="@style/TaskProperty"
+        android:src="@drawable/ic_label_tags">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/tags"
@@ -132,7 +80,7 @@
             android:layout_gravity="center_vertical"
             android:background="@drawable/tag_background"
             android:src="@drawable/ic_action_add" />
-    </LinearLayout>
+    </kvj.taskw.ui.IconLabel>
 
     <LinearLayout
         android:layout_width="match_parent"

@@ -20,6 +20,7 @@ import kvj.taskw.data.Task.Companion.Annotation
 
 import kotlinx.android.synthetic.main.activity_task.*
 import kotlinx.android.synthetic.main.item_one_annotation.view.*
+import kotlinx.android.synthetic.main.icon_label.view.*
 import kotlinx.android.synthetic.main.task_tag.view.*
 import kvj.taskw.data.AccountController
 
@@ -50,7 +51,7 @@ class TaskActivity : AppActivity() {
     }
 
     private fun setupActions() {
-        project_group.setOnClickListener {
+        project.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java).apply {
                 putExtra(App.KEY_ACCOUNT, task.account.toString())
                 putExtra(App.KEY_QUERY, "pro:\"${task.project}\"")
@@ -79,30 +80,35 @@ class TaskActivity : AppActivity() {
         id.text = getString(R.string.task_id, task.id.toString())
         description.text = task.description
 
+        mapOf<IconLabel, Any?>(
+            due to task.due,
+            wait to task.wait,
+            scheduled to task.scheduled,
+            recur to task.recur,
+            project to task.project
+        ).forEach {
+            it.key.visibility = if (it.value != null) View.VISIBLE else View.GONE
+        }
+
         task.due?.let {
-            due_group.visibility = View.VISIBLE
-            due.text = getString(R.string.due_format, MainListAdapter.formatDate(task.due))
+            due.value.text = getString(R.string.due_format, MainListAdapter.formatDate(it))
         }
 
         task.wait?.let {
-            wait_group.visibility = View.VISIBLE
-            wait.text = getString(R.string.wait_format, MainListAdapter.formatDate(it))
+            wait.value.text = getString(R.string.wait_format, MainListAdapter.formatDate(it))
         }
 
         task.scheduled?.let {
-            scheduled_group.visibility = View.VISIBLE
-            scheduled.text = getString(R.string.scheduled_format, MainListAdapter.formatDate(it))
+            scheduled.value.text = getString(R.string.scheduled_format, MainListAdapter.formatDate(it))
         }
 
         task.recur?.let {
-            recur_group.visibility = View.VISIBLE
-            recur.text = if (task.until != null) getString(R.string.recur_until_format, it, MainListAdapter.formatDate(task.until))
+            recur.value.text = if (task.until != null) getString(R.string.recur_until_format, it, MainListAdapter.formatDate(task.until))
                 else getString(R.string.recur_format, it)
         }
 
         task.project?.let {
-            project_group.visibility = View.VISIBLE
-            project.text = it
+            project.value.text = it
         }
 
         annotations.apply {

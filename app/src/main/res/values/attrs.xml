@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="app">
+        <attr name="textColor" format="reference" />
+    </declare-styleable>
+    <declare-styleable name="IconLabel">
+        <attr name="android:src" format="reference" />
+        <attr name="android:textAppearance" format="reference" />
+        <attr name="android:textColor" format="reference" />
         <attr name="iconColor" format="reference" />
+        <attr name="iconWidth" format="reference" />
     </declare-styleable>
 </resources>
