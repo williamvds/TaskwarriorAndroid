@@ -59,10 +59,15 @@ class MainListAdapter : RecyclerView.Adapter<MainListAdapter.ViewHolder>() {
 
             // Summary
             mapOf<IconLabel, Any?>(
+                    start to task.start,
                     due to task.due,
                     project to task.project
             ).forEach {
                 it.key.visibility = if (it.value != null) View.VISIBLE else View.GONE
+            }
+
+            task.start?.let {
+                start.value.text = context.getString(R.string.started_format, MainListAdapter.formatDate(it))
             }
 
             task.due?.let {

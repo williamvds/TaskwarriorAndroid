@@ -17,6 +17,7 @@
     <string name="task_annotations">Annotations</string>
 
     <string name="due_format">Due %1$s</string>
+    <string name="started_format">Started %1$s</string>
     <string name="wait_format">Waiting until %1$s</string>
     <string name="scheduled_format">Scheduled for %1$s</string>
     <string name="recur_format">Recurs %1$s</string>

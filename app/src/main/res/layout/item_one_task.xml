@@ -43,6 +43,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start"
+                    android:layout_marginBottom="4dp"
                     android:layout_weight="1"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textColor="?android:attr/textColorPrimary"
@@ -60,10 +61,13 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="fill_parent"
-                android:gravity="fill_vertical"
-                android:orientation="horizontal"
-                android:paddingTop="8dp">
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <kvj.taskw.ui.IconLabel
+                    android:id="@+id/start"
+                    style="@style/TaskSummaryProperty"
+                    android:src="@drawable/ic_action_start" />
 
                 <kvj.taskw.ui.IconLabel
                     android:id="@+id/due"
