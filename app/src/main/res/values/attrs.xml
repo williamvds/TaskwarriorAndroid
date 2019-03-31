@@ -5,6 +5,7 @@
     </declare-styleable>
     <declare-styleable name="IconLabel">
         <attr name="android:src" format="reference" />
+        <attr name="android:maxLines" format="reference" />
         <attr name="android:textAppearance" format="reference" />
         <attr name="android:textColor" format="reference" />
         <attr name="iconColor" format="reference" />

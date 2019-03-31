@@ -70,6 +70,7 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginRight">8dp</item>
         <item name="android:layout_gravity">bottom</item>
+        <item name="android:maxLines">1</item>
         <item name="android:textAppearance">?android:attr/textAppearanceSmall</item>
         <item name="android:textColor">?android:attr/textColorSecondary</item>
         <item name="iconWidth">@dimen/task_summary_icon</item>

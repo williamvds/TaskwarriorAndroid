@@ -32,6 +32,7 @@ class IconLabel @JvmOverloads constructor(
             value.apply {
                 setTextAppearance(context, a.getResourceId(R.styleable.IconLabel_android_textAppearance, android.R.attr.textAppearanceMedium))
                 setTextColor(a.getColor(R.styleable.IconLabel_android_textColor, android.R.attr.textColorPrimary))
+                maxLines = a.getInt(R.styleable.IconLabel_android_maxLines, Int.MAX_VALUE)
             }
 
             a.recycle()
