@@ -8,7 +8,6 @@ import java.util.Date
 import java.util.Locale
 
 import android.content.Intent
-import android.support.v7.widget.CardView
 import android.support.v7.widget.RecyclerView
 import android.text.TextUtils
 import android.view.LayoutInflater
@@ -23,7 +22,6 @@ import kvj.taskw.data.ReportInfo
 import kvj.taskw.data.Task
 
 import kotlinx.android.synthetic.main.icon_label.view.*
-import kotlinx.android.synthetic.main.item_one_card.view.*
 import kotlinx.android.synthetic.main.item_one_task.view.*
 
 class MainListAdapter : RecyclerView.Adapter<MainListAdapter.ViewHolder>() {
@@ -36,19 +34,12 @@ class MainListAdapter : RecyclerView.Adapter<MainListAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, type: Int) =
         ViewHolder(LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_one_card, parent, false))
+            .inflate(R.layout.item_one_task, parent, false))
 
     override fun onBindViewHolder(holder: MainListAdapter.ViewHolder, position: Int) {
         val task = data[position]
 
-        holder.card.apply {
-            body.setOnClickListener {
-                val intent = Intent(context, TaskActivity::class.java).apply {
-                    putExtra(App.KEY_TASK, task)
-                }
-                context.startActivity(intent)
-            }
-
+        holder.view.apply {
             task_description.text = task.description
 
             task_id.text = task.id.toString()
@@ -105,8 +96,23 @@ class MainListAdapter : RecyclerView.Adapter<MainListAdapter.ViewHolder>() {
         notifyDataSetChanged()
     }
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val card: CardView = itemView.card_card
+    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
+        val view = itemView
+
+        init {
+            view.setOnClickListener(this)
+        }
+
+        override fun onClick(view: View) {
+            val context = view.context
+            val task = data[adapterPosition]
+
+            val intent = Intent(context, TaskActivity::class.java).apply {
+                putExtra(App.KEY_TASK, task)
+            }
+
+            context.startActivity(intent)
+        }
     }
 
     companion object {
