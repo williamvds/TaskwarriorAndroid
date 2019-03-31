@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 
@@ -17,6 +18,7 @@ import kvj.taskw.R
 import kvj.taskw.data.Controller
 import kvj.taskw.data.Task
 import kvj.taskw.data.Task.Companion.Annotation
+import kvj.taskw.data.Task.Companion.Status
 
 import kotlinx.android.synthetic.main.activity_task.*
 import kotlinx.android.synthetic.main.item_one_annotation.view.*
@@ -26,6 +28,7 @@ import kvj.taskw.data.AccountController
 
 class TaskActivity : AppActivity() {
     lateinit var task: Task
+    var editExpanded = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,8 +47,20 @@ class TaskActivity : AppActivity() {
         populateData()
     }
 
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        if (editExpanded) {
+            hideEditList()
+            return true
+        }
+
+        return super.onTouchEvent(event)
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+
+        hideEditList()
+
         if (resultCode != RESULT_OK) return
         reload()
     }
@@ -59,14 +74,6 @@ class TaskActivity : AppActivity() {
             startActivity(intent)
         }
 
-        add_annotation.setOnClickListener {
-            val intent = Intent(this, AnnotationDialog::class.java).apply {
-                putExtra(App.KEY_ACCOUNT, task.account.toString())
-                putExtra(App.KEY_EDIT_UUID, task.uuid)
-            }
-            startActivityForResult(intent, App.ANNOTATE_REQUEST)
-        }
-
         add_tag.setOnClickListener {
             val intent = Intent(this, TagDialog::class.java).apply {
                 putExtra(App.KEY_ACCOUNT, task.account.toString())
@@ -74,6 +81,64 @@ class TaskActivity : AppActivity() {
             }
             startActivityForResult(intent, App.TAG_REQUEST)
         }
+
+        edit.setOnClickListener {
+            if (editExpanded) {
+                EditTask(this@TaskActivity) {
+                    val intent = Intent(this@TaskActivity, EditorActivity::class.java)
+                    intentForEditor(intent, task.uuid)
+                    startActivityForResult(intent, App.EDIT_REQUEST)
+                }.execute()
+            }
+
+            editExpanded = !editExpanded
+            updateEditList()
+        }
+
+        done.setOnClickListener {
+            EditTask(this@TaskActivity) { activity ->
+                taskDone(task.uuid)
+                activity.finish()
+            }.execute()
+
+            hideEditList()
+        }
+
+        start_stop.setOnClickListener {
+            EditTask(this@TaskActivity) {
+                if (task.start == null) taskStart(task.uuid) else taskStop(task.uuid)
+            }.execute()
+
+            hideEditList()
+        }
+
+        annotate.setOnClickListener {
+            val intent = Intent(this, AnnotationDialog::class.java).apply {
+                putExtra(App.KEY_ACCOUNT, task.account.toString())
+                putExtra(App.KEY_EDIT_UUID, task.uuid)
+            }
+
+            startActivityForResult(intent, App.ANNOTATE_REQUEST)
+            hideEditList()
+        }
+
+        delete.setOnClickListener {
+            EditTask(this@TaskActivity) { activity ->
+                taskDelete(task.uuid)
+                activity.finish()
+            }.execute()
+
+            hideEditList()
+        }
+    }
+
+    private fun updateEditList() {
+        edit_submenu.visibility = if (editExpanded) View.VISIBLE else View.GONE
+    }
+
+    private fun hideEditList() {
+        editExpanded = false
+        updateEditList()
     }
 
     private fun populateData() {
@@ -119,6 +184,9 @@ class TaskActivity : AppActivity() {
         }
 
         tags.adapter = TagsAdapter(this, task.tags)
+
+        (done as View).visibility = if (task.status == Status.PENDING) View.VISIBLE else View.GONE
+        start_stop.setImageResource(if (task.start == null) R.drawable.ic_action_start else R.drawable.ic_action_stop)
     }
 
     private fun reload() {
@@ -205,12 +273,12 @@ class TaskActivity : AppActivity() {
             }
         }
 
-        private class EditTask(activity: TaskActivity, val action: AccountController.() -> Unit)
+        private class EditTask(activity: TaskActivity, val action: AccountController.(TaskActivity) -> Unit)
             : StaticAsyncTask<TaskActivity, Void, Void, Unit>(activity) {
             override fun background(context: TaskActivity, vararg params: Void) {
                 val account = context.task.account
                 val controller = App.controller<Controller>().accountController(account.toString())
-                action(controller)
+                action(controller, context)
             }
 
             override fun finish(context: TaskActivity, result: Unit) {

@@ -59,6 +59,12 @@
         <item name="iconWidth">@dimen/task_property_icon</item>
     </style>
 
+    <style name="TaskEditSubFAB">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">16dp</item>
+    </style>
+
     <style name="TaskSummaryProperty">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
