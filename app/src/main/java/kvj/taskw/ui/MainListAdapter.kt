@@ -14,26 +14,23 @@ import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import kotlinx.android.synthetic.main.icon_label.view.value
 
 import org.kvj.bravo7.log.Logger
 
+import kvj.taskw.App
 import kvj.taskw.R
 import kvj.taskw.data.ReportInfo
 import kvj.taskw.data.Task
-import kvj.taskw.data.Task.Companion.Status
 
+import kotlinx.android.synthetic.main.icon_label.view.*
 import kotlinx.android.synthetic.main.item_one_card.view.*
 import kotlinx.android.synthetic.main.item_one_task.view.*
-import kvj.taskw.App
 
 class MainListAdapter : RecyclerView.Adapter<MainListAdapter.ViewHolder>() {
-    var listener: ItemListener? = null
     private val data = ArrayList<Task>()
     private var info: ReportInfo? = null
     private var minUrgency = 0.0
     private var maxUrgency = 0.0
-
 
     override fun getItemCount() = data.size
 
@@ -110,17 +107,6 @@ class MainListAdapter : RecyclerView.Adapter<MainListAdapter.ViewHolder>() {
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val card: CardView = itemView.card_card
-    }
-
-    interface ItemListener {
-        fun onEdit(task: Task)
-        fun onStatus(task: Task)
-        fun onDelete(task: Task)
-        fun onAnnotate(task: Task)
-        fun onStartStop(task: Task)
-        fun onDenotate(task: Task, annotation: Task.Companion.Annotation)
-        fun onCopyText(task: Task, text: String)
-        fun onLabelClick(task: Task, type: String, longClick: Boolean)
     }
 
     companion object {

@@ -102,11 +102,6 @@ public class MainList extends Fragment {
         new LoadResultsTask(this).execute();
     }
 
-    public void listener(MainListAdapter.ItemListener listener) {
-        adapter.setListener(listener);
-    }
-
-
     public ReportInfo reportInfo() {
         return info;
     }
