@@ -45,8 +45,6 @@ class MainListAdapter : RecyclerView.Adapter<MainListAdapter.ViewHolder>() {
         val task = data[position]
 
         holder.card.apply {
-            task_description.text = task.description
-
             body.setOnClickListener {
                 val intent = Intent(context, TaskActivity::class.java).apply {
                     putExtra(App.KEY_TASK, task)
@@ -54,13 +52,11 @@ class MainListAdapter : RecyclerView.Adapter<MainListAdapter.ViewHolder>() {
                 context.startActivity(intent)
             }
 
+            task_description.text = task.description
+
             task_id.text = task.id.toString()
 
-            task_status_btn.setImageResource(getStatusIcon(task.status))
-            task_start_stop_btn.setImageResource(if (task.start == null) PROGRESS_ICON_START else PROGRESS_ICON_STOP)
-
             task_start_flag.visibility = if (task.start != null) View.VISIBLE else View.GONE
-            task_start_stop_btn.visibility = if (task.status == Status.PENDING) View.VISIBLE else View.GONE
 
             task_priority.apply {
                 val index = info?.priorities?.indexOf(task.priority) ?: -1
@@ -81,7 +77,6 @@ class MainListAdapter : RecyclerView.Adapter<MainListAdapter.ViewHolder>() {
                 it.key.visibility = if (it.value != null) View.VISIBLE else View.GONE
             }
 
-            due.visibility = if (task.due != null) View.VISIBLE else View.GONE
             task.due?.let {
                 due.value.text = context.getString(R.string.due_format, MainListAdapter.formatDate(it))
             }
@@ -96,16 +91,6 @@ class MainListAdapter : RecyclerView.Adapter<MainListAdapter.ViewHolder>() {
             task.project?.let {
                 project.value.text = it
             }
-
-            task_more_btn.setOnClickListener {
-                val visibility = if (task_bottom_btns.visibility == View.VISIBLE) View.GONE else View.VISIBLE
-                task_bottom_btns.visibility = visibility
-            }
-
-            task_edit_btn.setOnClickListener { listener?.onEdit(task) }
-            task_status_btn.setOnClickListener { listener?.onStatus(task) }
-            task_delete_btn.setOnClickListener { listener?.onDelete(task) }
-            task_start_stop_btn.setOnClickListener { listener?.onStartStop(task) }
         }
     }
 
@@ -139,17 +124,6 @@ class MainListAdapter : RecyclerView.Adapter<MainListAdapter.ViewHolder>() {
     }
 
     companion object {
-        private fun getStatusIcon(status: Status) = when (status) {
-            Status.DELETED -> R.drawable.ic_status_deleted
-            Status.COMPLETED -> R.drawable.ic_status_completed
-            Status.WAITING -> R.drawable.ic_status_waiting
-            Status.RECURRING -> R.drawable.ic_status_recurring
-            else -> R.drawable.ic_status_pending
-        }
-
-        private const val PROGRESS_ICON_START = R.drawable.ic_action_start
-        private const val PROGRESS_ICON_STOP = R.drawable.ic_action_stop
-
         private val logger = Logger.forClass(MainListAdapter::class.java)
 
         @JvmField
