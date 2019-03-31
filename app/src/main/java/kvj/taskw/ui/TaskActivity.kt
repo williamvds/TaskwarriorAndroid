@@ -142,7 +142,7 @@ class TaskActivity : AppActivity() {
     }
 
     private fun populateData() {
-        id.text = getString(R.string.task_id, task.id.toString())
+        id.text = getString(R.string.id_format, task.id.toString())
         description.text = task.description
 
         mapOf<IconLabel, Any?>(

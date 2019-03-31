@@ -42,7 +42,7 @@ class MainListAdapter : RecyclerView.Adapter<MainListAdapter.ViewHolder>() {
         holder.view.apply {
             task_description.text = task.description
 
-            task_id.text = task.id.toString()
+            task_id.text = context.getString(R.string.id_format, task.id.toString())
 
             task_start_flag.visibility = if (task.start != null) View.VISIBLE else View.GONE
 

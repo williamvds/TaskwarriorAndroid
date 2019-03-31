@@ -5,7 +5,6 @@
     <string name="pref_account_id">pref_account_id</string>
 
     <!-- General -->
-    <string name="task_id">#%1$s</string>
     <string name="task_description">Description</string>
     <string name="task_project">Project</string>
     <string name="task_tags">Tags</string>
@@ -16,6 +15,7 @@
     <string name="task_until">Until</string>
     <string name="task_annotations">Annotations</string>
 
+    <string name="id_format">#%1$s</string>
     <string name="due_format">Due %1$s</string>
     <string name="started_format">Started %1$s</string>
     <string name="wait_format">Waiting until %1$s</string>
