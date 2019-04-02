@@ -12,7 +12,6 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -136,37 +135,26 @@
         android:id="@+id/done"
         style="@style/TaskEditSubFAB"
         android:src="@drawable/ic_action_done"
-        app:fabSize="mini"
-        app:layout_constraintBottom_toTopOf="@+id/edit"
-        app:layout_constraintEnd_toEndOf="@+id/edit"
-        app:layout_constraintStart_toStartOf="@+id/edit" />
+        app:layout_constraintBottom_toTopOf="@id/edit" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/start_stop"
         style="@style/TaskEditSubFAB"
         android:src="@drawable/ic_action_start"
         app:fabSize="mini"
-        app:layout_constraintBottom_toTopOf="@+id/done"
-        app:layout_constraintEnd_toEndOf="@+id/edit"
-        app:layout_constraintStart_toStartOf="@+id/edit" />
+        app:layout_constraintBottom_toTopOf="@id/done" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/annotate"
         style="@style/TaskEditSubFAB"
         android:src="@drawable/ic_action_annotate"
-        app:fabSize="mini"
-        app:layout_constraintBottom_toTopOf="@+id/start_stop"
-        app:layout_constraintEnd_toEndOf="@+id/edit"
-        app:layout_constraintStart_toStartOf="@+id/edit" />
+        app:layout_constraintBottom_toTopOf="@id/start_stop" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/delete"
         style="@style/TaskEditSubFAB"
         android:src="@drawable/ic_action_delete"
-        app:fabSize="mini"
-        app:layout_constraintBottom_toTopOf="@+id/annotate"
-        app:layout_constraintEnd_toEndOf="@+id/edit"
-        app:layout_constraintStart_toStartOf="@+id/edit" />
+        app:layout_constraintBottom_toTopOf="@id/annotate" />
 
     <android.support.constraint.Group
         android:id="@+id/edit_submenu"
