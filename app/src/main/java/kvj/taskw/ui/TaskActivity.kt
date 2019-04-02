@@ -187,6 +187,7 @@ class TaskActivity : AppActivity() {
 
         (done as View).visibility = if (task.status == Status.PENDING) View.VISIBLE else View.GONE
         start_stop.setImageResource(if (task.start == null) R.drawable.ic_action_start else R.drawable.ic_action_stop)
+        start_stop_label_text.text = getString(if (task.start == null) R.string.action_start else R.string.action_stop)
     }
 
     private fun reload() {

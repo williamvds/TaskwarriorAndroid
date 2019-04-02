@@ -31,6 +31,14 @@
 
     <string name="tag">Tag</string>
 
+    <!-- Actions -->
+    <string name="action_edit">Edit</string>
+    <string name="action_start">Start work</string>
+    <string name="action_stop">Stop work</string>
+    <string name="action_done">Mark as done</string>
+    <string name="action_annotate">Add annotation</string>
+    <string name="action_delete">Delete</string>
+
     <string name="save">Save</string>
     <string name="share">Share</string>
     <string name="reload">Reload</string>

@@ -156,10 +156,66 @@
         android:src="@drawable/ic_action_delete"
         app:layout_constraintBottom_toTopOf="@id/annotate" />
 
+    <android.support.v7.widget.CardView
+        android:id="@+id/edit_label"
+        style="@style/TaskEditCard"
+        app:layout_constraintBottom_toBottomOf="@+id/edit"
+        app:layout_constraintTop_toTopOf="@+id/edit">
+
+        <TextView
+            style="@style/TaskEditLabel"
+            android:text="@string/action_edit" />
+    </android.support.v7.widget.CardView>
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/done_label"
+        style="@style/TaskEditCard"
+        app:layout_constraintBottom_toBottomOf="@+id/done"
+        app:layout_constraintTop_toTopOf="@+id/done">
+
+        <TextView
+            style="@style/TaskEditLabel"
+            android:text="@string/action_done" />
+    </android.support.v7.widget.CardView>
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/start_stop_label"
+        style="@style/TaskEditCard"
+        app:layout_constraintBottom_toBottomOf="@+id/start_stop"
+        app:layout_constraintTop_toTopOf="@+id/start_stop">
+
+        <TextView
+            android:id="@+id/start_stop_label_text"
+            style="@style/TaskEditLabel"
+            android:text="@string/action_start" />
+    </android.support.v7.widget.CardView>
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/annotate_label"
+        style="@style/TaskEditCard"
+        app:layout_constraintBottom_toBottomOf="@+id/annotate"
+        app:layout_constraintTop_toTopOf="@+id/annotate">
+
+        <TextView
+            style="@style/TaskEditLabel"
+            android:text="@string/action_annotate" />
+    </android.support.v7.widget.CardView>
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/delete_label"
+        style="@style/TaskEditCard"
+        app:layout_constraintBottom_toBottomOf="@+id/delete"
+        app:layout_constraintTop_toTopOf="@+id/delete">
+
+        <TextView
+            style="@style/TaskEditLabel"
+            android:text="@string/action_delete" />
+    </android.support.v7.widget.CardView>
+
     <android.support.constraint.Group
         android:id="@+id/edit_submenu"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        app:constraint_referenced_ids="done,start_stop,annotate,delete" />
+        app:constraint_referenced_ids="done,start_stop,annotate,delete,edit_label,done_label,start_stop_label,annotate_label,delete_label" />
 </android.support.constraint.ConstraintLayout>
