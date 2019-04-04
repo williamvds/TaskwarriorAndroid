@@ -5,32 +5,24 @@ import java.util.UUID
 import android.os.Bundle
 import android.text.TextUtils
 
-import org.kvj.bravo7.form.FormController
-import org.kvj.bravo7.form.impl.ViewFinder
-import org.kvj.bravo7.form.impl.bundle.StringBundleAdapter
-import org.kvj.bravo7.form.impl.widget.TextViewCharSequenceAdapter
-import org.kvj.bravo7.form.impl.widget.TransientAdapter
-
 import kvj.taskw.App
 import kvj.taskw.R
 import kvj.taskw.data.Controller
-import kvj.taskw.data.UUIDBundleAdapter
 
 import kotlinx.android.synthetic.main.dialog_add_annotation.*
 
 class AnnotationDialog : AppDialog() {
     internal var controller = App.controller<Controller>()
-
-    internal var form = FormController(ViewFinder.ActivityViewFinder(this))
+    private val form = Form()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.dialog_add_annotation)
 
-        form.add<Any, String>(TransientAdapter(StringBundleAdapter(), null), App.KEY_ACCOUNT)
-        form.add<Any, UUID>(TransientAdapter(UUIDBundleAdapter(), null), App.KEY_EDIT_UUID)
-        form.add<Any, CharSequence>(TextViewCharSequenceAdapter(R.id.ann_text, ""), App.KEY_EDIT_TEXT)
-        form.load(this, savedInstanceState)
+        form.load(intent.extras)
+        if (!form.valid) form.load(savedInstanceState)
+        if (!form.valid) finish()
 
         ann_cancel_btn.setOnClickListener { doFinish() }
         ann_ok_btn.setOnClickListener { doSave() }
@@ -44,7 +36,7 @@ class AnnotationDialog : AppDialog() {
     }
 
     private fun doSave() {
-        val text = form.getValue<String>(App.KEY_EDIT_TEXT)
+        val text = form.annotation
 
         if (TextUtils.isEmpty(text)) { // Nothing to save
             controller.messageShort("Input is mandatory")
@@ -55,7 +47,7 @@ class AnnotationDialog : AppDialog() {
     }
 
     private fun doFinish() {
-        if (form.changed()) { // Ask for confirmation
+        if (!TextUtils.isEmpty(form.annotation)) { // Ask for confirmation
             controller.question(this,
                 "There are some changes, discard?",
                 Runnable { finish() },
@@ -65,14 +57,36 @@ class AnnotationDialog : AppDialog() {
         }
     }
 
+    private inner class Form {
+        var account: String? = null
+        var uuid: UUID? = null
+
+        var annotation: String
+            get() = ann_text.text.toString()
+            set(value) { ann_text.setText(value) }
+        val valid: Boolean
+            get() = account != null && uuid != null
+
+        fun load(data: Bundle?) {
+            data ?: return
+            account    = data.getString(App.KEY_ACCOUNT)
+            uuid       = data.getSerializable(App.KEY_EDIT_UUID) as UUID
+            annotation = data.getString(App.KEY_TEXT_INPUT) ?: ""
+        }
+
+        fun save(data: Bundle) {
+            data.putString(App.KEY_ACCOUNT, account)
+            data.putSerializable(App.KEY_EDIT_UUID, uuid)
+            data.putString(App.KEY_TEXT_INPUT, annotation)
+        }
+    }
+
     companion object {
         private class SaveTask(activity: AnnotationDialog)
             : StaticAsyncTask<AnnotationDialog, String, Void, String?>(activity) {
             override fun background(context: AnnotationDialog, vararg params: String): String? {
-                val account = context.form.getValue(App.KEY_ACCOUNT, String::class.java)
-                val uuid = context.form.getValue<UUID>(App.KEY_EDIT_UUID)
-                val accountController = context.controller.accountController(account)
-                return accountController.taskAnnotate(uuid, params[0])
+                val accountController = context.controller.accountController(context.form.account)
+                return accountController.taskAnnotate(context.form.uuid!!, params[0])
             }
 
             override fun finish(context: AnnotationDialog, result: String?) {
