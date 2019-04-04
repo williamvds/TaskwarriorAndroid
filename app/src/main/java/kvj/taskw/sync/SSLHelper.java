@@ -3,7 +3,6 @@ package kvj.taskw.sync;
 import android.util.Base64;
 
 import org.kvj.bravo7.log.Logger;
-import org.kvj.bravo7.util.Compat;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
@@ -17,12 +16,10 @@ import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
-import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-import java.security.spec.InvalidKeySpecException;
 import java.security.spec.RSAPrivateCrtKeySpec;
 
 import javax.net.ssl.KeyManager;
@@ -162,27 +159,8 @@ public class SSLHelper {
         return orig; // Not finished
     }
 
-    protected static SSLSocketFactory tlsSocket(KeyManager[] kmf, TrustManager[] tmf) throws NoSuchAlgorithmException, KeyStoreException, IOException, CertificateException, InvalidKeySpecException, UnrecoverableKeyException, KeyManagementException, UnrecoverableKeyException {
-
-        SSLContext context = Compat.produceLevelAware(16, new Compat.Producer<SSLContext>() {
-            @Override
-            public SSLContext produce() {
-                try {
-                    return SSLContext.getInstance("TLSv1.2");
-                } catch (NoSuchAlgorithmException e) {
-                    return null;
-                }
-            }
-        }, new Compat.Producer<SSLContext>() {
-            @Override
-            public SSLContext produce() {
-                try {
-                    return SSLContext.getInstance("TLSv1");
-                } catch (NoSuchAlgorithmException e) {
-                    return null;
-                }
-            }
-        });
+    protected static SSLSocketFactory tlsSocket(KeyManager[] kmf, TrustManager[] tmf) throws NoSuchAlgorithmException, KeyManagementException {
+        SSLContext context = SSLContext.getInstance("TLSv1.2");
         context.init(kmf, tmf, null);
         return context.getSocketFactory();
     }
