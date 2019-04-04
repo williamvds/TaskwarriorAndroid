@@ -5,32 +5,23 @@ import java.util.UUID
 import android.os.Bundle
 import android.text.TextUtils
 
-import org.kvj.bravo7.form.FormController
-import org.kvj.bravo7.form.impl.ViewFinder
-import org.kvj.bravo7.form.impl.bundle.StringBundleAdapter
-import org.kvj.bravo7.form.impl.widget.TextViewCharSequenceAdapter
-import org.kvj.bravo7.form.impl.widget.TransientAdapter
-
 import kvj.taskw.App
 import kvj.taskw.R
 import kvj.taskw.data.Controller
-import kvj.taskw.data.UUIDBundleAdapter
 
 import kotlinx.android.synthetic.main.dialog_add_tag.*
 
 class TagDialog : AppDialog() {
     internal var controller = App.controller<Controller>()
-
-    internal var form = FormController(ViewFinder.ActivityViewFinder(this))
+    private val form = Form()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.dialog_add_tag)
 
-        form.add<Any, String>(TransientAdapter(StringBundleAdapter(), null), App.KEY_ACCOUNT)
-        form.add<Any, UUID>(TransientAdapter(UUIDBundleAdapter(), null), App.KEY_EDIT_UUID)
-        form.add<Any, CharSequence>(TextViewCharSequenceAdapter(R.id.text, ""), App.KEY_EDIT_TEXT)
-        form.load(this, savedInstanceState)
+        form.load(intent.extras)
+        if (!form.valid) finish()
+
+        setContentView(R.layout.dialog_add_tag)
 
         cancel.setOnClickListener { finish() }
         ok.setOnClickListener { doSave() }
@@ -38,13 +29,8 @@ class TagDialog : AppDialog() {
 
     override fun onBackPressed() = finish()
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        form.save(outState)
-    }
-
     private fun doSave() {
-        val text = form.getValue<String>(App.KEY_EDIT_TEXT)
+        val text = form.tag
 
         if (TextUtils.isEmpty(text)) { // Nothing to save
             controller.messageShort("Input is mandatory")
@@ -54,15 +40,28 @@ class TagDialog : AppDialog() {
         SaveTask(this).execute(text)
     }
 
+    private inner class Form {
+        var account: String? = null
+        var uuid: UUID? = null
+
+        val tag: String
+            get() = text.text.toString()
+        val valid: Boolean
+            get() = account != null && uuid != null
+
+        fun load(data: Bundle?) {
+            data ?: return
+            account = data.getString(App.KEY_ACCOUNT)
+            uuid    = data.getSerializable(App.KEY_EDIT_UUID) as UUID
+        }
+    }
+
     companion object {
         private class SaveTask(activity: TagDialog)
             : StaticAsyncTask<TagDialog, String, Void, String?>(activity) {
             override fun background(context: TagDialog, vararg params: String): String? {
-                val account = context.form.getValue(App.KEY_ACCOUNT, String::class.java)
-                val uuid = context.form.getValue<UUID>(App.KEY_EDIT_UUID)
-                val accountController = context.controller.accountController(account)
-
-                return accountController.taskAddTag(uuid, params[0])
+                val accountController = context.controller.accountController(context.form.account)
+                return accountController.taskAddTag(context.form.uuid!!, params[0])
             }
 
             override fun finish(context: TagDialog, result: String?) {
