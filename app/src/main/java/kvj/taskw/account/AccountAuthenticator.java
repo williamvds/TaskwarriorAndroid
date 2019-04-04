@@ -25,7 +25,7 @@ import java.util.List;
 import kvj.taskw.App;
 import kvj.taskw.R;
 import kvj.taskw.data.Controller;
-import kvj.taskw.ui.AppActivity;
+import kvj.taskw.ui.AppDialog;
 
 /**
  * Created by vorobyev on 11/17/15.
@@ -99,7 +99,7 @@ public class AccountAuthenticator extends AbstractAccountAuthenticator {
         return null;
     }
 
-    public static class AccountAddDialog extends AppActivity {
+    public static class AccountAddDialog extends AppDialog {
 
         Controller controller = App.controller();
         private View okButton;

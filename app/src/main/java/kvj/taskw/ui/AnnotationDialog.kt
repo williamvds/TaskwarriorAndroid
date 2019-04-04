@@ -18,7 +18,7 @@ import kvj.taskw.data.UUIDBundleAdapter
 
 import kotlinx.android.synthetic.main.dialog_add_annotation.*
 
-class AnnotationDialog : AppActivity() {
+class AnnotationDialog : AppDialog() {
     internal var controller = App.controller<Controller>()
 
     internal var form = FormController(ViewFinder.ActivityViewFinder(this))

@@ -11,7 +11,7 @@ import kvj.taskw.R
  * Base class of all activities of the application
  */
 abstract class AppActivity : AppCompatActivity() {
-    private var activeTheme: String? = null
+    protected var activeTheme: Theme = Companion.Theme.LIGHT
     @JvmField var preferences: SharedPreferences? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -21,12 +21,7 @@ abstract class AppActivity : AppCompatActivity() {
 
         activeTheme = globalTheme
 
-        val resource = when (activeTheme) {
-            "light" -> R.style.Theme_App_Light
-            "dark" -> R.style.Theme_App_Dark
-            else -> R.style.Theme_App_Light
-        }
-        setTheme(resource)
+        setTheme(getThemeResource())
 
         super.onCreate(savedInstanceState)
     }
@@ -34,25 +29,30 @@ abstract class AppActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
-        applyThemeChanges()
+        if (activeTheme != globalTheme) recreate()
     }
 
     private fun loadPreferences() {
         if (preferences == null) return
 
         darkMode    = preferences?.getBoolean(PREF_DARK_MODE, false) ?: false
-        globalTheme = if (darkMode == true) "dark" else "light"
+        globalTheme = if (darkMode == true) Companion.Theme.DARK else Companion.Theme.LIGHT
     }
 
-    private fun applyThemeChanges() {
-        if (activeTheme != globalTheme) recreate()
+    open fun getThemeResource() = when (activeTheme) {
+        Companion.Theme.LIGHT -> R.style.Theme_App_Light
+        Companion.Theme.DARK -> R.style.Theme_App_Dark
     }
 
     companion object {
         const val PREF_DARK_MODE = "DarkMode"
 
-        var darkMode: Boolean? = null
+        enum class Theme {
+            LIGHT,
+            DARK
+        }
 
-        var globalTheme: String? = null
+        var darkMode: Boolean? = null
+        var globalTheme = Theme.LIGHT
     }
 }
