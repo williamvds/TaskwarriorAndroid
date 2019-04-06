@@ -11,7 +11,6 @@ import android.text.TextUtils;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.kvj.bravo7.util.Compat;
 import org.kvj.bravo7.util.DataUtil;
 import org.kvj.bravo7.util.Listeners;
 
@@ -774,17 +773,7 @@ public class AccountController {
                 try {
                     remoteSocket = (SSLSocket) factory.createSocket(host, port);
                     final SSLSocket finalRemoteSocket = remoteSocket;
-                    Compat.levelAware(16, new Runnable() {
-                        @Override
-                        public void run() {
-                            finalRemoteSocket.setEnabledProtocols(new String[]{"TLSv1", "TLSv1.1", "TLSv1.2"});
-                        }
-                    }, new Runnable() {
-                        @Override
-                        public void run() {
-                            finalRemoteSocket.setEnabledProtocols(new String[]{"TLSv1"});
-                        }
-                    });
+                    finalRemoteSocket.setEnabledProtocols(new String[]{"TLSv1", "TLSv1.1", "TLSv1.2"});
                     debug("Ready to establish TLS connection to:", host, port);
                     InputStream localInput = socket.getInputStream();
                     OutputStream localOutput = socket.getOutputStream();
