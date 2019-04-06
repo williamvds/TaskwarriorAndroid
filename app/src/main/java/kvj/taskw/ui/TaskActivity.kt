@@ -82,17 +82,23 @@ class TaskActivity : AppActivity() {
             startActivityForResult(intent, App.TAG_REQUEST)
         }
 
+        fun openEditor() {
+            EditTask(this) {
+                val intent = Intent(this, EditorActivity::class.java)
+                it.intentForEditor(intent, task.uuid)
+                startActivityForResult(intent, App.EDIT_REQUEST)
+            }.execute()
+        }
+
         edit.setOnClickListener {
-            if (editExpanded) {
-                EditTask(this@TaskActivity) {
-                    val intent = Intent(this, EditorActivity::class.java)
-                    it.intentForEditor(intent, task.uuid)
-                    startActivityForResult(intent, App.EDIT_REQUEST)
-                }.execute()
-            }
+            if (editExpanded) openEditor()
 
             editExpanded = !editExpanded
             updateEditList()
+        }
+        edit.setOnLongClickListener {
+            openEditor()
+            true
         }
 
         done.setOnClickListener {
