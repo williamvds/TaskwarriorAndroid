@@ -6,8 +6,9 @@ import android.content.Intent;
 import android.os.PowerManager;
 import android.text.TextUtils;
 
-import org.kvj.bravo7.log.Logger;
 import org.kvj.bravo7.util.Tasks;
+
+import timber.log.Timber;
 
 import kvj.taskw.App;
 
@@ -17,14 +18,13 @@ import kvj.taskw.App;
 public class SyncIntentReceiver extends BroadcastReceiver {
 
     Controller controller = App.controller();
-    Logger logger = Logger.forInstance(this);
 
     @Override
     public void onReceive(final Context context, final Intent intent) {
         // Lock and run sync
         final PowerManager.WakeLock lock = controller.lock();
         lock.acquire(10*60*1000L);
-        logger.d("Sync from receiver", intent.getData());
+        Timber.d("Sync from receiver: %s", intent.getData());
         new Tasks.SimpleTask<String>() {
 
             @Override
@@ -38,7 +38,7 @@ public class SyncIntentReceiver extends BroadcastReceiver {
 
             @Override
             protected void onPostExecute(String s) {
-                logger.d("Sync from receiver done:", s);
+                Timber.d("Sync from receiver done: %s", s);
                 if (null != s) {
                     // Failed
                     controller.messageShort(s);

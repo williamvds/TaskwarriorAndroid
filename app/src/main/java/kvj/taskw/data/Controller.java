@@ -35,6 +35,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import timber.log.Timber;
+
 import kvj.taskw.App;
 import kvj.taskw.R;
 import kvj.taskw.notifications.NotificationChannels;
@@ -88,7 +90,7 @@ public class Controller extends org.kvj.bravo7.ng.Controller {
             messageShort("Shortcut added");
             return true;
         } catch (Exception e) {
-            logger.d(e, "Failed to add shortcut");
+            Timber.d(e, "Failed to add shortcut");
         }
         return false;
     }
@@ -109,7 +111,7 @@ public class Controller extends org.kvj.bravo7.ng.Controller {
             file.setExecutable(true, true);
             return file.getAbsolutePath();
         } catch (IOException e) {
-            logger.e(e, "Error preparing file");
+            Timber.e(e, "Error preparing file");
         }
         return null;
     }
@@ -160,12 +162,12 @@ public class Controller extends org.kvj.bravo7.ng.Controller {
     }
 
     public void addAccount(Activity activity) {
-        logger.d("Will add new account");
+        Timber.d("Will add new account");
         accountManager.addAccount(App.ACCOUNT_TYPE, null, null, null, activity,
           new AccountManagerCallback<Bundle>() {
               @Override
               public void run(AccountManagerFuture<Bundle> future) {
-                  logger.d("Add done");
+                  Timber.d("Add done");
               }
           }, null);
     }
@@ -199,28 +201,28 @@ public class Controller extends org.kvj.bravo7.ng.Controller {
             File folder = new File(context().getExternalFilesDir(null), folderName);
             if (!folder.exists()) {
                 if (!folder.mkdir()) {
-                    logger.w("Failed to create folder", name);
+                    Timber.w("Failed to create folder '%s'", name);
                     return "Storage access error";
                 }
             }
             File taskrc = new File(folder, AccountController.TASKRC);
             if (!taskrc.exists()) {
                 if (!taskrc.createNewFile()) {
-                    logger.w("Failed to create folder", name);
+                    Timber.w("Failed to create folder '%s'", name);
                     return "Storage access error";
                 }
             }
             File dataFolder = new File(folder, AccountController.DATA_FOLDER);
             if (!dataFolder.exists()) {
                 if (!dataFolder.mkdir()) {
-                    logger.w("Failed to create data folder", dataFolder.getAbsolutePath());
+                    Timber.w("Failed to create data folder '%s'", dataFolder.getAbsolutePath());
                     return "Storage access error";
                 }
             }
             Bundle data = new Bundle();
             data.putString(App.ACCOUNT_FOLDER, folderName);
             if (!accountManager.addAccountExplicitly(new Account(name, App.ACCOUNT_TYPE), "", data)) {
-                logger.w("Failed to create account", name);
+                Timber.w("Failed to create account '%s'", name);
                 return "Account create failure";
             }
             return null;

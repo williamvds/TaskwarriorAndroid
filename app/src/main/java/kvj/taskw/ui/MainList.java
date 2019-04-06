@@ -9,9 +9,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import timber.log.Timber;
+
 import org.jetbrains.annotations.NotNull;
 import org.kvj.bravo7.form.FormController;
-import org.kvj.bravo7.log.Logger;
 
 import java.util.List;
 
@@ -29,7 +30,6 @@ public class MainList extends Fragment {
     private RecyclerView list = null;
     private ReportInfo info = null;
     Controller controller = App.controller();
-    Logger logger = Logger.forInstance(this);
     private MainListAdapter adapter = null;
     private String account = null;
 
@@ -58,7 +58,7 @@ public class MainList extends Fragment {
 
         @Override
         protected ReportInfo background(MainList frag, Void... params) {
-            frag.logger.d("Load:", query, report);
+            Timber.d("Load: %s %s", query, report);
             return frag.controller.accountController(frag.account).taskReportInfo(report, query);
         }
 
@@ -84,7 +84,7 @@ public class MainList extends Fragment {
 
         @Override
         protected List<Task> background(MainList frag, Void... params) {
-            frag.logger.d("Exec:", frag.info.query);
+            Timber.d("Exec: %s", frag.info.query);
             List<Task> list = frag.controller.accountController(frag.account).taskList(frag.info.query);
             frag.info.sort(list); // Sorted according to report spec.
             return list;

@@ -4,6 +4,7 @@ package kvj.taskw;
 import android.accounts.Account;
 
 import kvj.taskw.data.Controller;
+import timber.log.Timber;
 
 /**
  * Created by vorobyev on 10/4/15.
@@ -64,6 +65,13 @@ public class App extends org.kvj.bravo7.ng.App<Controller> {
 
     @Override
     protected void init() {
+        Timber.plant(new Timber.DebugTree() {
+            @Override
+            protected String createStackElementTag(StackTraceElement element) {
+                return super.createStackElementTag(element) + ":" + element.getLineNumber();
+            }
+        });
+
         Controller controller = App.controller();
         for (Account acc : controller.accounts()) {
             controller.accountController(controller.accountID(acc)); // This will schedule sync

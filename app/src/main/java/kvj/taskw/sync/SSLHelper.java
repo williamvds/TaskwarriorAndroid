@@ -2,8 +2,6 @@ package kvj.taskw.sync;
 
 import android.util.Base64;
 
-import org.kvj.bravo7.log.Logger;
-
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -30,12 +28,12 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
+import timber.log.Timber;
+
 import kvj.taskw.sync.der.DerInputStream;
 import kvj.taskw.sync.der.DerValue;
 
 public class SSLHelper {
-
-    static Logger logger = Logger.forClass(SSLHelper.class);
 
     protected static byte[] fromStream(InputStream inputStream) throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -101,7 +99,6 @@ public class SSLHelper {
         KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
         Certificate cert = loadCertificate(certStream);
         keyStore.load(null);
-//        logger.d("Keystore:", cert.getPublicKey().getAlgorithm(), cert.getPublicKey().getFormat());
         keyStore.setCertificateEntry("certificate", cert);
         keyStore.setKeyEntry("private-key", loadPrivateKey(keyStream), "".toCharArray(), new Certificate[]{cert});
         kmf.init(keyStore, "".toCharArray());
@@ -126,7 +123,7 @@ public class SSLHelper {
         KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
         keyStore.load(null);
         final X509Certificate cert = loadCertificate(stream);
-        logger.d("Truststore:", cert.getIssuerDN().getName(), cert.getSubjectDN().getName());
+        Timber.d("Truststore: %s %s", cert.getIssuerDN().getName(), cert.getSubjectDN().getName());
         keyStore.setCertificateEntry("ca", cert);
         tmf.init(keyStore);
         TrustManager[] orig = tmf.getTrustManagers();
@@ -144,15 +141,15 @@ public class SSLHelper {
 
             @Override
             public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-                logger.d("Check server cert:", chain.length, authType, trustType);
+                Timber.d("Check server cert: %d %s %s", chain.length, authType, trustType);
                 for (X509Certificate c : chain) { // Check every cert
-                    logger.d("Check certificate:", c.getIssuerDN().getName(), c.getSubjectDN().getName());
+                    Timber.d("Check certificate: %s %s", c.getIssuerDN().getName(), c.getSubjectDN().getName());
                 }
             }
 
             @Override
             public X509Certificate[] getAcceptedIssuers() {
-                logger.d("Issuers:");
+                Timber.d("Issuers:");
                 return new X509Certificate[]{cert};
             }
         };

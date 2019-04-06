@@ -14,7 +14,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 
-import org.kvj.bravo7.log.Logger
+import timber.log.Timber;
 
 import kvj.taskw.App
 import kvj.taskw.R
@@ -121,8 +121,6 @@ class MainListAdapter : RecyclerView.Adapter<MainListAdapter.ViewHolder>() {
     }
 
     companion object {
-        private val logger = Logger.forClass(MainListAdapter::class.java)
-
         @JvmField
         val formattedFormat = SimpleDateFormat("yyyy-MM-dd", Locale.US)
         @JvmField
@@ -149,7 +147,7 @@ class MainListAdapter : RecyclerView.Adapter<MainListAdapter.ViewHolder>() {
                 return formattedISO.format(value)
 
             } catch (e: Exception) {
-                logger.e(e, "Failed to parse Date:", value)
+                Timber.e(e, "Failed to parse date '%s'", value)
             }
 
             return null

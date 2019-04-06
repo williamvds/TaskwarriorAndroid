@@ -11,7 +11,6 @@ import android.text.TextUtils;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.kvj.bravo7.log.Logger;
 import org.kvj.bravo7.util.Compat;
 import org.kvj.bravo7.util.DataUtil;
 import org.kvj.bravo7.util.Listeners;
@@ -41,6 +40,8 @@ import java.util.regex.Pattern;
 
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
+
+import timber.log.Timber;
 
 import kvj.taskw.App;
 import kvj.taskw.sync.SSLHelper;
@@ -185,8 +186,6 @@ public class AccountController {
     private boolean active = false;
     private final String socketName;
 
-    Logger logger = Logger.forInstance(this);
-
     private final LocalServerSocket syncSocket;
     private final File tasksFolder;
 
@@ -194,24 +193,18 @@ public class AccountController {
         public void eat(String line);
     }
 
-    private class ToLogConsumer implements StreamConsumer {
-
-        private final Logger.LoggerLevel level;
-        private final String prefix;
-
-        private ToLogConsumer(Logger.LoggerLevel level, String prefix) {
-            this.level = level;
-            this.prefix = prefix;
-        }
-
+    private StreamConsumer errConsumer = new StreamConsumer() {
         @Override
         public void eat(String line) {
-            logger.log(level, prefix, line);
+            Timber.w("error: %s", line);
         }
-    }
-
-    private StreamConsumer errConsumer = new ToLogConsumer(Logger.LoggerLevel.Warning, "ERR:");
-    private StreamConsumer outConsumer = new ToLogConsumer(Logger.LoggerLevel.Info, "STD:");
+    };
+    private StreamConsumer outConsumer = new StreamConsumer() {
+        @Override
+        public void eat(String line) {
+            Timber.i("output: %s", line);
+        }
+    };
 
     public AccountController(Controller controller, String folder, String name) {
         this.controller = controller;
@@ -318,7 +311,7 @@ public class AccountController {
             try {
                 syncSocket.close();
             } catch (Exception e) {
-                logger.w(e, "Failed to close socket");
+                Timber.w(e, "Failed to close socket");
             }
         }
     }
@@ -338,7 +331,7 @@ public class AccountController {
             try {
                 return Double.parseDouble(config.values().iterator().next());
             } catch (Exception e) {
-                c.logger.w("Failed to parse:", e.getMessage(), config);
+                Timber.w(e, "Failed to parse: %s", config);
             }
             return 0.0;
         }
@@ -346,13 +339,13 @@ public class AccountController {
         @Override
         protected void finish(AccountController c, Double minutes) {
             if (minutes <= 0) {
-                c.logger.d("Ignore schedule - not configured", type);
+                Timber.d("Ignore schedule - not configured: %s", type);
                 return;
             }
             Calendar cal = Calendar.getInstance();
             cal.add(Calendar.SECOND, (int) (minutes * 60.0));
             c.controller.scheduleAlarm(cal.getTime(), c.syncIntent("alarm"));
-            c.logger.d("Scheduled:", cal.getTime(), type);
+            Timber.d("Scheduled: %s, %s", cal.getTime(), type);
         }
     }
 
@@ -370,7 +363,7 @@ public class AccountController {
         StringAggregator out = new StringAggregator();
         boolean result = callTask(out, err, "rc.taskd.socket=" + socketName, "sync");
         debug("Sync result:", result);
-        logger.d("Sync result:", result, "ERR:", err.text(), "OUT:", out.text());
+        Timber.d("Sync result: %s\nERR:\n%sOUT:\n%s", result, err.text(), out.text());
 
         if (result) { // Success
             notifyFactory.create(NotificationChannels.SYNC_SUCCESS);
@@ -474,7 +467,6 @@ public class AccountController {
         if (result.isEmpty()) { // Invalid configuration
             result.put("next", "[next] Fail-safe report");
         }
-//        logger.d("Reports after sort:", keys, values, defaultReport, result);
         return result;
     }
 
@@ -544,7 +536,7 @@ public class AccountController {
             @Override
             void eat(String key, String value) {
                 result.addAll(split2(value, ","));
-                logger.d("Parsed priority:", value, result);
+                Timber.d("Parsed priority: %s %s", value, result);
             }
         }, errConsumer, "show", "uda.priority.values");
         return result;
@@ -556,7 +548,7 @@ public class AccountController {
         try {
             reader = new InputStreamReader(stream, "utf-8");
         } catch (UnsupportedEncodingException e) {
-            logger.e("Error opening stream");
+            Timber.e("Error opening stream");
             return null;
         }
         Thread thread = new Thread() {
@@ -610,7 +602,7 @@ public class AccountController {
                         }
                     }
                 } catch (Exception e) {
-                    logger.e(e, "Error reading stream");
+                    Timber.e(e, "Error reading stream");
                 } finally {
                     try {
                         reader.close();
@@ -664,18 +656,18 @@ public class AccountController {
             pb.environment().put("TASKRC", new File(tasksFolder, TASKRC).getAbsolutePath());
             pb.environment().put("TASKDATA", new File(tasksFolder, DATA_FOLDER).getAbsolutePath());
             Process p = pb.start();
-            logger.d("Calling now:", tasksFolder, args);
+            Timber.d("Calling now: %s %s", tasksFolder, args);
 //            debug("Execute:", args);
             Thread outThread = readStream(p.getInputStream(), p.getOutputStream(), out);
             Thread errThread = readStream(p.getErrorStream(), null, err);
             int exitCode = p.waitFor();
-            logger.d("Exit code:", exitCode, args);
+            Timber.d("Exit code %d: %s", exitCode, args);
 //            debug("Execute result:", exitCode);
             if (null != outThread) outThread.join();
             if (null != errThread) errThread.join();
             return exitCode;
         } catch (Exception e) {
-            logger.e(e, "Failed to execute task");
+            Timber.e(e, "Failed to execute task");
             err.eat(e.getMessage());
             debug("Execute failure:");
             debug(e);
@@ -735,13 +727,13 @@ public class AccountController {
                     new FileInputStream(fileFromConfig(config.get("taskd.certificate"))),
                     new FileInputStream(fileFromConfig(config.get("taskd.key"))), trustType);
             debug("Credentials loaded");
-            logger.d("Connecting to:", this.host, this.port);
+            Timber.d("Connecting to %s:%d", host, port);
             this.socket = new LocalServerSocket(name);
         }
 
         public void accept() throws IOException {
             LocalSocket conn = socket.accept();
-            logger.d("New incoming connection");
+            Timber.d("New incoming connection");
             new LocalSocketThread(conn).start();
         }
 
@@ -761,10 +753,9 @@ public class AccountController {
                 long size = ByteBuffer.wrap(head, 0, 4).order(ByteOrder.BIG_ENDIAN).getInt();
                 long bytes = 4;
                 byte[] buffer = new byte[1024];
-                logger.d("Will transfer:", size);
+                Timber.d("Will transfer %d", size);
                 while (bytes < size) {
                     int recv = from.read(buffer);
-//                logger.d("Actually get:", recv);
                     if (recv == -1) {
                         return bytes;
                     }
@@ -772,7 +763,7 @@ public class AccountController {
                     to.flush();
                     bytes += recv;
                 }
-                logger.d("Transfer done", bytes, size);
+                Timber.d("Received %d bytes of %d", bytes, size);
                 return bytes;
             }
 
@@ -800,13 +791,13 @@ public class AccountController {
                     InputStream remoteInput = remoteSocket.getInputStream();
                     OutputStream remoteOutput = remoteSocket.getOutputStream();
                     debug("Connected to taskd server");
-                    logger.d("Connected, will read first piece", remoteSocket.getSession().getCipherSuite());
+                    Timber.d("Connected, will read first piece: %s", remoteSocket.getSession().getCipherSuite());
                     long bread = recvSend(localInput, remoteOutput);
                     long bwrite = recvSend(remoteInput, localOutput);
-                    logger.d("Sync success");
+                    Timber.d("Sync success");
                     debug("Transfer complete. Bytes sent:", bread, "Bytes received:", bwrite);
                 } catch (Exception e) {
-                    logger.e(e, "Failed to transfer data");
+                    Timber.e(e, "Failed to transfer data");
                     debug("Transfer failure");
                     debug(e);
                 } finally {
@@ -829,11 +820,11 @@ public class AccountController {
     private LocalServerSocket openLocalSocket(String name) {
         try {
             final Map<String, String> config = taskSettings("taskd.ca", "taskd.certificate", "taskd.key", "taskd.server", "taskd.trust");
-            logger.d("Will run with config:", config);
+            Timber.d("Will run with config: %s", config);
             debug("taskd.* config:", config);
             if (!config.containsKey("taskd.server")) {
                 // Not configured
-                logger.d("Sync not configured - give up");
+                Timber.d("Sync not configured - give up");
                 controller.toastMessage("Sync disabled: no taskd.server value", true);
                 debug("taskd.server is empty: sync disabled");
                 return null;
@@ -842,7 +833,7 @@ public class AccountController {
             try {
                 runner = new LocalSocketRunner(name, config);
             } catch (Exception e) {
-                logger.e(e, "Error opening socket");
+                Timber.e(e, "Error opening socket");
                 debug(e);
                 controller.toastMessage("Sync disabled: certificate load failure", true);
                 return null;
@@ -857,7 +848,7 @@ public class AccountController {
                         } catch (IOException e) {
                             debug("Socket accept failed");
                             debug(e);
-                            logger.w(e, "Accept failed");
+                            Timber.w(e, "Accept failed");
                             return;
                         }
                     }
@@ -867,7 +858,7 @@ public class AccountController {
             controller.toastMessage("Sync configured", false);
             return runner.socket; // Close me later on stop
         } catch (Exception e) {
-            logger.e(e, "Failed to open local socket");
+            Timber.e(e, "Failed to open local socket");
         }
         return null;
     }
@@ -879,7 +870,7 @@ public class AccountController {
             query = String.format("(%s)", query);
         }
         String context = taskSetting("context");
-        logger.d("taskList context:", context);
+        Timber.d("taskList context: %s", context);
         debug("List query:", query, "context:", context);
         if (!TextUtils.isEmpty(context)) { // Have context configured
             String cQuery = taskSetting(String.format("context.%s", context));
@@ -887,7 +878,7 @@ public class AccountController {
                 debug("Context query:", cQuery);
                 query = String.format("(%s) %s", cQuery, query);
             }
-            logger.d("Context query:", cQuery, query);
+            Timber.d("Context query: %s, %s", cQuery, query);
         }
         final List<Task> result = new ArrayList<>();
         List<String> params = new ArrayList<>();
@@ -903,12 +894,12 @@ public class AccountController {
                         JSONObject json = new JSONObject(line);
                         result.add(Task.fromJSON(json, UUID.fromString(id)));
                     } catch (JSONException e) {
-                        logger.e(e, "Not JSON object:", line);
+                        Timber.e(e, "Not JSON object: %s", line);
                     }
                 }
             }
         }, errConsumer, params.toArray(new String[0]));
-        logger.d("List for:", query, result.size(), context);
+        Timber.d("List for %s: %d %s", query, result.size(), context);
         return result;
     }
 

@@ -18,6 +18,8 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import timber.log.Timber;
+
 import org.jetbrains.annotations.NotNull;
 import org.kvj.bravo7.form.FormController;
 import org.kvj.bravo7.form.impl.ViewFinder;
@@ -25,7 +27,6 @@ import org.kvj.bravo7.form.impl.bundle.ListStringBundleAdapter;
 import org.kvj.bravo7.form.impl.bundle.StringBundleAdapter;
 import org.kvj.bravo7.form.impl.widget.TextViewCharSequenceAdapter;
 import org.kvj.bravo7.form.impl.widget.TransientAdapter;
-import org.kvj.bravo7.log.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +43,6 @@ public class RunActivity extends AppActivity {
 
     FormController form = new FormController(new ViewFinder.ActivityViewFinder(this));
     Controller controller = App.controller();
-    Logger logger = Logger.forInstance(this);
     private AccountController ac = null;
     private RunAdapter adapter = null;
     private kvj.taskw.data.AccountController.TaskListener progressListener = null;
@@ -96,7 +96,7 @@ public class RunActivity extends AppActivity {
         sendIntent.putExtra(Intent.EXTRA_TEXT, text);
         sendIntent.setType("text/plain");
         if (null != mShareActionProvider) {
-            logger.d("Share provider set");
+            Timber.d("Share provider set");
             mShareActionProvider.setShareIntent(sendIntent);
         }
     }

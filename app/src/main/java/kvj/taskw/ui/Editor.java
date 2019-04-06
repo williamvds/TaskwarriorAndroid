@@ -1,5 +1,9 @@
 package kvj.taskw.ui;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
@@ -15,16 +19,11 @@ import android.widget.Spinner;
 import android.widget.TimePicker;
 
 import org.jetbrains.annotations.NotNull;
+
 import org.kvj.bravo7.form.FormController;
 import org.kvj.bravo7.form.impl.widget.ImageViewIntegerAdapter;
 import org.kvj.bravo7.form.impl.widget.SpinnerIntegerAdapter;
 import org.kvj.bravo7.form.impl.widget.TextViewCharSequenceAdapter;
-import org.kvj.bravo7.log.Logger;
-
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
 
 import kvj.taskw.App;
 import kvj.taskw.R;
@@ -33,8 +32,6 @@ import kvj.taskw.R;
  * Created by kvorobyev on 11/21/15.
  */
 public class Editor extends Fragment {
-
-    Logger logger = Logger.forInstance(this);
     private Spinner prioritiesSpinner = null;
 
     @Override
@@ -100,7 +97,6 @@ public class Editor extends Fragment {
                 DatePickerDialog dialog = new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-//                        logger.d("Date set:", year, monthOfYear, dayOfMonth);
                         c.set(Calendar.DAY_OF_MONTH, 1);
                         c.set(Calendar.YEAR, year);
                         c.set(Calendar.MONTH, monthOfYear);
@@ -123,7 +119,6 @@ public class Editor extends Fragment {
                 TimePickerDialog dialog = new TimePickerDialog(getContext(), new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-//                        logger.d("Date set:", year, monthOfYear, dayOfMonth);
                         c.set(Calendar.HOUR_OF_DAY, hourOfDay);
                         c.set(Calendar.MINUTE, minute);
                         c.set(Calendar.SECOND, 0);

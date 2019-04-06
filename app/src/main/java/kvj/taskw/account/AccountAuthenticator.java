@@ -18,7 +18,8 @@ import org.kvj.bravo7.form.FormController;
 import org.kvj.bravo7.form.impl.ViewFinder;
 import org.kvj.bravo7.form.impl.widget.SpinnerIntegerAdapter;
 import org.kvj.bravo7.form.impl.widget.TextViewCharSequenceAdapter;
-import org.kvj.bravo7.log.Logger;
+
+import timber.log.Timber;
 
 import java.util.List;
 
@@ -33,7 +34,6 @@ import kvj.taskw.ui.AppDialog;
 public class AccountAuthenticator extends AbstractAccountAuthenticator {
 
     private final Context context;
-    Logger logger = Logger.forInstance(this);
 
     public static class Service extends android.app.Service {
 
@@ -51,7 +51,7 @@ public class AccountAuthenticator extends AbstractAccountAuthenticator {
 
     @Override
     public Bundle editProperties(AccountAuthenticatorResponse response, String accountType) {
-        logger.d("editProperties", accountType, response);
+        Timber.d("editProperties %s %s", accountType, response);
         return null;
     }
 
@@ -59,7 +59,7 @@ public class AccountAuthenticator extends AbstractAccountAuthenticator {
     public Bundle addAccount(final AccountAuthenticatorResponse response, String accountType,
                              String authTokenType, String[] requiredFeatures, Bundle options)
         throws NetworkErrorException {
-        logger.d("addAccount", accountType, authTokenType, options, response);
+        Timber.d("addAccount %s %s %s %s", accountType, authTokenType, options, response);
         Bundle bundle = new Bundle();
         bundle.putParcelable(AccountManager.KEY_INTENT, new Intent(context, AccountAddDialog.class));
         return bundle;
@@ -68,14 +68,14 @@ public class AccountAuthenticator extends AbstractAccountAuthenticator {
     @Override
     public Bundle confirmCredentials(AccountAuthenticatorResponse response, Account account,
                                      Bundle options) throws NetworkErrorException {
-        logger.d("confirmCredentials", account, options, response);
+        Timber.d("confirmCredentials %s %s %s", account, options, response);
         return null;
     }
 
     @Override
     public Bundle getAuthToken(AccountAuthenticatorResponse response, Account account,
                                String authTokenType, Bundle options) throws NetworkErrorException {
-        logger.d("getAuthToken", account, authTokenType, options, response);
+        Timber.d("getAuthToken %s %s %s %s", account, authTokenType, options, response);
         return null;
     }
 
@@ -88,14 +88,14 @@ public class AccountAuthenticator extends AbstractAccountAuthenticator {
     public Bundle updateCredentials(AccountAuthenticatorResponse response, Account account,
                                     String authTokenType, Bundle options)
         throws NetworkErrorException {
-        logger.d("updateCredentials", account, authTokenType, options, response);
+        Timber.d("updateCredentials %s %s %s %s", account, authTokenType, options, response);
         return null;
     }
 
     @Override
     public Bundle hasFeatures(AccountAuthenticatorResponse response, Account account,
                               String[] features) throws NetworkErrorException {
-        logger.d("hasFeatures", account, response);
+        Timber.d("hasFeatures %s %s", account, response);
         return null;
     }
 

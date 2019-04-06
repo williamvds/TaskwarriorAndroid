@@ -26,13 +26,14 @@ import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import timber.log.Timber;
+
 import org.jetbrains.annotations.NotNull;
 import org.kvj.bravo7.form.FormController;
 import org.kvj.bravo7.form.impl.ViewFinder;
 import org.kvj.bravo7.form.impl.bundle.StringBundleAdapter;
 import org.kvj.bravo7.form.impl.widget.TextViewCharSequenceAdapter;
 import org.kvj.bravo7.form.impl.widget.TransientAdapter;
-import org.kvj.bravo7.log.Logger;
 import org.kvj.bravo7.util.DataUtil;
 
 import java.util.ArrayList;
@@ -48,9 +49,6 @@ import kvj.taskw.data.Task;
 import kvj.taskw.data.Task.Companion.*;
 
 public class MainActivity extends AppActivity implements Controller.ToastMessageListener {
-
-    Logger logger = Logger.forInstance(this);
-
     Controller controller = App.controller();
     private AccountController ac = null;
     private Toolbar toolbar = null;
@@ -158,7 +156,7 @@ public class MainActivity extends AppActivity implements Controller.ToastMessage
             public void onClick(View v) {
                 String input = form.getValue(App.KEY_QUERY);
 //                form.setValue(App.KEY_QUERY, input);
-                logger.d("Changed filter:", form.getValue(App.KEY_QUERY), input);
+                Timber.d("Changed filter: %s %s", form.getValue(App.KEY_QUERY), input);
                 reload();
             }
         });
@@ -238,7 +236,7 @@ public class MainActivity extends AppActivity implements Controller.ToastMessage
                 try {
                     startActivityForResult(intent, App.SETTINGS_REQUEST);
                 } catch (Exception e) {
-                    logger.e(e, "Failed to edit file");
+                    Timber.e(e, "Failed to edit file");
                     controller.messageLong("No suitable plain text editors found");
                 }
                 break;
@@ -468,7 +466,7 @@ public class MainActivity extends AppActivity implements Controller.ToastMessage
             controller.addAccount(this);
             return false;
         } else {
-            logger.d("Refresh account:", account);
+            Timber.d("Refresh account: %s", account);
             form.setValue(App.KEY_ACCOUNT, account);
             ac = controller.accountController(form); // Should be not null always
         }
@@ -625,7 +623,7 @@ public class MainActivity extends AppActivity implements Controller.ToastMessage
         super.onActivityResult(requestCode, resultCode, data);
         if (null == ac) return;
         if (RESULT_OK == resultCode && App.SETTINGS_REQUEST == requestCode) { // Settings were modified
-            logger.d("Reload after finish:", requestCode, resultCode);
+            Timber.d("Reload after finish: %s %s", requestCode, resultCode);
             refreshAccount(form.getValue(App.KEY_ACCOUNT, String.class));
         }
     }

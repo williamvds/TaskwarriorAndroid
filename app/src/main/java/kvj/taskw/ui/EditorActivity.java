@@ -9,13 +9,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ProgressBar;
 
+import timber.log.Timber;
+
 import kvj.taskw.data.UUIDBundleAdapter;
 import org.kvj.bravo7.form.BundleAdapter;
 import org.kvj.bravo7.form.FormController;
 import org.kvj.bravo7.form.impl.ViewFinder;
 import org.kvj.bravo7.form.impl.bundle.StringBundleAdapter;
 import org.kvj.bravo7.form.impl.widget.TransientAdapter;
-import org.kvj.bravo7.log.Logger;
 import org.kvj.bravo7.util.DataUtil;
 import org.kvj.bravo7.util.Tasks;
 
@@ -28,7 +29,7 @@ import kvj.taskw.App;
 import kvj.taskw.R;
 import kvj.taskw.data.AccountController;
 import kvj.taskw.data.Controller;
-import kvj.taskw.ui.AppActivity;
+import kvj.taskw.data.UUIDBundleAdapter;
 
 /**
  * Created by kvorobyev on 11/21/15.
@@ -39,7 +40,6 @@ public class EditorActivity extends AppActivity {
     private Editor editor = null;
     private FormController form = new FormController(new ViewFinder.ActivityViewFinder(this));
     Controller controller = App.controller();
-    Logger logger = Logger.forInstance(this);
     private List<String> priorities = null;
     private AccountController.TaskListener progressListener = null;
     private AccountController ac = null;
@@ -52,7 +52,6 @@ public class EditorActivity extends AppActivity {
         editor = (Editor) getSupportFragmentManager().findFragmentById(R.id.editor_editor);
         ProgressBar progressBar = findViewById(R.id.progress);
         setSupportActionBar(toolbar);
-        logger.e("OnCreate", savedInstanceState);
         form.add(new TransientAdapter<>(new StringBundleAdapter(), null), App.KEY_ACCOUNT);
         form.add(new TransientAdapter<>(new UUIDBundleAdapter(), null), App.KEY_EDIT_UUID);
         form.add(new TransientAdapter<>(new BundleAdapter<Bundle>() {
@@ -102,7 +101,7 @@ public class EditorActivity extends AppActivity {
                 editor.show(form);
                 Bundle formData = form.getValue(App.KEY_EDIT_DATA);
                 List<String> fields = form.getValue(App.KEY_EDIT_DATA_FIELDS);
-                logger.d("Edit:", formData, fields);
+                Timber.d("Edit: %s %s", formData, fields);
                 if (null != formData && null != fields) { // Have data
                     for (String f : fields) { // $COMMENT
                         form.setValue(f, formData.getString(f));
@@ -178,7 +177,7 @@ public class EditorActivity extends AppActivity {
             super.onBackPressed();
             return;
         }
-        logger.d("Changed:", form.changes());
+        Timber.d("Changed: %s", form.changes());
         controller.question(this, "There are some changes, discard?", new Runnable() {
 
             @Override
@@ -240,7 +239,7 @@ public class EditorActivity extends AppActivity {
         }
         UUID uuid = form.getValue(App.KEY_EDIT_UUID);
         boolean completed = form.getValue(App.KEY_EDIT_STATUS, Integer.class) > 0;
-        logger.d("Saving change:", uuid, changes, completed);
+        Timber.d("Saving change: %s %s %s", uuid, changes, completed);
         if (uuid == null) { // Add new
             return completed? ac.taskLog(changes): ac.taskAdd(changes);
         } else {

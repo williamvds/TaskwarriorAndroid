@@ -7,12 +7,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import timber.log.Timber;
+
 import org.kvj.bravo7.form.FormController;
 import org.kvj.bravo7.form.impl.ViewFinder;
 import org.kvj.bravo7.form.impl.bundle.StringBundleAdapter;
 import org.kvj.bravo7.form.impl.widget.TextViewCharSequenceAdapter;
 import org.kvj.bravo7.form.impl.widget.TransientAdapter;
-import org.kvj.bravo7.log.Logger;
 import org.kvj.bravo7.util.Tasks;
 
 import java.io.InputStream;
@@ -31,7 +32,6 @@ public class TextEditor extends AppActivity {
     FormController form = new FormController(new ViewFinder.ActivityViewFinder(this));
     private Toolbar toolbar = null;
     Controller controller = App.controller();
-    Logger logger = Logger.forInstance(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +42,6 @@ public class TextEditor extends AppActivity {
         form.add(new TextViewCharSequenceAdapter(R.id.text_editor_input, null).trackOrigin(true), App.KEY_TEXT_INPUT);
         form.add(new TransientAdapter<>(new StringBundleAdapter(), null), App.KEY_TEXT_TARGET);
         form.load(this, savedInstanceState);
-//        logger.d("On create:", form.getValue(App.KEY_TEXT_INPUT), form.getValue(App.KEY_TEXT_TARGET));
         if (null == form.getValue(App.KEY_TEXT_TARGET)) {
             // No data - load from Uri
             loadText(getIntent());
@@ -74,7 +73,7 @@ public class TextEditor extends AppActivity {
 
             @Override
             public void finish(String result) {
-                logger.d("File loaded:", uri, result != null);
+                Timber.d("File loaded: %s %s", uri, result != null);
                 if (null == result) {
                     controller.messageLong("File IO error");
                     TextEditor.this.finish();
@@ -99,7 +98,7 @@ public class TextEditor extends AppActivity {
             super.onBackPressed(); // Close
             return;
         }
-        logger.d("Changes:", form.changes());
+        Timber.d("Changes: %s", form.changes());
         controller.question(this, "There are some changes, discard?", new Runnable() {
             @Override
             public void run() {
