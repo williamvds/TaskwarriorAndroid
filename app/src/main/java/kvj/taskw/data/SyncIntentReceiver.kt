@@ -3,42 +3,44 @@ package kvj.taskw.data
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.os.PowerManager
 import android.text.TextUtils
 
 import timber.log.Timber
 
-import org.kvj.bravo7.util.Tasks
-
 import kvj.taskw.App
+import kvj.taskw.ui.StaticAsyncTask
 
 class SyncIntentReceiver : BroadcastReceiver() {
     internal var controller = App.controller<Controller>()
 
     override fun onReceive(context: Context, intent: Intent) {
-        // Lock and run sync
-        val lock = controller.lock()
-        lock.acquire(10 * 60 * 1000L)
-
         Timber.d("Sync from receiver: %s", intent.data)
+        SyncTask(this, controller.lock(), intent).execute()
+    }
 
-        object : Tasks.SimpleTask<String>() {
+    companion object {
+        private class SyncTask(context: SyncIntentReceiver,
+                               val lock: PowerManager.WakeLock,
+                               val intent: Intent)
+            : StaticAsyncTask<SyncIntentReceiver, Void, Void, String?>(context) {
 
-            override fun doInBackground(): String? {
+            override fun SyncIntentReceiver.background(vararg params: Void): String? {
+                lock.acquire(10 * 60 * 1000L)
+
                 var account: String? = intent.getStringExtra(App.KEY_ACCOUNT)
-                if (TextUtils.isEmpty(account)) {
-                    account = controller.currentAccount()
-                }
+                if (TextUtils.isEmpty(account)) account = controller.currentAccount()
+
                 return controller.accountController(account).taskSync()
             }
 
-            override fun onPostExecute(s: String?) {
-                Timber.d("Sync from receiver done: %s", s)
-                if (null != s) {
-                    // Failed
-                    controller.messageShort(s)
-                }
+            override fun SyncIntentReceiver.finish(result: String?) {
+                Timber.d("Sync from receiver done: %s", result)
+
+                if (result != null) controller.messageShort(result)
                 lock.release()
             }
-        }.exec()
+
+        }
     }
 }
