@@ -11,16 +11,16 @@ abstract class StaticAsyncTask<Context, Params, Progress, Result>(activityContex
     protected val context: Context?
         get() = contextReference.get()
 
-    protected abstract fun background(context: Context, vararg params: Params): Result
-    protected abstract fun finish(context: Context, result: Result)
+    protected abstract fun Context.background(vararg params: Params): Result
+    protected abstract fun Context.finish(result: Result)
 
     override fun doInBackground(vararg params: Params): Result? {
         val context = context ?: return null
-        return background(context, *params)
+        return context.background(*params)
     }
 
     override fun onPostExecute(result: Result) {
         val context = context ?: return
-        finish(context, result)
+        context.finish(result)
     }
 }

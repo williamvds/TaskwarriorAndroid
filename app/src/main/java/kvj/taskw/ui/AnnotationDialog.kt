@@ -84,17 +84,17 @@ class AnnotationDialog : AppDialog() {
     companion object {
         private class SaveTask(activity: AnnotationDialog)
             : StaticAsyncTask<AnnotationDialog, String, Void, String?>(activity) {
-            override fun background(context: AnnotationDialog, vararg params: String): String? {
-                val accountController = context.controller.accountController(context.form.account)
-                return accountController.taskAnnotate(context.form.uuid!!, params[0])
+            override fun AnnotationDialog.background(vararg params: String): String? {
+                val accountController = controller.accountController(form.account)
+                return accountController.taskAnnotate(form.uuid!!, params[0])
             }
 
-            override fun finish(context: AnnotationDialog, result: String?) {
+            override fun AnnotationDialog.finish(result: String?) {
                 if (result != null) { // Error
-                    context.controller.messageShort(result)
+                    controller.messageShort(result)
                 } else {
-                    context.setResult(RESULT_OK)
-                    context.finish()
+                    setResult(RESULT_OK)
+                    finish()
                 }
             }
         }

@@ -59,17 +59,17 @@ class TagDialog : AppDialog() {
     companion object {
         private class SaveTask(activity: TagDialog)
             : StaticAsyncTask<TagDialog, String, Void, String?>(activity) {
-            override fun background(context: TagDialog, vararg params: String): String? {
-                val accountController = context.controller.accountController(context.form.account)
-                return accountController.taskAddTag(context.form.uuid!!, params[0])
+            override fun TagDialog.background(vararg params: String): String? {
+                val accountController = controller.accountController(form.account)
+                return accountController.taskAddTag(form.uuid!!, params[0])
             }
 
-            override fun finish(context: TagDialog, result: String?) {
+            override fun TagDialog.finish(result: String?) {
                 if (result != null) { // Error
-                    context.controller.messageShort(result)
+                    controller.messageShort(result)
                 } else {
-                    context.setResult(RESULT_OK)
-                    context.finish()
+                    setResult(RESULT_OK)
+                    finish()
                 }
             }
         }

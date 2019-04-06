@@ -85,8 +85,8 @@ class TaskActivity : AppActivity() {
         edit.setOnClickListener {
             if (editExpanded) {
                 EditTask(this@TaskActivity) {
-                    val intent = Intent(this@TaskActivity, EditorActivity::class.java)
-                    intentForEditor(intent, task.uuid)
+                    val intent = Intent(this, EditorActivity::class.java)
+                    it.intentForEditor(intent, task.uuid)
                     startActivityForResult(intent, App.EDIT_REQUEST)
                 }.execute()
             }
@@ -96,9 +96,9 @@ class TaskActivity : AppActivity() {
         }
 
         done.setOnClickListener {
-            EditTask(this@TaskActivity) { activity ->
-                taskDone(task.uuid)
-                activity.finish()
+            EditTask(this@TaskActivity) {
+                it.taskDone(task.uuid)
+                finish()
             }.execute()
 
             hideEditList()
@@ -106,7 +106,7 @@ class TaskActivity : AppActivity() {
 
         start_stop.setOnClickListener {
             EditTask(this@TaskActivity) {
-                if (task.start == null) taskStart(task.uuid) else taskStop(task.uuid)
+                if (task.start == null) it.taskStart(task.uuid) else it.taskStop(task.uuid)
             }.execute()
 
             hideEditList()
@@ -123,9 +123,9 @@ class TaskActivity : AppActivity() {
         }
 
         delete.setOnClickListener {
-            EditTask(this@TaskActivity) { activity ->
-                taskDelete(task.uuid)
-                activity.finish()
+            EditTask(this@TaskActivity) {
+                it.taskDelete(task.uuid)
+                finish()
             }.execute()
 
             hideEditList()
@@ -199,7 +199,7 @@ class TaskActivity : AppActivity() {
             setMessage(getString(R.string.remove_tag_dialog_format, tag))
             setPositiveButton(android.R.string.yes) { _, _ ->
                 EditTask(this@TaskActivity) {
-                    taskRemoveTag(task.uuid, tag)
+                    it.taskRemoveTag(task.uuid, tag)
                 }.execute()
             }
             setNegativeButton(android.R.string.no, null)
@@ -223,7 +223,7 @@ class TaskActivity : AppActivity() {
                 task_ann_date.text = MainListAdapter.formatDate(annotation.entry)
                 task_ann_delete_btn.setOnClickListener {
                     EditTask(activity) {
-                        taskDenotate(activity.task.uuid, annotation.description)
+                        it.taskDenotate(activity.task.uuid, annotation.description)
                     }.execute()
                 }
             }
@@ -260,30 +260,28 @@ class TaskActivity : AppActivity() {
     companion object {
         private class ReloadTask(activity: TaskActivity)
             : StaticAsyncTask<TaskActivity, Void, Void, Task>(activity) {
-            override fun background(context: TaskActivity, vararg params: Void): Task {
-                val account = context.task.account
+            override fun TaskActivity.background(vararg params: Void): Task {
+                val account = task.account
                 val controller = App.controller<Controller>().accountController(account.toString())
-                return controller.getTask(context.task.uuid)
+                return controller.getTask(task.uuid)
             }
 
-            override fun finish(context: TaskActivity, result: Task) {
-                context.apply {
-                    task = result
-                    populateData()
-                }
+            override fun TaskActivity.finish(result: Task) {
+                task = result
+                populateData()
             }
         }
 
-        private class EditTask(activity: TaskActivity, val action: AccountController.(TaskActivity) -> Unit)
+        private class EditTask(activity: TaskActivity, val action: TaskActivity.(AccountController) -> Unit)
             : StaticAsyncTask<TaskActivity, Void, Void, Unit>(activity) {
-            override fun background(context: TaskActivity, vararg params: Void) {
-                val account = context.task.account
+            override fun TaskActivity.background(vararg params: Void) {
+                val account = task.account
                 val controller = App.controller<Controller>().accountController(account.toString())
-                action(controller, context)
+                action(controller)
             }
 
-            override fun finish(context: TaskActivity, result: Unit) {
-                context.reload()
+            override fun TaskActivity.finish(result: Unit) {
+                reload()
             }
         }
     }
