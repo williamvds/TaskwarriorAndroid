@@ -98,6 +98,7 @@
     <!-- New account dialog -->
     <string name="account_name_hint">Name</string>
     <string name="data_folder">Folder</string>
+    <string name="data_new_folder">Create new</string>
 
     <!-- Annotation dialog -->
     <string name="annotation">Annotation</string>

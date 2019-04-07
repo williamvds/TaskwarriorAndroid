@@ -52,10 +52,8 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".account.AccountAuthenticator$AccountAddDialog"
-            android:excludeFromRecents="true">
-
-        </activity>
+            android:name=".ui.AccountAddDialog"
+            android:excludeFromRecents="true" />
         <activity android:name=".ui.AnnotationDialog">
         </activity>
         <activity android:name=".ui.EditorActivity">
