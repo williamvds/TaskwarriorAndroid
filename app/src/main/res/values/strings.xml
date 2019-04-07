@@ -88,6 +88,8 @@
 
     <!-- Task editor -->
     <string name="add_another">Add another</string>
+    <string name="edit_task_success">Task edited</string>
+    <string name="add_task_success">Task added</string>
 
     <!-- Custom command dialog -->
     <string name="command_prompt_hint">Arguments</string>
