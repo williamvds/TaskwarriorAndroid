@@ -119,12 +119,11 @@ class TaskActivity : AppActivity() {
         }
 
         annotate.setOnClickListener {
-            val intent = Intent(this, AnnotationDialog::class.java).apply {
-                putExtra(App.KEY_ACCOUNT, task.account.toString())
-                putExtra(App.KEY_EDIT_UUID, task.uuid)
-            }
+            AnnotationDialog.start(this, AnnotationDialog.Form(
+                task.account.toString(),
+                task.uuid
+            ))
 
-            startActivityForResult(intent, App.ANNOTATE_REQUEST)
             hideEditList()
         }
 

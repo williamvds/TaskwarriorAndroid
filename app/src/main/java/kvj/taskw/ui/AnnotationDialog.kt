@@ -1,28 +1,31 @@
 package kvj.taskw.ui
 
+import android.app.Activity
+import android.content.Intent
 import java.util.UUID
 
 import android.os.Bundle
+import android.os.Parcelable
 import android.text.TextUtils
 
 import kvj.taskw.App
 import kvj.taskw.R
 import kvj.taskw.data.Controller
 
+import kotlinx.android.parcel.Parcelize
 import kotlinx.android.synthetic.main.dialog_add_annotation.*
 
 class AnnotationDialog : AppDialog() {
     internal var controller = App.controller<Controller>()
-    private val form = Form()
+    private lateinit var form: Form
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.dialog_add_annotation)
 
-        form.load(intent.extras)
-        if (!form.valid) form.load(savedInstanceState)
-        if (!form.valid) finish()
+        if (!loadForm(intent.extras))
+            loadForm(savedInstanceState)
 
         ann_cancel_btn.setOnClickListener { doFinish() }
         ann_ok_btn.setOnClickListener { doSave() }
@@ -32,10 +35,11 @@ class AnnotationDialog : AppDialog() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        form.save(outState)
+        saveForm(outState)
     }
 
     private fun doSave() {
+        applyToForm()
         val text = form.annotation
 
         if (TextUtils.isEmpty(text)) { // Nothing to save
@@ -47,6 +51,8 @@ class AnnotationDialog : AppDialog() {
     }
 
     private fun doFinish() {
+        applyToForm()
+
         if (!TextUtils.isEmpty(form.annotation)) { // Ask for confirmation
             controller.question(this,
                 "There are some changes, discard?",
@@ -57,31 +63,41 @@ class AnnotationDialog : AppDialog() {
         }
     }
 
-    private inner class Form {
-        var account: String? = null
-        var uuid: UUID? = null
+    private fun loadForm(data: Bundle?): Boolean {
+        val stored = data?.getParcelable<Form?>(App.KEY_EDIT_DATA)
+        stored?.let { form = it }
 
-        var annotation: String
-            get() = ann_text.text.toString()
-            set(value) { ann_text.setText(value) }
-        val valid: Boolean
-            get() = account != null && uuid != null
+        ann_text.setText(form.annotation)
 
-        fun load(data: Bundle?) {
-            data ?: return
-            account    = data.getString(App.KEY_ACCOUNT)
-            uuid       = data.getSerializable(App.KEY_EDIT_UUID) as UUID
-            annotation = data.getString(App.KEY_TEXT_INPUT) ?: ""
-        }
-
-        fun save(data: Bundle) {
-            data.putString(App.KEY_ACCOUNT, account)
-            data.putSerializable(App.KEY_EDIT_UUID, uuid)
-            data.putString(App.KEY_TEXT_INPUT, annotation)
-        }
+        return stored != null
     }
 
+    private fun applyToForm() {
+        form.annotation = ann_text.text.toString()
+    }
+
+    private fun saveForm(data: Bundle) {
+        applyToForm()
+        data.putParcelable(App.KEY_EDIT_DATA, form)
+    }
+
+    @Parcelize
+    data class Form @JvmOverloads constructor(
+            val account: String,
+            val uuid: UUID,
+            var annotation: String? = null
+    ) : Parcelable
+
     companion object {
+        @JvmStatic
+        fun start(activity: Activity, form: Form) {
+            val intent = Intent(activity, AnnotationDialog::class.java).apply {
+                putExtra(App.KEY_EDIT_DATA, form)
+            }
+
+            activity.startActivityForResult(intent, App.ANNOTATE_REQUEST)
+        }
+
         private class SaveTask(activity: AnnotationDialog)
             : StaticAsyncTask<AnnotationDialog, String, Void, String?>(activity) {
             override fun AnnotationDialog.background(vararg params: String): String? {

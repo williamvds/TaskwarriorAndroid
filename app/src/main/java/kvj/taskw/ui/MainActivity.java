@@ -174,10 +174,10 @@ public class MainActivity extends AppActivity implements Controller.ToastMessage
     }
 
     private void annotate(@NotNull Task task) {
-        Intent dialog = new Intent(this, AnnotationDialog.class);
-        dialog.putExtra(App.KEY_ACCOUNT, form.getValue(App.KEY_ACCOUNT, String.class));
-        dialog.putExtra(App.KEY_EDIT_UUID, task.uuid);
-        startActivityForResult(dialog, App.ANNOTATE_REQUEST);
+        AnnotationDialog.start(this, new AnnotationDialog.Form(
+            form.getValue(App.KEY_ACCOUNT, String.class),
+            task.uuid
+        ));
     }
 
     private void showAccountMenu(View btn) {
