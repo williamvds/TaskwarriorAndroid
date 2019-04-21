@@ -29,6 +29,9 @@ abstract class AppForm<T: FormData>: AppActivity() {
         saveToBundle(outState)
     }
 
+    protected val initialized: Boolean
+        get() = ::data.isInitialized
+
     private fun loadFromBundle(bundle: Bundle?): Boolean {
         val stored = bundle?.getParcelable<T?>(App.KEY_EDIT_DATA)
 
