@@ -11,16 +11,15 @@ import kvj.taskw.R
  * Base class of all activities of the application
  */
 abstract class AppActivity : AppCompatActivity() {
-    protected var activeTheme: Theme = Companion.Theme.LIGHT
+    open val style = Style.NORMAL
+    private var activeTheme: Theme = Theme.LIGHT
     @JvmField var preferences: SharedPreferences? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         preferences = PreferenceManager.getDefaultSharedPreferences(this)
-
         loadPreferences()
 
         activeTheme = globalTheme
-
         setTheme(getThemeResource())
 
         super.onCreate(savedInstanceState)
@@ -39,9 +38,15 @@ abstract class AppActivity : AppCompatActivity() {
         globalTheme = if (darkMode == true) Companion.Theme.DARK else Companion.Theme.LIGHT
     }
 
-    open fun getThemeResource() = when (activeTheme) {
-        Companion.Theme.LIGHT -> R.style.Theme_App_Light
-        Companion.Theme.DARK -> R.style.Theme_App_Dark
+    open fun getThemeResource() = when (style) {
+        Style.NORMAL -> when (activeTheme) {
+            Companion.Theme.LIGHT -> R.style.Theme_App_Light
+            Companion.Theme.DARK -> R.style.Theme_App_Dark
+        }
+        Style.DIALOG -> when (activeTheme) {
+            Companion.Theme.LIGHT -> R.style.Theme_App_Light_Dialog
+            Companion.Theme.DARK -> R.style.Theme_App_Dark_Dialog
+        }
     }
 
     companion object {
@@ -49,7 +54,12 @@ abstract class AppActivity : AppCompatActivity() {
 
         enum class Theme {
             LIGHT,
-            DARK
+            DARK,
+        }
+
+        enum class Style {
+            NORMAL,
+            DIALOG,
         }
 
         var darkMode: Boolean? = null

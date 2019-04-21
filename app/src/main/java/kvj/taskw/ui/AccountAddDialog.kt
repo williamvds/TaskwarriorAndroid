@@ -8,10 +8,13 @@ import android.widget.ArrayAdapter
 import kvj.taskw.App
 import kvj.taskw.R
 import kvj.taskw.data.Controller
+import kvj.taskw.ui.AppActivity.Companion.Style
 
 import kotlinx.android.synthetic.main.dialog_add_account.*
 
-class AccountAddDialog : AppDialog() {
+class AccountAddDialog : AppActivity() {
+    override val style = Style.DIALOG
+
     private var controller = App.controller<Controller>()
     private var response: AccountAuthenticatorResponse? = null
     private var result = Bundle()

@@ -8,10 +8,13 @@ import android.text.TextUtils
 import kvj.taskw.App
 import kvj.taskw.R
 import kvj.taskw.data.Controller
+import kvj.taskw.ui.AppActivity.Companion.Style
 
 import kotlinx.android.synthetic.main.dialog_add_tag.*
 
-class TagDialog : AppDialog() {
+class TagDialog : AppActivity() {
+    override val style = Style.DIALOG
+
     internal var controller = App.controller<Controller>()
     private val form = Form()
 
