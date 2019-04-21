@@ -2,69 +2,81 @@ package kvj.taskw.ui
 
 import java.util.UUID
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
-import android.text.TextUtils
 
 import kvj.taskw.App
 import kvj.taskw.R
-import kvj.taskw.data.Controller
 import kvj.taskw.ui.AppActivity.Companion.Style
 
+import kotlinx.android.parcel.Parcelize
 import kotlinx.android.synthetic.main.dialog_add_tag.*
 
-class TagDialog : AppActivity() {
+class TagDialog : AppForm<TagDialog.Form>() {
     override val style = Style.DIALOG
-
-    internal var controller = App.controller<Controller>()
-    private val form = Form()
+    override val layout = R.layout.dialog_add_tag
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        form.load(intent.extras)
-        if (!form.valid) finish()
-
-        setContentView(R.layout.dialog_add_tag)
-
-        cancel.setOnClickListener { finish() }
-        ok.setOnClickListener { doSave() }
+        cancel.setOnClickListener { cancel() }
+        ok.setOnClickListener { submit() }
     }
 
-    override fun onBackPressed() = finish()
+    override fun submit() {
+        super.submit()
 
-    private fun doSave() {
-        val text = form.tag
+        if (validate())
+            SaveTask(this).execute(data.tag)
+    }
 
-        if (TextUtils.isEmpty(text)) { // Nothing to save
-            controller.messageShort("Input is mandatory")
-            return
+    override fun loadFromForm() {
+        text.setText(data.tag)
+    }
+
+    override fun saveToForm() {
+        data.tag = text.text.toString()
+    }
+
+    override fun hasChanges() = !data.tag.isNullOrBlank()
+
+    override fun validate(): Boolean {
+        val tag = data.tag
+        if (tag.isNullOrBlank()) {
+            controller.messageShort(getString(R.string.error_no_input))
+            return false
+        }
+        else if (tag.contains("\\s".toRegex())) {
+            controller.messageShort(getString(R.string.error_tag_whitespace))
+            return false
         }
 
-        SaveTask(this).execute(text)
+        return true
     }
 
-    private inner class Form {
-        var account: String? = null
-        var uuid: UUID? = null
-
-        val tag: String
-            get() = text.text.toString()
-        val valid: Boolean
-            get() = account != null && uuid != null
-
-        fun load(data: Bundle?) {
-            data ?: return
-            account = data.getString(App.KEY_ACCOUNT)
-            uuid    = data.getSerializable(App.KEY_EDIT_UUID) as UUID
-        }
-    }
+    @Parcelize
+    data class Form @JvmOverloads constructor(
+            val account: String,
+            val uuid: UUID,
+            var tag: String? = null
+    ) : FormData
 
     companion object {
+        @JvmStatic
+        fun start(activity: Activity, data: Form) {
+            val intent = Intent(activity, TagDialog::class.java).apply {
+                putExtra(App.KEY_EDIT_DATA, data)
+            }
+
+            activity.startActivityForResult(intent, App.TAG_REQUEST)
+        }
+
         private class SaveTask(activity: TagDialog)
             : StaticAsyncTask<TagDialog, String, Void, String?>(activity) {
             override fun TagDialog.background(vararg params: String): String? {
-                val accountController = controller.accountController(form.account)
-                return accountController.taskAddTag(form.uuid!!, params[0])
+                val accountController = controller.accountController(data.account)
+                return accountController.taskAddTag(data.uuid, params[0])
             }
 
             override fun TagDialog.finish(result: String?) {

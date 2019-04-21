@@ -75,11 +75,10 @@ class TaskActivity : AppActivity() {
         }
 
         add_tag.setOnClickListener {
-            val intent = Intent(this, TagDialog::class.java).apply {
-                putExtra(App.KEY_ACCOUNT, task.account.toString())
-                putExtra(App.KEY_EDIT_UUID, task.uuid)
-            }
-            startActivityForResult(intent, App.TAG_REQUEST)
+            TagDialog.start(this, TagDialog.Form(
+                task.account.toString(),
+                task.uuid
+            ))
         }
 
         fun openEditor() {

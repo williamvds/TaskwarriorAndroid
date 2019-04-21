@@ -93,6 +93,7 @@
 
     <!-- Form -->
     <string name="form_discard_confirm">There are some changes, discard them?</string>
+    <string name="error_no_input">Input is mandatory</string>
 
     <!-- Custom command dialog -->
     <string name="command_prompt_hint">Arguments</string>
@@ -107,4 +108,7 @@
     <string name="annotation">Annotation</string>
     <string name="add_annotation">Annotate</string>
     <string name="no_annotations">No annotations</string>
+
+    <!-- Tag dialog -->
+    <string name="error_tag_whitespace">Tags must not contian whitespace</string>
 </resources>
