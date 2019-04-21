@@ -1,12 +1,10 @@
 package kvj.taskw.ui
 
-import android.app.Activity
-import android.content.Intent
 import java.util.UUID
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
-import android.os.Parcelable
-import android.text.TextUtils
 
 import kvj.taskw.App
 import kvj.taskw.R
@@ -15,86 +13,44 @@ import kvj.taskw.ui.AppActivity.Companion.Style
 import kotlinx.android.parcel.Parcelize
 import kotlinx.android.synthetic.main.dialog_add_annotation.*
 
-class AnnotationDialog : AppDialog() {
+class AnnotationDialog : AppForm<AnnotationDialog.Form>() {
     override val style = Style.DIALOG
-
-    internal var controller = App.controller<Controller>()
-    private lateinit var form: Form
+    override val layout = R.layout.dialog_add_annotation
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContentView(R.layout.dialog_add_annotation)
-
-        if (!loadForm(intent.extras))
-            loadForm(savedInstanceState)
-
-        ann_cancel_btn.setOnClickListener { doFinish() }
-        ann_ok_btn.setOnClickListener { doSave() }
+        ann_cancel_btn.setOnClickListener { cancel() }
+        ann_ok_btn.setOnClickListener { submit() }
     }
 
-    override fun onBackPressed() = doFinish()
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        saveForm(outState)
+    override fun submit() {
+        super.submit()
+        SaveTask(this).execute(data.annotation)
     }
 
-    private fun doSave() {
-        applyToForm()
-        val text = form.annotation
-
-        if (TextUtils.isEmpty(text)) { // Nothing to save
-            controller.messageShort("Input is mandatory")
-            return
-        }
-
-        SaveTask(this).execute(text)
+    override fun loadFromForm() {
+        ann_text.setText(data.annotation)
     }
 
-    private fun doFinish() {
-        applyToForm()
-
-        if (!TextUtils.isEmpty(form.annotation)) { // Ask for confirmation
-            controller.question(this,
-                "There are some changes, discard?",
-                Runnable { finish() },
-                null)
-        } else {
-            finish()
-        }
+    override fun saveToForm() {
+        data.annotation = ann_text.text.toString()
     }
 
-    private fun loadForm(data: Bundle?): Boolean {
-        val stored = data?.getParcelable<Form?>(App.KEY_EDIT_DATA)
-        stored?.let { form = it }
-
-        ann_text.setText(form.annotation)
-
-        return stored != null
-    }
-
-    private fun applyToForm() {
-        form.annotation = ann_text.text.toString()
-    }
-
-    private fun saveForm(data: Bundle) {
-        applyToForm()
-        data.putParcelable(App.KEY_EDIT_DATA, form)
-    }
+    override fun hasChanges() = !data.annotation.isNullOrBlank()
 
     @Parcelize
     data class Form @JvmOverloads constructor(
-            val account: String,
-            val uuid: UUID,
-            var annotation: String? = null
-    ) : Parcelable
+        val account: String,
+        val uuid: UUID,
+        var annotation: String? = null
+    ) : FormData
 
     companion object {
         @JvmStatic
-        fun start(activity: Activity, form: Form) {
+        fun start(activity: Activity, data: Form) {
             val intent = Intent(activity, AnnotationDialog::class.java).apply {
-                putExtra(App.KEY_EDIT_DATA, form)
+                putExtra(App.KEY_EDIT_DATA, data)
             }
 
             activity.startActivityForResult(intent, App.ANNOTATE_REQUEST)
@@ -103,8 +59,8 @@ class AnnotationDialog : AppDialog() {
         private class SaveTask(activity: AnnotationDialog)
             : StaticAsyncTask<AnnotationDialog, String, Void, String?>(activity) {
             override fun AnnotationDialog.background(vararg params: String): String? {
-                val accountController = controller.accountController(form.account)
-                return accountController.taskAnnotate(form.uuid!!, params[0])
+                val accountController = controller.accountController(data.account)
+                return accountController.taskAnnotate(data.uuid, params[0])
             }
 
             override fun AnnotationDialog.finish(result: String?) {

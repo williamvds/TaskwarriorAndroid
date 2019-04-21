@@ -91,6 +91,9 @@
     <string name="edit_task_success">Task edited</string>
     <string name="add_task_success">Task added</string>
 
+    <!-- Form -->
+    <string name="form_discard_confirm">There are some changes, discard them?</string>
+
     <!-- Custom command dialog -->
     <string name="command_prompt_hint">Arguments</string>
     <string name="run">Run</string>
