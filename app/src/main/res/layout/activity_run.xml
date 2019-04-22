@@ -34,9 +34,10 @@
                     android:layout_marginTop="6dp">
 
                     <EditText
-                        android:id="@+id/run_command"
+                        android:id="@+id/input"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
                         android:hint="@string/command_prompt_hint"
                         android:imeOptions="actionSend"
                         android:importantForAutofill="no"
@@ -48,12 +49,15 @@
                 </android.support.design.widget.TextInputLayout>
             </LinearLayout>
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/run_output"
+            <TextView
+                android:id="@+id/output"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:scrollbars="vertical" />
+                android:fontFamily="monospace"
+                android:singleLine="false"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textIsSelectable="true" />
         </LinearLayout>
 
         <ProgressBar

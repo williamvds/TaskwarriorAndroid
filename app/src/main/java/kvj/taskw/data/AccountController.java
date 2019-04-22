@@ -45,7 +45,6 @@ import timber.log.Timber;
 import kvj.taskw.App;
 import kvj.taskw.sync.SSLHelper;
 import kvj.taskw.ui.MainListAdapter;
-import kvj.taskw.ui.RunActivity;
 import kvj.taskw.notifications.NotificationFactory;
 import kvj.taskw.notifications.NotificationChannels;
 import kvj.taskw.ui.StaticAsyncTask;
@@ -255,7 +254,7 @@ public class AccountController {
         new LoadNotificationsTask(this).execute();
     }
 
-    private class StringAggregator implements StreamConsumer {
+    public static class StringAggregator implements StreamConsumer {
 
         StringBuilder builder = new StringBuilder();
 
@@ -267,7 +266,7 @@ public class AccountController {
             builder.append(line);
         }
 
-        private String text() {
+        public String text() {
             return builder.toString();
         }
     }
@@ -898,12 +897,6 @@ public class AccountController {
 
     public static String escape(String query) {
         return query.replace(" ", "\\ "); //.replace("(", "\\(").replace(")", "\\)");
-    }
-
-    public Intent intentForRunTask() {
-        Intent intent = new Intent(controller.context(), RunActivity.class);
-        intent.putExtra(App.KEY_ACCOUNT, id);
-        return intent;
     }
 
     public boolean intentForEditor(Intent intent, UUID uuid) {

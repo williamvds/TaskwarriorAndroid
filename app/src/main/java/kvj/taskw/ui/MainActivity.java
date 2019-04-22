@@ -214,7 +214,7 @@ public class MainActivity extends AppActivity implements Controller.ToastMessage
                 refreshAccount(account);
                 break;
             case R.id.menu_nav_run:
-                startActivity(ac.intentForRunTask());
+                RunActivity.start(this, new RunActivity.Form(account));
                 break;
             case R.id.menu_nav_debug:
                 Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);

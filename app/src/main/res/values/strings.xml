@@ -100,6 +100,7 @@
     <!-- Custom command dialog -->
     <string name="command_prompt_hint">Arguments</string>
     <string name="run">Run</string>
+    <string name="command_result_format">%1$s\n\nErrors:\n%2$s</string>
 
     <!-- New account dialog -->
     <string name="account_name_hint">Name</string>
