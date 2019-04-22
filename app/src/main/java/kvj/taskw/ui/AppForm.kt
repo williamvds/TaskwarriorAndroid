@@ -18,8 +18,8 @@ abstract class AppForm<T: FormData>: AppActivity() {
         super.onCreate(savedInstanceState)
         setContentView(layout)
 
-        if (!loadFromBundle(intent.extras))
-            loadFromBundle(savedInstanceState)
+        if (!loadFromBundle(savedInstanceState))
+            loadFromBundle(intent.extras)
     }
 
     override fun onBackPressed() = cancel()
