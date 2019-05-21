@@ -15,24 +15,24 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class Task(
-    @JvmField val account: UUID,
-    @JvmField val uuid: UUID,
-    @JvmField val id: Int,
-    @JvmField val description: String,
-    @JvmField val entry: Date,
-    @JvmField val status: Status,
-    @JvmField val annotations: List<Annotation> = ArrayList(),
-    @JvmField val depends: List<UUID> = ArrayList(),
-    @JvmField val tags: List<String> = ArrayList(),
-    @JvmField val urgency: Double? = null,
-    @JvmField val priority: String? = null,
-    @JvmField val project: String? = null,
-    @JvmField val due: Date? = null,
-    @JvmField val recur: String? = null,
-    @JvmField val until: Date? = null,
-    @JvmField val wait: Date? = null,
-    @JvmField val scheduled: Date? = null,
-    @JvmField val start: Date? = null
+    @JvmField var account: UUID? = null,
+    @JvmField var uuid: UUID? = null,
+    @JvmField var id: Int? = null,
+    @JvmField var description: String? = null,
+    @JvmField var entry: Date? = null,
+    @JvmField var status: Status? = null,
+    @JvmField var annotations: List<Annotation> = ArrayList(),
+    @JvmField var depends: List<UUID> = ArrayList(),
+    @JvmField var tags: List<String> = ArrayList(),
+    @JvmField var urgency: Double? = null,
+    @JvmField var priority: String? = null,
+    @JvmField var project: String? = null,
+    @JvmField var due: Date? = null,
+    @JvmField var recur: String? = null,
+    @JvmField var until: Date? = null,
+    @JvmField var wait: Date? = null,
+    @JvmField var scheduled: Date? = null,
+    @JvmField var start: Date? = null
 ) : Parcelable {
     companion object {
         enum class Status {

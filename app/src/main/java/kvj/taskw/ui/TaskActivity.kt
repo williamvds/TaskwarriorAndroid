@@ -77,16 +77,12 @@ class TaskActivity : AppActivity() {
         add_tag.setOnClickListener {
             TagDialog.start(this, TagDialog.Form(
                 task.account.toString(),
-                task.uuid
+                task.uuid!!
             ))
         }
 
         fun openEditor() {
-            EditTask(this) {
-                val intent = Intent(this, EditorActivity::class.java)
-                it.intentForEditor(intent, task.uuid)
-                startActivityForResult(intent, App.EDIT_REQUEST)
-            }.execute()
+            EditorActivity.start(this, EditorActivity.Form(task.account.toString(), task))
         }
 
         edit.setOnClickListener {
@@ -102,7 +98,7 @@ class TaskActivity : AppActivity() {
 
         done.setOnClickListener {
             EditTask(this@TaskActivity) {
-                it.taskDone(task.uuid)
+                it.taskDone(task.uuid!!)
                 finish()
             }.execute()
 
@@ -120,7 +116,7 @@ class TaskActivity : AppActivity() {
         annotate.setOnClickListener {
             AnnotationDialog.start(this, AnnotationDialog.Form(
                 task.account.toString(),
-                task.uuid
+                task.uuid!!
             ))
 
             hideEditList()
@@ -203,7 +199,7 @@ class TaskActivity : AppActivity() {
             setMessage(getString(R.string.remove_tag_dialog_format, tag))
             setPositiveButton(android.R.string.yes) { _, _ ->
                 EditTask(this@TaskActivity) {
-                    it.taskRemoveTag(task.uuid, tag)
+                    it.taskRemoveTag(task.uuid!!, tag)
                 }.execute()
             }
             setNegativeButton(android.R.string.no, null)
@@ -227,7 +223,7 @@ class TaskActivity : AppActivity() {
                 task_ann_date.text = MainListAdapter.formatDate(annotation.entry)
                 task_ann_delete_btn.setOnClickListener {
                     EditTask(activity) {
-                        it.taskDenotate(activity.task.uuid, annotation.description)
+                        it.taskDenotate(activity.task.uuid!!, annotation.description)
                     }.execute()
                 }
             }
@@ -267,7 +263,7 @@ class TaskActivity : AppActivity() {
             override fun TaskActivity.background(vararg params: Void): Task {
                 val account = task.account
                 val controller = App.controller<Controller>().accountController(account.toString())
-                return controller.getTask(task.uuid)
+                return controller.getTask(task.uuid!!)
             }
 
             override fun TaskActivity.finish(result: Task) {

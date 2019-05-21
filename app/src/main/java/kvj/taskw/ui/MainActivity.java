@@ -394,31 +394,12 @@ public class MainActivity extends AppActivity implements Controller.ToastMessage
 
     private void add(Pair<String, String>... pairs) {
         if (null == ac) return;
-        Intent intent = new Intent(this, EditorActivity.class);
-        ac.intentForEditor(intent, null);
-        if (null != pairs) {
-            Bundle data = new Bundle();
-            ArrayList<String> names = new ArrayList<>();
-            for (Pair<String, String> pair : pairs) { // $COMMENT
-                if (!TextUtils.isEmpty(pair.second)) { // Has data
-                    data.putString(pair.first, pair.second);
-                    names.add(pair.first);
-                }
-            }
-            intent.putExtra(App.KEY_EDIT_DATA, data);
-            intent.putStringArrayListExtra(App.KEY_EDIT_DATA_FIELDS, names);
-        }
-        startActivityForResult(intent, App.EDIT_REQUEST);
+        EditorActivity.start(this, new EditorActivity.Form(ac.id()));
     }
 
     private void edit(@NotNull Task task) {
         if (null == ac) return;
-        Intent intent = new Intent(this, EditorActivity.class);
-        if (ac.intentForEditor(intent, task.uuid)) { // Valid task
-            startActivityForResult(intent, App.EDIT_REQUEST);
-        } else {
-            controller.messageShort("Invalid task");
-        }
+        EditorActivity.start(this, new EditorActivity.Form(task.account.toString(), task));
     }
 
     @Override

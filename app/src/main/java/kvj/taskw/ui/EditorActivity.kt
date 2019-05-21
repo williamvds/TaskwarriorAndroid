@@ -1,134 +1,144 @@
 package kvj.taskw.ui
 
-import java.util.ArrayList
-import java.util.UUID
+import java.util.Calendar
+import java.util.Date
 
 import android.app.Activity
+import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.content.Intent
 import android.os.Bundle
-import android.text.TextUtils
+import android.text.format.DateFormat
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.ArrayAdapter
+import android.widget.EditText
 
 import timber.log.Timber
 
-import org.kvj.bravo7.form.BundleAdapter
-import org.kvj.bravo7.form.FormController
-import org.kvj.bravo7.form.impl.ViewFinder
-import org.kvj.bravo7.form.impl.bundle.StringBundleAdapter
-import org.kvj.bravo7.form.impl.widget.TransientAdapter
 import org.kvj.bravo7.util.DataUtil
 
+import kvj.taskw.data.Task
+import kvj.taskw.data.Task.Companion.Status
 import kvj.taskw.App
 import kvj.taskw.R
 import kvj.taskw.data.AccountController
-import kvj.taskw.data.Controller
-import kvj.taskw.data.UUIDBundleAdapter
 
 import kotlinx.android.synthetic.main.activity_editor.*
+import kotlinx.android.parcel.Parcelize
+import java.lang.Exception
 
-class EditorActivity : AppActivity() {
-    private val form = FormController(ViewFinder.ActivityViewFinder(this))
-    internal var controller = App.controller<Controller>()
+class EditorActivity : AppForm<EditorActivity.Form>() {
+    override val layout = R.layout.activity_editor
+
     private var priorities = listOf<String>()
-    private var progressListener: AccountController.TaskListener? = null
-    private var ac: AccountController? = null
-    private var editor: Editor? = null
+    private lateinit var progressListener: AccountController.TaskListener
+    private lateinit var ac: AccountController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_editor)
         setSupportActionBar(toolbar)
 
-        form.apply {
-            add<Any, String>(TransientAdapter(StringBundleAdapter(), null), App.KEY_ACCOUNT)
-            add<Any, UUID>  (TransientAdapter(UUIDBundleAdapter(),   null), App.KEY_EDIT_UUID)
-
-            add<Any, Bundle?>(TransientAdapter(object : BundleAdapter<Bundle?>() {
-                override fun get(bundle: Bundle?, name: String, def: Bundle?) = bundle?.getBundle(name)
-                override fun set(bundle: Bundle?, name: String, value: Bundle?) { bundle?.putBundle(name, value) }
-            }, null).oneShot(), App.KEY_EDIT_DATA)
-
-            add<Any, ArrayList<String>>(TransientAdapter(object : BundleAdapter<ArrayList<String>>() {
-                override fun get(bundle: Bundle, name: String, def: ArrayList<String>?) = bundle.getStringArrayList(name)
-                override fun set(bundle: Bundle, name: String, value: ArrayList<String>?) { bundle.putStringArrayList(name, value) }
-            }, null).oneShot(), App.KEY_EDIT_DATA_FIELDS)
-        }
-
-        editor = supportFragmentManager.findFragmentById(R.id.editor_editor) as Editor
-        editor!!.initForm(form)
-        form.load(this@EditorActivity, savedInstanceState)
-
-        ac = controller.accountController(form)
-        if (ac == null) {
-            finish()
-            controller.messageShort("Invalid arguments")
-            return
-        }
-
-        toolbar.subtitle = ac!!.name()
         progressListener = MainActivity.setupProgressListener(this, progress)
-        GetPrioritiesTask(this, savedInstanceState).execute()
+        GetPrioritiesTask(this).execute()
+
+        setupDatePicker(editor_due_btn, due)
+        setupDatePicker(editor_wait_btn, wait)
+        setupDatePicker(editor_scheduled_btn, scheduled)
+        setupDatePicker(editor_until_btn, until)
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        form.save(outState)
+    override fun onResume() {
+        super.onResume()
+        ac.listeners().add(progressListener, true)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        ac.listeners().remove(progressListener)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_editor, menu)
-
-        val uuid = form.getValue<UUID>(App.KEY_EDIT_UUID)
-        menu.findItem(R.id.menu_tb_add_another).isVisible = (uuid != null)
+        menu.findItem(R.id.menu_tb_add_another).isVisible = (data.task != null)
 
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_tb_save ->         doSave(false)
-            R.id.menu_tb_add_another ->  doSave(true)
+            R.id.menu_tb_save ->         submit(false)
+            R.id.menu_tb_add_another ->  submit(false)
             R.id.menu_tb_add_shortcut -> createShortcut()
         }
 
         return true
     }
 
-    override fun onResume() {
-        super.onResume()
-        ac?.listeners()?.add(progressListener, true)
+    override fun loadFromForm() {
+        ac = controller.accountController(data.account)
+        toolbar.subtitle = ac.name()
+
+        val task = data.task ?: return
+
+        description.setText(task.description)
+        complete.isChecked = task.status == Status.COMPLETED
+        project.setText(task.project)
+        tags.setText(MainListAdapter.join(",", task.tags))
+        recur.setText(task.recur)
+
+        due.setText(data.due ?: MainListAdapter.formatDate(task.due))
+        wait.setText(data.wait ?: MainListAdapter.formatDate(task.wait))
+        scheduled.setText(data.scheduled ?: MainListAdapter.formatDate(task.scheduled))
+        until.setText(data.until ?: MainListAdapter.formatDate(task.until))
+
+        data.original = data.original ?: task.copy()
     }
 
-    override fun onPause() {
-        super.onPause()
-        ac?.listeners()?.remove(progressListener)
-    }
-
-    override fun onBackPressed() {
-        if (!form.changed()) { // No changes - just close
-            super.onBackPressed()
-            return
+    override fun saveToForm() {
+        data.task?.let {
+            it.description = description.text.toString()
+            it.status = if (complete.isChecked) Status.COMPLETED else Status.PENDING
+            it.project = project.text.toString()
+            it.tags = tags.text.toString().split("([,;]\\s*|\\s+)".toRegex())
+            it.priority = priority.selectedItem as String
+            it.recur = recur.text.toString()
         }
 
-        Timber.d("Changed: %s", form.changes())
-        controller.question(this,
-            "There are some changes, discard?",
-            Runnable { super@EditorActivity.onBackPressed() },
-            null)
+        data.let {
+            it.due = due.text.toString()
+            it.wait = wait.text.toString()
+            it.scheduled = scheduled.text.toString()
+            it.until = until.text.toString()
+        }
+
+        data.let {
+            it.due = due.text.toString()
+            it.wait = wait.text.toString()
+            it.scheduled = scheduled.text.toString()
+            it.until = until.text.toString()
+        }
+    }
+
+    override fun hasChanges(): Boolean {
+        return !data.due.isNullOrEmpty()
+                || !data.wait.isNullOrEmpty()
+                || !data.scheduled.isNullOrEmpty()
+                || !data.until.isNullOrEmpty()
+                || (data.task?.equals(data.original) ?: true)
+    }
+
+    private fun submit(addAnother: Boolean) {
+        super.submit()
+        SaveTask(this, addAnother).execute()
     }
 
     private fun createShortcut() {
-        val ac = ac
-        ac ?: return
-
-        val bundle = Bundle()
-        form.save(bundle)
-        bundle.remove(App.KEY_EDIT_UUID) // Just in case
+        saveToForm()
 
         val shortcutIntent = Intent(this, EditorActivity::class.java).apply {
-            putExtras(bundle)
+            putExtra(App.KEY_EDIT_DATA, data)
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
 
@@ -140,74 +150,108 @@ class EditorActivity : AppActivity() {
         controller.input(this, "Shortcut name:", ac.name(), callback, null)
     }
 
-    private fun propertyChange(key: String, modifier: String): String {
-        var value = form.getValue<String>(key)
-        if (value.isBlank()) value = ""
-
-        return String.format("%s:%s", modifier, value)
-    }
-
-    private fun save(): String? {
-        if (!form.changed()) return "Nothing has been changed"
-
-        val description = form.getValue<String>(App.KEY_EDIT_DESCRIPTION)
-        if (TextUtils.isEmpty(description)) return "Description is mandatory"
-
-        val uuid      = form.getValue<UUID>(App.KEY_EDIT_UUID)
-        val completed = form.getValue(App.KEY_EDIT_STATUS,   Int::class.java) > 0
-        val priority  = form.getValue(App.KEY_EDIT_PRIORITY, Int::class.java)
-
-        val changes = ArrayList<String>()
-        form.changes().forEach { key ->
-            when (key) {
-                App.KEY_EDIT_DESCRIPTION ->  changes.add(AccountController.escape(description))
-                App.KEY_EDIT_PROJECT ->      changes.add(propertyChange(key, "project"))
-                App.KEY_EDIT_DUE ->          changes.add(propertyChange(key, "due"))
-                App.KEY_EDIT_SCHEDULED ->    changes.add(propertyChange(key, "scheduled"))
-                App.KEY_EDIT_WAIT ->         changes.add(propertyChange(key, "wait"))
-                App.KEY_EDIT_UNTIL ->        changes.add(propertyChange(key, "until"))
-                App.KEY_EDIT_RECUR ->        changes.add(propertyChange(key, "recur"))
-                App.KEY_EDIT_PRIORITY ->     changes.add("priority:${priorities[priority]}")
-                App.KEY_EDIT_TAGS -> {
-                    val tagsStr = form.getValue<String>(App.KEY_EDIT_TAGS)
-                    val tags = tagsStr.split("([,;]\\s*|\\s+)".toRegex())
-                    changes.add(String.format("tags:%s", tags.joinToString(",")))
-                }
+    private fun setupDatePicker(button: View, input: EditText) {
+        fun getCalendar(input: EditText): Calendar {
+            val date = try {
+                MainListAdapter.formattedFormat.parse(input.text.toString().trim()) ?: Date()
+            } catch (ex: Exception) {
+                Date()
             }
+
+            return Calendar.getInstance().apply { time = date }
         }
 
-        Timber.d("Saving change: %s %s %s", uuid, changes, completed)
+        button.setOnClickListener {
+            val calendar = getCalendar(input)
 
-        uuid?.let { return ac!!.taskModify(uuid, changes) }
-        return if (completed) ac!!.taskLog(changes) else ac!!.taskAdd(changes)
+            DatePickerDialog(this, { _, year, month, day ->
+                calendar.set(year, month, day)
+                input.setText(MainListAdapter.formattedFormat.format(calendar.time))
+            }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show()
+        }
+
+        button.setOnLongClickListener {
+            val calendar = getCalendar(input)
+            val format24 = DateFormat.is24HourFormat(this)
+
+            TimePickerDialog(this, TimePickerDialog.OnTimeSetListener { _, hour, minute ->
+                calendar.apply {
+                    set(Calendar.HOUR_OF_DAY, hour)
+                    set(Calendar.MINUTE, minute)
+                    set(Calendar.SECOND, 0)
+                }
+
+                input.setText(MainListAdapter.formattedISO.format(calendar.time))
+            }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), format24).show()
+
+            true
+        }
     }
 
-    private fun doSave(addAnother: Boolean) {
-        SaveTask(this, addAnother).execute()
+    fun save(): String? {
+        val changes = mutableListOf<String>()
+
+        val map = mapOf(
+            "description" to Pair(data.task?.description, data.original?.description),
+            "project" to Pair(data.task?.project, data.original?.project),
+            "priority" to Pair(data.task?.priority, data.original?.priority),
+            "due" to Pair(data.due, data.original?.due),
+            "scheduled" to Pair(data.scheduled, data.original?.scheduled),
+            "wait" to Pair(data.wait, data.original?.wait),
+            "until" to Pair(data.until, data.original?.until),
+            "recur" to Pair(data.task?.recur, data.original?.recur),
+            "tags" to Pair(data.task?.tags?.joinToString(separator = ","), data.original?.tags?.joinToString(separator = ","))
+        )
+
+        for ((key, pair) in map) {
+            if (pair.first == pair.second) continue
+
+            val value = when (pair.first) {
+                null -> ""
+                else -> AccountController.escape(pair.first.toString())
+            }
+
+            changes.add("$key:$value")
+        }
+
+        val completed = data.task?.status == Status.COMPLETED
+        Timber.d("Saving change: UUID %s, changes %s %s", data.task?.uuid, changes, completed)
+
+        data.task?.uuid?.let { return ac.taskModify(it, changes) }
+        return if (completed) ac.taskLog(changes) else ac.taskAdd(changes)
     }
+
+    @Parcelize
+    data class Form @JvmOverloads constructor(
+            val account: String,
+            var task: Task? = null,
+            var original: Task? = null,
+            var due: String? = null,
+            var wait: String? = null,
+            var scheduled: String? = null,
+            var until: String? = null
+    ) : FormData
 
     companion object {
-        private class GetPrioritiesTask(activity: EditorActivity,
-                                        val bundle: Bundle?)
+        @JvmStatic
+        fun start(activity: Activity, data: Form) {
+            val intent = Intent(activity, EditorActivity::class.java).apply {
+                putExtra(App.KEY_EDIT_DATA, data)
+            }
+
+            activity.startActivityForResult(intent, App.EDIT_REQUEST)
+        }
+
+        private class GetPrioritiesTask(activity: EditorActivity)
             : StaticAsyncTask<EditorActivity, Void, Void, List<String>>(activity) {
 
-            override fun EditorActivity.background(vararg params: Void): List<String> {
-                return ac!!.taskPriority()
-            }
+            override fun EditorActivity.background(vararg params: Void): List<String>
+                = ac.taskPriority()
 
             override fun EditorActivity.finish(result: List<String>) {
                 priorities = result
-                editor!!.setupPriorities(priorities)
-                form.load(this, bundle, App.KEY_EDIT_PRIORITY)
-                editor!!.show(form)
-
-                val formData = form.getValue<Bundle>(App.KEY_EDIT_DATA)
-                val fields   = form.getValue<List<String>>(App.KEY_EDIT_DATA_FIELDS)
-
-                Timber.d("Edit: %s %s", formData, fields)
-
-                if (formData == null || fields == null) return
-                fields.forEach { form.setValue(it, formData.getString(it)) }
+                priority.adapter = ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, priorities)
+                priority.setSelection(priorities.indexOf(data.task?.priority ?: ""))
             }
         }
 
@@ -215,7 +259,9 @@ class EditorActivity : AppActivity() {
                                val addAnother: Boolean)
             : StaticAsyncTask<EditorActivity, Void, Void, String?>(context) {
 
-            override fun EditorActivity.background(vararg params: Void) = save()
+            override fun EditorActivity.background(vararg params: Void): String? {
+                return save()
+            }
 
             override fun EditorActivity.finish(result: String?) {
                 if (!result.isNullOrBlank()) {
@@ -223,9 +269,8 @@ class EditorActivity : AppActivity() {
                     return
                 }
 
-                val uuid = form.getValue<UUID>(App.KEY_EDIT_UUID)
                 controller.messageShort(
-                    getString(if (uuid != null) R.string.edit_task_success else R.string.add_task_success))
+                    getString(if (data.task != null) R.string.edit_task_success else R.string.add_task_success))
 
                 setResult(Activity.RESULT_OK)
 
@@ -234,8 +279,8 @@ class EditorActivity : AppActivity() {
                     return
                 }
 
-                form.setValue(App.KEY_EDIT_DESCRIPTION, "")
-                form.getView<View>(App.KEY_EDIT_DESCRIPTION).requestFocus()
+                data.task = null
+                description.requestFocus()
             }
         }
     }
